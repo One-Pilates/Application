@@ -13,22 +13,10 @@ Este projeto utiliza as seguintes tecnologias:
 
 <div align="center">
   <img src="https://skillicons.dev/icons?i=java,spring,react,vite,nodejs,mysql" alt="My Skills" />
-  <br />
-  
-   **Java 21+**  
-   **Spring Boot**  
-   **React + Vite**  
-   **Node.js**  
-   **MySQL**  
 </div>
 
 
 ---
-
-
-
-
-
 
 ## ⚙️ Instalação  
 
@@ -64,25 +52,6 @@ Após rodar o projeto:
 
 ---
 
-## 🌟 Features  
-- 📊 EM ANDAMENTO...
-
-## 👥 Contribuidores  
-- [Andrei Scaffi](https://github.com/) –   
-- [Gustavo Castro](https://github.com/GustCastro) – 
-- [Guilherme Queiroz](https://github.com/Guilherme-Queiroz-lima) – 
-- [Harison Rios](https://github.com/HarisonRios) – 
-- [Isabella Viana](https://github.com/isabella-viana) – 
-- [Pedro Gandin](https://github.com/) – 
-
-
----
-
 ## 📄 Licença  
 Este projeto é distribuído sob a licença **MIT**.  
 
----
-
-## 🔗 Links  
-- 🌐 [Site Oficial](https://onepilates.com.br/site/)  
-- 📸 [Instagram](https://www.instagram.com/one_pilates/?hl=pt)  
