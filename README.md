@@ -70,7 +70,7 @@ Após rodar o projeto:
 ## 👥 Contribuidores  
 - [Andrei Scaffi](https://github.com/) –   
 - [Gustavo Castro](https://github.com/GustCastro) – 
-- [Guilherme Queiroz](https://github.com/) – 
+- [Guilherme Queiroz](https://github.com/Guilherme-Queiroz-lima) – 
 - [Harison Rios](https://github.com/HarisonRios) – 
 - [Isabella Viana](https://github.com/isabella-viana) – 
 - [Pedro Gandin](https://github.com/) – 
