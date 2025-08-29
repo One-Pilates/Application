@@ -73,16 +73,22 @@ export const diasDaSemana = {
 
 import { parse, format } from 'date-fns'
 
-const data = parse('29/08/2025', 'dd/MM/yyyy', new Date())
-console.log(format(data, 'dd MMMM yyyy'))
 
+export function formatarData(dataString) {
+    const data = parse(dataString, 'dd/MM/yyyy', new Date())
+    return format(data, 'dd MMMM yyyy', { locale: undefined }) 
+}
 
 
 
 // horario biblioteca    INSTALA: npm install dayjs
-
 import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 
-const hora = dayjs('14:30', 'HH:mm')
-console.log(hora.format('HH:mm')) 
+dayjs.extend(customParseFormat)
+
+export function formatarHora(horaString) {
+    const hora = dayjs(horaString, 'HH:mm')
+    return hora.format('HH:mm')
+}
 
