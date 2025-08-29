@@ -1,0 +1,82 @@
+
+//validar a senha
+
+function validacaoSenha(senha) {
+    if (senha.length < 8) {
+        console.log(`A senha precisa conter mais de 8 caracteres.`);
+    }
+
+    const possuiMaiuscula = /[A-Z]/.test(senha);
+    if (!possuiMaiuscula) {
+        console.log(`A senha precisa conter pelo menos uma letra maiúscula.`);
+    }
+
+    const possuiMinuscula = /[a-z]/.test(senha);
+    if (!possuiMinuscula) {
+        console.log(`A senha precisa conter pelo menos uma letra minúscula.`);
+    }
+
+    const possuiNumero = /[0-9]/.test(senha);
+    if (!possuiNumero) {
+        console.log(`A senha precisa conter pelo menos um número.`);
+    }
+
+    const especiais = ['!', '@', '#', '*', '%', '$'];
+    if (!especiais.some(char => senha.includes(char))) {
+        console.log('A senha precisa conter pelo menos um caractere especial.');
+    }
+
+
+
+    
+    console.log(`Validação concluída!`);
+}
+
+console.log(validacaoSenha('Exemplo@'));
+console.log(validacaoSenha('Exemplo123'));
+console.log(validacaoSenha('exemplo@123'));
+console.log(validacaoSenha('EXEMPLO@123'));
+console.log(validacaoSenha('Exemplo@123'));
+
+
+//validar email
+
+function validacaoEmail(email) {
+    const caractere = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!caractere.test(email)) {
+        console.log(`O email "${email}" é inválido.`);
+    } else {
+        console.log(`O email "${email}" é válido.`);
+    }
+}
+
+console.log(validacaoEmail('exemplo@dominio.com'));
+console.log(validacaoEmail('exemplo@dominio'));
+console.log(validacaoEmail('exemplo.com'));
+console.log(validacaoEmail('@dominio.com'));
+console.log(validacaoEmail('exemplo@.com'));
+
+
+//classificar semana
+
+git status
+
+
+
+//data biblioteca  INSTALA: npm install date-fns
+
+import { parse, format } from 'date-fns'
+
+const data = parse('29/08/2025', 'dd/MM/yyyy', new Date())
+console.log(format(data, 'dd MMMM yyyy'))
+
+
+
+
+// horario biblioteca    INSTALA: npm install dayjs
+
+import dayjs from 'dayjs'
+
+const hora = dayjs('14:30', 'HH:mm')
+console.log(hora.format('HH:mm')) 
+
