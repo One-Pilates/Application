@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "teste@teste.com",
+      "senha": "123456",
+      "nome": "Gustavo",
+      "idade": 21
+    },
+    {
+      "id": "2",
+      "email": "admin@teste.com",
+      "senha": "admin123",
+      "nome": "Teste",
+      "idade": 31
+    },
+    {
+      "id": "425e",
+      "email": "gustavo.teste",
+      "senha": "68719503",
+      "nome": "Gustavo",
+      "dataNasc": "2025-08-13"
+    },
+    {
+      "id": "452d",
+      "email": "teste@gamil",
+      "senha": "68719503",
+      "nome": "Gustavo",
+      "dataNasc": "2025-08-21"
+    },
+    {
+      "id": "94d5",
+      "email": "hari",
+      "senha": "urubu100",
+      "nome": "Hari",
+      "dataNasc": "2005-12-27"
+    },
+    {
+      "id": "c2f2",
+      "email": "gui@teste",
+      "senha": "guiguigui",
+      "nome": "Guilherme Queiroz",
+      "dataNasc": "2025-08-04"
+    }
+  ]
+}

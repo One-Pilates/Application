@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/cadastro.css">
+  <link rel="shortcut icon" href="assets/logoBranca.png" type="image/x-icon">
+  <script src="js/cadastro.js"></script>
+  <title>Cadastro - One Pilates</title>
+</head>
+
+<body>
+    <div class="signup-page">
+    <div class="container-form">
+      <div class="form-container">
+        <p class="title">Criar conta</p>
+        <p class="subtitle">Preencha seus dados para criar sua conta</p>
+        
+        <div class="step-indicator">
+          <div class="step active" id="step-1">1</div>
+          <div class="step-line" id="line-1"></div>
+          <div class="step inactive" id="step-2">2</div>
+        </div>
+
+        <div class="step-content active" id="content-1">
+          <form class="form" id="form-step-1">
+            <div class="input-field">
+              <label class="input-label" for="nome">Nome completo</label>
+              <input type="text" class="input" placeholder="Digite seu nome completo" id="nome" required>
+            </div>
+            
+            <div class="input-field">
+              <label class="input-label" for="dataNasc">Data de nascimento</label>
+              <input type="date" class="input" id="dataNasc" required>
+            </div>
+            
+            <div class="input-field">
+              <label class="input-label" for="email">E-mail</label>
+              <input type="email" class="input" placeholder="Digite seu e-mail" id="email" required>
+            </div>
+
+            <div class="button-group">
+              <button type="button" class="form-btn" onclick="nextStep()">Continuar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="step-content" id="content-2">
+          <form class="form" id="form-step-2">
+            <input type="password" class="input" placeholder="Senha" id="senha" required>
+            
+            <input type="password" class="input" placeholder="Repetir senha" id="confirmarSenha" required>
+
+            <div class="button-group">
+              <button type="button" class="form-btn btn-secondary" onclick="prevStep()">Voltar</button>
+              <button type="button" class="form-btn" onclick="completeSignup()">Finalizar</button>
+            </div>
+          </form>
+        </div>
+
+        <p class="sign-up-label">
+          Já possui uma conta?<a class="sign-up-link" href="login.html">Fazer login</a>
+        </p>
+      </div>
+    </div>
+    
+    <div class="background">
+      <img src="assets/logoBranca.png" alt="Logo">
+    </div>
+  </div>
+
+</body>
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>

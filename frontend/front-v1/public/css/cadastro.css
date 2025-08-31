@@ -1,0 +1,331 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      text-decoration: none;
+      user-select: none;
+      font-family: 'Roboto', sans-serif;
+      font-style: normal;
+      overflow: hidden;
+    }
+
+    .signup-page {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .container-form {
+      display: flex;
+      width: 40%;
+      height: 100vh;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #FAFBFC;
+      border: 1px solid transparent;
+      padding: 2vw 7vw;
+    }
+
+    .input-label{
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .logo-container {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      width: 120px;
+      height: auto;
+    }
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+
+    .background{
+      display: flex;
+      flex-wrap: wrap;
+      height: 100%;
+      width: 60%; 
+      padding: 2.5vw;
+      background: linear-gradient(135deg,  #F77433 45%, #FFCC9C 100%);
+      /* background: url('../assets/background.png') no-repeat center center fixed;
+      background-size: cover; */
+      justify-content: center;
+      align-items: center;
+    }
+
+    .background img{
+      width: 65%;
+      height: 65%;
+      transition: all 0.4s ease;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 400px;
+      background-color: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      box-sizing: border-box;
+      padding: 0;
+    }
+
+ 
+    .title {
+      text-align: center;
+      margin: 10px 0 30px 0;
+      font-size: 28px;
+      font-weight: 800;
+      color: #F77433;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 30px;
+      font-weight: 400;
+    }
+
+
+    .form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 15px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-group .input {
+      flex: 1;
+    }
+
+    .input {
+      border-radius: 10px;
+      border: 1px solid #c0c0c0;
+      outline: 0 !important;
+      box-sizing: border-box;
+      padding: 12px 15px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      width: 100%;
+    }
+
+    .input:focus {
+      border-color: #F77433;
+    }
+
+    .form-btn {
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 0 !important;
+      outline: 0 !important;
+      background: #F77433;
+      color: white;
+      cursor: pointer;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .form-btn:hover {
+      background: #e86730;
+      transform: translateY(-2px);
+    }
+
+    .form-btn:active {
+      box-shadow: none;
+      transform: translateY(0);
+    }
+
+    .form-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #F77433;
+      border: 2px solid #F77433 !important;
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      background: #F77433;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    .step {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .step.active {
+      background: #F77433;
+      color: white;
+    }
+
+    .step.completed {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .step.inactive {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .step-line {
+      width: 40px;
+      height: 2px;
+      background: #e0e0e0;
+      transition: all 0.3s ease;
+    }
+
+    .step-line.completed {
+      background: #4CAF50;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .button-group button {
+      flex: 1;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+      color: #747474;
+      font-size: 14px;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #e0e0e0;
+      z-index: 1;
+    }
+
+    .divider span {
+      background: #FAFBFC;
+      padding: 0 15px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .google-login-button {
+      border-radius: 10px;
+      box-sizing: border-box;
+      padding: 12px 15px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+            rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 13px;
+      gap: 8px;
+      transition: all 0.3s ease;
+      border: 2px solid #747474;
+      background-color: white;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .google-login-button:hover {
+      border-color: #F77433;
+      transform: translateY(-2px);
+    }
+
+    .google-icon {
+      font-size: 18px;
+      margin-bottom: 1px;
+    }
+
+    .sign-up-label {
+      margin: 15px 0;
+      font-size: 12px;
+      color: #747474;
+      text-align: center;
+    }
+
+    .sign-up-link {
+      border-radius: 10px;
+      margin-left: 3px;
+      font-size: 12px;
+      text-decoration: underline;
+      text-decoration-color: #F77433;
+      color: #F77433;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .step-content {
+      display: none;
+    }
+
+    .step-content.active {
+      display: block;
+    }
+
+    .error-message {
+      color: #ff4444;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .success-message {
+      color: #4CAF50;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+
+    
