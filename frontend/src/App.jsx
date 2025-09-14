@@ -15,7 +15,7 @@ function App() {
     <div className="App">
       <Navbar />
       <Hero />
-      {/* <Slider /> */}
+      <Slider /> 
       <Services />
       {/* <About /> TA VAZIO REVER*/}
       <Equipment />
