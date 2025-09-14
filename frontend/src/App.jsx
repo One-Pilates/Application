@@ -1,17 +1,30 @@
-import { useState } from 'react'
-import './styles/App.css'
+import Navbar from './pages/landing/components/Navbar';
+import Hero from './pages/landing/components/Hero';
+import Services from './pages/landing/components/Services';
+import About from './pages/landing/components/About';
+import Equipment from './pages/landing/components/Equipment';
+import Contact from './pages/landing/components/Contact';
+import Testimonials from './pages/landing/components/Testimonials';
+import FAQ from './pages/landing/components/FAQ';
+import Footer from './pages/landing/components/Footer';
+import Slider from './pages/landing/components/Slider';
+import './styles/App.scss';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="page">
-        <h1 className="title">EM BREVE — ONE PILATES</h1>
-        <img className="logo" src="./src/assets/logoOriginal.png" alt="One Pilates" />
-      <footer className="footer">© {new Date().getFullYear()} One Pilates</footer>      
+    <div className="App">
+      <Navbar />
+      <Hero />
+      {/* <Slider /> */}
+      <Services />
+      {/* <About /> TA VAZIO REVER*/}
+      <Equipment />
+      <Testimonials />
+      <FAQ />
+      <Contact />
+      <Footer />
     </div>
-  )
+  );
 }
 
-export default App
-
+export default App;
