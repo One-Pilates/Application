@@ -22,11 +22,12 @@ export default function Footer() {
 
           <div className="footer-links">
             <h4>Navegação</h4>
-            <a href="#home">Home</a>
-            <a href="#services">Serviços</a>
-            <a href="#equipments">Equipamentos</a>
-            <a href="#professionals">Profissionais</a>
-            <a href="#reviews">Avaliações</a>
+              <a href="#home">Home</a>
+              <a href="#services">Serviços</a>
+              <a href="#about">Sobre</a>
+              <a href="#equipment">Equipamentos</a>
+              <a href="#testimonials">Depoimentos</a>
+              <a href="#contact">Contato</a>
 
             <div className="footer-social">
               <a 

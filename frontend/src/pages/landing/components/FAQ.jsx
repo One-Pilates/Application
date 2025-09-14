@@ -36,7 +36,7 @@ export default function FAQ() {
       <div className="container">
         <h2>Perguntas Frequentes</h2>
         <p className="faq-subtitle">
-          Aqui você encontra as respostas para as dúvidas mais comuns sobre nosso estúdio. Clique nas perguntas para expandir as respostas.
+          Aqui você encontra as respostas para as dúvidas mais comuns sobre nosso estúdio.
         </p>
         <div className="faq-list">
           {faqs.map((faq, index) => (
