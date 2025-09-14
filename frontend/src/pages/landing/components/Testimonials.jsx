@@ -1,36 +1,53 @@
 import '../styles/Testimonials.scss';
 
-const Testimonials = () => {
-  const testimonials = [
-    {
-      name: 'Maria Silva',
-      text: 'O Pilates mudou minha vida. Sinto-me mais forte e flexível.',
-      rating: 5
-    },
-    {
-      name: 'João Santos',
-      text: 'Profissionais excelentes e ambiente acolhedor.',
-      rating: 5
-    },
-    {
-      name: 'Ana Costa',
-      text: 'Recomendo para todos que buscam qualidade de vida.',
-      rating: 5
-    }
-  ];
+const testimonials = [
+  {
+    name: 'Luciana Cordeiro',
+    text: 'O One Pilates é um estúdio maravilhoso, com profissionais muito competentes, o que é fundamental. Atendimento impecável!',
+    rating: 5,
+    time: 'Editado um ano atrás',
+    initials: 'L'
+  },
+  {
+    name: 'Erika Zsoldos',
+    text: 'Faço pilates na One Pilates desde 2016 e amo! A equipe é maravilhosa, super capacitadas e atenciosas.',
+    rating: 5,
+    time: 'Um ano atrás',
+    initials: 'E'
+  },
+  {
+    name: 'Vivian Kairalla',
+    text: 'Estou há doze anos no One Pilates e a cada dia o estúdio se supera com relação à qualidade da aulas e profissionais.',
+    rating: 5,
+    time: 'Editado um ano atrás',
+    initials: 'V'
+  }
+];
 
+export default function Testimonials(){
   return (
     <section id="testimonials" className="testimonials">
       <div className="container">
-        <h2>Testemunhos</h2>
+        <div className="testimonials-header">
+          <p>O que os clientes dizem.</p>
+          <h2>Testemunhos</h2>
+          <span className="testimonial-intro">
+            "Atribuímos um grande valor a relacionamentos sólidos e vemos os benefícios que eles <br/>trazem para o nosso negócio. O feedback do cliente é vital para nos ajudar a acertar."
+          </span>
+        </div>
+
         <div className="testimonials-grid">
-          {testimonials.map((testimonial, index) => (
-            <div key={index} className="testimonial-card">
-              <div className="stars">
-                {'★'.repeat(testimonial.rating)}
+          {testimonials.map((t, i) => (
+            <div key={i} className="testimonial-card">
+              <div className="testimonial-top">
+                <div className="avatar">{t.initials}</div>
+                <div className="testimonial-info">
+                  <h4>{t.name}</h4>
+                  <span>{t.time}</span>
+                </div>
               </div>
-              <p>"{testimonial.text}"</p>
-              <h4>{testimonial.name}</h4>
+              <div className="stars">{'★'.repeat(t.rating)}</div>
+              <p>"{t.text}"</p>
             </div>
           ))}
         </div>
@@ -39,4 +56,3 @@ const Testimonials = () => {
   );
 };
 
-export default Testimonials;
