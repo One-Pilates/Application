@@ -1,0 +1,33 @@
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px; /* na imagem não é tão redondo quanto 25px */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary {
+  background: #ff6b35; /* cor sólida como na imagem */
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #e85c2c; /* tom mais escuro ao passar o mouse */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 107, 53, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #ff6b35;
+  border: 2px solid #ff6b35;
+}
+
+.btn-secondary:hover {
+  background: #ff6b35;
+  color: white;
+}
