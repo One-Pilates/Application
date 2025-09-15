@@ -8,6 +8,7 @@ import Testimonials from './pages/landing/components/Testimonials';
 import FAQ from './pages/landing/components/FAQ';
 import Footer from './pages/landing/components/Footer';
 import Slider from './pages/landing/components/Slider';
+import Info from './pages/landing/components/Info';
 import './styles/App.scss';
 
 function App() {
@@ -17,8 +18,9 @@ function App() {
       <Hero />
       <Slider /> 
       <Services />
-      {/* <About /> TA VAZIO REVER*/}
+      <About />
       <Equipment />
+      <Info />
       <Testimonials />
       <FAQ />
       <Contact />
