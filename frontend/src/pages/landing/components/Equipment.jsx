@@ -1,26 +1,25 @@
-import Slider from '../components/Slider';
-import '../styles/Equipment.scss';
+import "../styles/About.scss";
 
-
-const Equipment = () => {
-  const equipmentImages = [
-    { src: '/equipment1.jpg', alt: 'Reformer' },
-    { src: '/equipment2.jpg', alt: 'Cadillac' },
-    { src: '/equipment3.jpg', alt: 'Chair' },
-    { src: '/equipment4.jpg', alt: 'Barrel' }
-  ];
-
+export default function Equipment() {
   return (
-    <section id="equipment" className="equipment">
-      <div className="container">
-        <h2>Nossos Equipamentos</h2>
-        <p>Equipamentos de última geração para sua prática de Pilates</p>
-        <div className="equipment-slider">
-          <Slider images={equipmentImages} />
+    <section className="about">
+      <div className="about__container">
+        
+        <div className="about__image">
+          <img src="/1.jpg" alt="Studio de Pilates" />
         </div>
+
+        <div className="about__content">
+          <h2 className="about__title">Nossos Equipamentos</h2>
+          <p className="about__text">
+            Aqui na OnePilates sua saúde e segurança estão em primeiro lugar,
+            todos os nossos equipamentos são Physio Pilates, marca conceituada
+            por sua qualidade e pioneirismo.
+          </p>
+          <button className="about__button">Mais Detalhes</button>
+        </div>
+
       </div>
     </section>
   );
-};
-
-export default Equipment;
+}
