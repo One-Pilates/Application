@@ -1,31 +1,22 @@
-import Navbar from './pages/landing/components/Navbar';
-import Hero from './pages/landing/components/Hero';
-import Services from './pages/landing/components/Services';
-import About from './pages/landing/components/About';
-import Equipment from './pages/landing/components/Equipment';
-import Contact from './pages/landing/components/Contact';
-import Testimonials from './pages/landing/components/Testimonials';
-import FAQ from './pages/landing/components/FAQ';
-import Footer from './pages/landing/components/Footer';
-import Slider from './pages/landing/components/Slider';
-import Info from './pages/landing/components/Info';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/landing/LandingPage';
+import Dashboard from './pages/dashboard/Dashboard';
+import NotFound from './pages/notfound/notfound';
+import Login from './pages/login/Login';
+import Register from './pages/register/Register';
 import './styles/App.scss';
 
 function App() {
   return (
-    <div className="App">
-      <Navbar />
-      <Hero />
-      <Slider /> 
-      <Services />
-      <About />
-      <Equipment />
-      <Info />
-      <Testimonials />
-      <FAQ />
-      <Contact />
-      <Footer />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 
