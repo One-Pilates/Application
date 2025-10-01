@@ -1,10 +1,281 @@
-.not-found{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+// Keyframes for animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 
+      0 0 20px rgba(247, 116, 51, 0.5),
+      0 0 40px rgba(247, 116, 51, 0.3),
+      0 0 60px rgba(247, 116, 51, 0.2);
+  }
+  50% {
+    text-shadow: 
+      0 0 30px rgba(247, 116, 51, 0.8),
+      0 0 60px rgba(247, 116, 51, 0.5),
+      0 0 90px rgba(247, 116, 51, 0.3);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.notfound-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .background-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(247, 116, 51, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(247, 116, 51, 0.1) 0%, transparent 50%),
+      linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+    z-index: 1;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 2px,
+          rgba(247, 116, 51, 0.03) 2px,
+          rgba(247, 116, 51, 0.03) 4px
+        );
+      animation: float 6s ease-in-out infinite;
+    }
+  }
+
+  .content {
+    position: relative;
+    z-index: 3;
     text-align: center;
-    background-color: #f8f9fa;
-    color: #343a40;
+    color: #fff;
+    animation: fadeInUp 1s ease-out;
+
+    .title {
+      font-size: clamp(4rem, 15vw, 10rem);
+      font-weight: 900;
+      margin: 0;
+      background: linear-gradient(135deg, #f77433, #ff9a56, #f77433);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+      line-height: 0.9;
+      
+      // Fallback for browsers that don't support background-clip
+      @supports not (-webkit-background-clip: text) {
+        color: #f77433;
+        text-shadow: 
+          0 0 10px rgba(247, 116, 51, 0.3),
+          0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-weight: 300;
+      margin: 1rem 0 3rem 0;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 0.05em;
+      animation: fadeInUp 1s ease-out 0.3s both;
+      
+      &::before {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #f77433, transparent);
+        margin: 0 auto 1rem;
+        animation: fadeInUp 1s ease-out 0.5s both;
+      }
+    }
+
+    .back-button {
+      background: linear-gradient(135deg, #f77433 0%, #e66429 100%);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease-out 0.6s both;
+      box-shadow: 
+        0 4px 15px rgba(247, 116, 51, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.6s ease;
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, #e66429 0%, #d55a26 100%);
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 
+          0 8px 25px rgba(247, 116, 51, 0.4),
+          0 0 0 1px rgba(255, 255, 255, 0.2);
+
+        &::before {
+          left: 100%;
+        }
+      }
+
+      &:active {
+        transform: translateY(0) scale(1.02);
+        transition: transform 0.1s ease;
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 
+          0 8px 25px rgba(247, 116, 51, 0.4),
+          0 0 0 3px rgba(247, 116, 51, 0.3);
+      }
+    }
+  }
+
+  .custom-rays {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    opacity: 0.8;
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .content {
+      padding: 0 1rem;
+
+      .title {
+        font-size: clamp(3rem, 20vw, 6rem);
+      }
+
+      .subtitle {
+        font-size: clamp(0.9rem, 4vw, 1.2rem);
+        margin: 0.5rem 0 2rem 0;
+      }
+
+      .back-button {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .content {
+      .title {
+        font-size: clamp(2.5rem, 25vw, 5rem);
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        margin: 0.5rem 0 1.5rem 0;
+      }
+    }
+  }
+
+  // High contrast mode support
+  @media (prefers-contrast: high) {
+    .background-gradient {
+      background: #000;
+    }
+
+    .content .title {
+      -webkit-text-fill-color: #f77433;
+      color: #f77433;
+    }
+
+    .content .subtitle {
+      color: #fff;
+    }
+  }
+
+  // Reduced motion support
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  // Dark mode adjustments (if your app supports it)
+  @media (prefers-color-scheme: light) {
+    .background-gradient {
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(247, 116, 51, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(247, 116, 51, 0.08) 0%, transparent 50%),
+        linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f1f3f4 100%);
+    }
+
+    .content {
+      color: #212529;
+
+      .subtitle {
+        color: rgba(33, 37, 41, 0.7);
+      }
+    }
+  }
 }
