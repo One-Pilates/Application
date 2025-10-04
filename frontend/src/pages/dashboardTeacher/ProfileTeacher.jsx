@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { FaPen } from 'react-icons/fa';
-import '../styles/ProfileTeacher.scss';
+import './styles/ProfileTeacher.scss';
 
 const ProfileTeacher = () => {
   const [dadosProfessor, setDadosProfessor] = useState({
