@@ -1,8 +1,9 @@
 import '../styles/Contact.scss';
-import Button from './Button';
+import Botao from '../../components/Button';
 import { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import Notiflix from 'notiflix';
+import { FaPaperPlane } from 'react-icons/fa';
 
 Notiflix.Confirm.init({
   borderRadius: '8px',
@@ -113,10 +114,10 @@ export default function Contact() {
               <div className="form-group">
                 <textarea name="message" placeholder="Mensagem *" required></textarea>
               </div>
-              <Button 
-                text={isSending ? "Enviando..." : "Enviar Mensagem"} 
-                className='btn-submit' 
-                disabled={isSending}
+              <Botao
+                  cor="bg-main" 
+                  texto={isSending ? "Enviando..." : "Enviar Mensagem"}
+                  className='btn-submit'
               />
             </form>
           </div>
