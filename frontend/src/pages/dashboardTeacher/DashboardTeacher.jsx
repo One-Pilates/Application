@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import { FaBars } from "react-icons/fa";
-import Account from "./components/Account";
-import Navbar from "./components/NavBar";
+import Account from "../components/Account";
+import Navbar from "../components/Navbar";
 
-function Dashboard() {
+function DashboardTeacher() {
   const [navAberta, setNavAberta] = useState(true);
-  const [paginaAtual, setPaginaAtual] = useState("agenda");
+  const [paginaAtual, setPaginaAtual] = useState("dashboard");
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <Navbar navAberta={navAberta} paginaAtual={paginaAtual} setPaginaAtual={setPaginaAtual} />
+      <Navbar 
+        navAberta={navAberta} 
+        paginaAtual={paginaAtual} 
+        setPaginaAtual={setPaginaAtual} 
+        userType="teacher"
+      />
       <div className="flex flex-col flex-1">
         <div className="flex justify-between items-center bg-gray-200 px-6 py-3 border-b">
           <div className="flex items-center gap-4">
@@ -28,4 +33,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default DashboardTeacher;
