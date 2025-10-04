@@ -1,1 +1,0 @@
-// #TODO: Essa pasta é especifica para componentes gerais que podem ser usados em todas as páginas
