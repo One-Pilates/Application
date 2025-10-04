@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Navbar.scss';
 import { Link } from 'react-router-dom';
-import Button from '../components/Button';
+import Botao from '../../components/Button';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,7 +29,7 @@ export default function Navbar() {
           <li><a href="#equipment">Equipamentos</a></li>
           <li><a href="#testimonials">Depoimentos</a></li>
           <li><a href="#contact">Contato</a></li>
-          <Link to="/dashboard"><Button text={"Dashboard"} /></Link>
+          <Link to="/DashboardTeacher"><Botao texto="Login" cor="bg-main"/></Link>
         </ul>
       </div>
     </nav>

@@ -14,7 +14,7 @@ export default function About() {
             Somos um Studio de Pilates localizado em São Paulo com excelentes profissionais e
             equipamentos de última geração, estamos localizados bem próximos à Av. Paulista e ao Metrô Paraíso.
           </p>
-          <Botao cor="bg-orange-500" icone={FaPlus} texto="Mais Detalhes"/>
+          <Botao cor="bg-main" icone={FaPlus} texto="Mais Detalhes"/>
         </div>
 
         <div className="about__image">
