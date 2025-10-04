@@ -3,7 +3,7 @@ import { FaChartBar, FaUser, FaCalendarAlt, FaChalkboardTeacher, FaUsers, FaSign
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
 
-function NavBar({ navAberta, paginaAtual, setPaginaAtual }) {
+function Navbar({ navAberta, paginaAtual, setPaginaAtual }) {
   const navigate = useNavigate();
 
   return (
@@ -37,4 +37,4 @@ function NavBar({ navAberta, paginaAtual, setPaginaAtual }) {
   );
 }
 
-export default NavBar;
+export default Navbar;

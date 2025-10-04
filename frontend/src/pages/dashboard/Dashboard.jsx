@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import Account from "./components/Account";
-import NavBar from "./components/Navbar";
+import Navbar from "./components/NavBar";
 
 function Dashboard() {
   const [navAberta, setNavAberta] = useState(true);
@@ -9,7 +9,7 @@ function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <NavBar navAberta={navAberta} paginaAtual={paginaAtual} setPaginaAtual={setPaginaAtual} />
+      <Navbar navAberta={navAberta} paginaAtual={paginaAtual} setPaginaAtual={setPaginaAtual} />
       <div className="flex flex-col flex-1">
         <div className="flex justify-between items-center bg-gray-200 px-6 py-3 border-b">
           <div className="flex items-center gap-4">
