@@ -1,14 +1,25 @@
 import React from "react";
 import { FaChevronDown } from "react-icons/fa";
-import Notiflix from "notiflix";
+import Swal from "sweetalert2";
 
 function Account() {
   const abrirModal = () => {
-    Notiflix.Report.info("Conta", "Aqui você pode gerenciar o perfil do usuário.", "Fechar");
+    Swal.fire({
+      title: "Conta",
+      text: "Aqui você pode gerenciar o perfil do usuário.",
+      icon: "info",
+      confirmButtonText: "Fechar",
+      confirmButtonColor: "#ff6b35",
+      background: "#1e1e1e",
+      color: "#fff", 
+    });
   };
 
   return (
-    <div className="flex items-center gap-3 bg-white rounded-full px-3 py-2 shadow cursor-pointer">
+    <div
+      onClick={abrirModal}
+      className="flex items-center gap-3 bg-white rounded-full px-3 py-2 shadow cursor-pointer hover:bg-gray-100 transition"
+    >
       <img
         src="https://via.placeholder.com/40"
         alt="Perfil"
@@ -18,7 +29,7 @@ function Account() {
         <p className="font-semibold">Amanda</p>
         <p className="text-sm text-gray-500">Recepcionista</p>
       </div>
-      <FaChevronDown onClick={abrirModal} className="text-gray-600 cursor-pointer" />
+      <FaChevronDown className="text-gray-600" />
     </div>
   );
 }

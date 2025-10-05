@@ -2,20 +2,8 @@ import '../styles/Contact.scss';
 import Botao from '../../components/Button';
 import { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
-import Notiflix from 'notiflix';
+import Swal from 'sweetalert2';
 import { FaPaperPlane } from 'react-icons/fa';
-
-Notiflix.Confirm.init({
-  borderRadius: '8px',
-  okButtonBackground: '#ff6b35',
-  titleColor: '#ff6b35',
-});
-
-Notiflix.Report.init({
-  borderRadius: '8px',
-  okButtonBackground: '#ff6b35',
-  titleColor: '#ff6b35',
-});
 
 export default function Contact() {
   const form = useRef();
@@ -27,16 +15,31 @@ export default function Contact() {
 
   const validateForm = (name, email, message) => {
     if (!name || name.trim().length < 2) {
-      Notiflix.Notify.failure('O nome precisa ter pelo menos 2 caracteres.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Nome inválido',
+        text: 'O nome precisa ter pelo menos 2 caracteres.',
+        confirmButtonColor: '#ff6b35',
+      });
       return false;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email && !emailRegex.test(email)) {
-      Notiflix.Notify.failure('Por favor, insira um email válido.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Email inválido',
+        text: 'Por favor, insira um email válido.',
+        confirmButtonColor: '#ff6b35',
+      });
       return false;
     }
     if (!message || message.trim().length < 10) {
-      Notiflix.Notify.failure('A mensagem precisa ter pelo menos 10 caracteres.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Mensagem curta',
+        text: 'A mensagem precisa ter pelo menos 10 caracteres.',
+        confirmButtonColor: '#ff6b35',
+      });
       return false;
     }
     return true;
@@ -51,14 +54,20 @@ export default function Contact() {
 
     if (!validateForm(name, email, message)) return;
 
-    Notiflix.Confirm.show(
-      'Confirmação',
-      'Deseja realmente enviar sua mensagem?',
-      'Sim',
-      'Cancelar',
-      () => sendEmail(),
-      () => {}
-    );
+    Swal.fire({
+      title: 'Confirmar envio?',
+      text: 'Deseja realmente enviar sua mensagem?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ff6b35',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sim, enviar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        sendEmail();
+      }
+    });
   };
 
   const sendEmail = () => {
@@ -67,20 +76,22 @@ export default function Contact() {
     emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current, PUBLIC_KEY)
       .then(
         () => {
-          Notiflix.Report.success(
-            'Enviado!',
-            'Sua mensagem foi enviada com sucesso.',
-            'OK'
-          );
+          Swal.fire({
+            icon: 'success',
+            title: 'Enviado!',
+            text: 'Sua mensagem foi enviada com sucesso.',
+            confirmButtonColor: '#ff6b35',
+          });
           form.current.reset();
         },
         (error) => {
           console.error('Erro:', error.text);
-          Notiflix.Report.failure(
-            'Erro!',
-            'Não foi possível enviar a mensagem. Tente novamente.',
-            'OK'
-          );
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro!',
+            text: 'Não foi possível enviar a mensagem. Tente novamente.',
+            confirmButtonColor: '#ff6b35',
+          });
         }
       )
       .finally(() => setIsSending(false));
@@ -115,9 +126,9 @@ export default function Contact() {
                 <textarea name="message" placeholder="Mensagem *" required></textarea>
               </div>
               <Botao
-                  cor="bg-main" 
-                  texto={isSending ? "Enviando..." : "Enviar Mensagem"}
-                  className='btn-submit'
+                cor="bg-main" 
+                texto={isSending ? "Enviando..." : "Enviar Mensagem"}
+                className='btn-submit'
               />
             </form>
           </div>
