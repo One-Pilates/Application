@@ -7,14 +7,7 @@ export default function CalendarSecretary() {
 
   return (
     <>
-      <Botao texto="Definir Ausência" cor="bg-main" onClick={() => setIsModalOpen(true)}> </Botao>
-
-      {isModalOpen && (
-        <DefinirAusenciaModal 
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
+    <div>Calendarios das aulas das secretaria</div>
     </>
   )
 }
