@@ -15,7 +15,12 @@ import RegisterTeacher from './pages/dashboardSecretary/RegisterTeacher';
 import RegisterStudent from './pages/dashboardSecretary/RegisterStudent';
 
 import NotFound from './pages/notfound/notfound';
+
+import Teacher from './pages/dashboardTeacher/layout/Teacher';
+import Secretary from './pages/dashboardSecretary/Layout/Secretary';
+
 import './styles/App.scss';
+
 
 function App() {
   return (
@@ -24,14 +29,19 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
-        <Route path="/dashboardTeacher" element={<DashboardTeacher />}>
+
+  
+        <Route path="/professora" element={<Teacher />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardTeacher />} />
           <Route path="perfil" element={<ProfileTeacher />} />
           <Route path="agenda" element={<AgendaTeacher />} />
         </Route>
+    
 
-
-        <Route path="/dashboardSecretary" element={<DashboardSecretary />}>
+       <Route path="/secretaria" element={<Secretary />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardSecretary />} />
           <Route path="perfil" element={<ProfileSecretary />} />
           <Route path="agenda" element={<CalendarSecretary />} />
           <Route path="professor" element={<RegisterTeacher />} />
