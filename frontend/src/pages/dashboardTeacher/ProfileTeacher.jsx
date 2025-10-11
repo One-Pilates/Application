@@ -1,29 +1,48 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaPen } from 'react-icons/fa';
 import './styles/ProfileTeacher.scss';
+import axios from 'axios';
+// import { ca } from 'date-fns/locale';
 
 const ProfileTeacher = () => {
-  const [dadosProfessor, setDadosProfessor] = useState({
-    nome: 'Flavia Lima Silva',
-    email: 'flavia@gmail.com',
-    dataNascimento: 'xx/xx/xxxx',
-    telefone: '(11) 96224 - 2005',
-    senha: '4165HiLdo%!%',
-    receberNotificacao: false,
-    especialidades: {
-      fisioterapia: true,
-      pilates: true,
-      drenagem: true,
-      rPG: true,
-      massagem: true,
-      massoterapia: true,
-      acupuntura: true
-    }
-  });
-
-  // estado para imagem de perfil (preview)
-  const [profileImage, setProfileImage] = useState('https://i.pravatar.cc/150?img=45');
+  const [dadosProfessor, setDadosProfessor] = useState([]);
+  const [profileImage, setProfileImage] = useState('');
+  const [editavel, setEditavel] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(()=>{
+    axios.get("/funcionarios/${userId)")
+    .then((json) => {
+      const result = json.data
+      const data = result.map(item => ({
+        id: item.id,
+        nome: item.nome,
+        cargo: item.cargo,
+        email: item.email,
+        dataNascimento: item.dataNascimento,
+        telefone: item.telefone,
+        senha: item.senha,
+        receberNotificacao: item.receberNotificacao,
+        especialidades: {
+          fisioterapia: item.especialidades.fisioterapia,
+          pilates: item.especialidades.pilates,
+          drenagem: item.especialidades.drenagem,
+          rPG: item.especialidades.rPG,
+          massagem: item.especialidades.massagem,
+          massoterapia: item.especialidades.massoterapia,
+          acupuntura: item.especialidades.acupuntura,
+        }
+      }));
+        setDadosProfessor(data[0]);
+    })
+    .catch((error) => {
+      console.error("Erro ao buscar dados do professor:", error, error.status);
+    });
+  }, []);
+
+  useEffect(() => {
+    
+  }, [setDadosProfessor]);
 
   const handleEditFotoClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -38,6 +57,10 @@ const ProfileTeacher = () => {
     };
     reader.readAsDataURL(file);
   };
+
+  const handleEditInput = () =>{
+    setEditavel(!editavel);
+  }
 
   const toggleEspecialidade = (especialidade) => {
     setDadosProfessor({
@@ -81,7 +104,7 @@ const ProfileTeacher = () => {
         </div>
         <div className="profile-teacher__info">
           <h2 className="profile-teacher__nome">{dadosProfessor.nome}</h2>
-          <p className="profile-teacher__cargo">Fisioterapeuta</p>
+          <p className="profile-teacher__cargo">{dadosProfessor.cargo}</p>
         </div>
       </div>
 
@@ -93,12 +116,13 @@ const ProfileTeacher = () => {
             <label className="profile-teacher__label">Nome Completo</label>
             <div className="profile-teacher__input-group">
               <input
+                disabled={!editavel}
                 type="text"
                 value={dadosProfessor.nome}
                 onChange={(e) => setDadosProfessor({ ...dadosProfessor, nome: e.target.value })}
                 className="profile-teacher__input"
               />
-              <button className="profile-teacher__edit-icon">
+              <button onClick={handleEditInput} className="profile-teacher__edit-icon">
                 <FaPen size={14} />
               </button>
             </div>
@@ -107,12 +131,13 @@ const ProfileTeacher = () => {
             <label className="profile-teacher__label">Email</label>
             <div className="profile-teacher__input-group">
               <input
+                disabled={!editavel}
                 type="email"
                 value={dadosProfessor.email}
                 onChange={(e) => setDadosProfessor({ ...dadosProfessor, email: e.target.value })}
                 className="profile-teacher__input"
               />
-              <button className="profile-teacher__edit-icon">
+              <button onClick={handleEditInput} className="profile-teacher__edit-icon">
                 <FaPen size={14} />
               </button>
             </div>
@@ -125,12 +150,13 @@ const ProfileTeacher = () => {
             <label className="profile-teacher__label">Data de nascimento</label>
             <div className="profile-teacher__input-group">
               <input
+                disabled={!editavel}
                 type="date"
                 value={dadosProfessor.dataNascimento}
                 onChange={(e) => setDadosProfessor({ ...dadosProfessor, dataNascimento: e.target.value })}
                 className="profile-teacher__input profile-teacher__input--placeholder"
               />
-              <button className="profile-teacher__edit-icon">
+              <button onClick={handleEditInput} className="profile-teacher__edit-icon">
                 <FaPen size={14} />
               </button>
             </div>
@@ -139,12 +165,13 @@ const ProfileTeacher = () => {
             <label className="profile-teacher__label">Telefone</label>
             <div className="profile-teacher__input-group">
               <input
+                disabled={!editavel}
                 type="tel"
                 value={dadosProfessor.telefone}
                 onChange={(e) => setDadosProfessor({ ...dadosProfessor, telefone: e.target.value })}
                 className="profile-teacher__input"
               />
-              <button className="profile-teacher__edit-icon">
+              <button onClick={handleEditInput} className="profile-teacher__edit-icon">
                 <FaPen size={14} />
               </button>
             </div>
@@ -157,13 +184,14 @@ const ProfileTeacher = () => {
             <label className="profile-teacher__label">Senha</label>
             <div className="profile-teacher__input-group">
               <input
-                type="password"
+                disabled={!editavel}
+                type="text"
                 value={dadosProfessor.senha}
                 onChange={(e) => setDadosProfessor({ ...dadosProfessor, senha: e.target.value })}
                 className="profile-teacher__input"
               />
-              <button className="profile-teacher__edit-icon">
-                <FaPen size={14} />
+              <button onClick={handleEditInput} className="profile-teacher__edit-icon" >
+                <FaPen size={14}  />
               </button>
             </div>
           </div>

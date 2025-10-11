@@ -35,19 +35,19 @@ export default function Login() {
       })
       .then((response) => {
         const data = response.data;
-        if (data && data.token) {
-          localStorage.setItem("token", data.token);
+        if (data) {
+          // localStorage.setItem("token", data.token);
           Swal.fire({
             icon: "success",
             title: "Login bem-sucedido",
             text: "Você foi logado com sucesso.",
           });
-          navigate("/dashboard");
+          navigate("/dashboardTeacher");
         }
         console.log("Login bem-sucedido:", data);
       })
       .catch((error) => {
-        const status = error.status;
+        const status = error.response?.status;
         const message =
           status === 401
             ? "Email ou senha incorretos."
