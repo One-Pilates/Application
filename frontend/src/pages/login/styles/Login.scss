@@ -1,0 +1,154 @@
+.login {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+
+  &__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #ffffff;
+    padding: 2rem 4rem;
+    border-radius: 0.5rem;
+    width: 40%;
+  }
+
+  &__header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    width: 100%;
+  }
+  
+  &__title {
+    font-size: 2.5rem;
+    color: #f77433;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  &__label {
+    text-align: left;
+    font-size: 1rem;
+    margin-bottom: 0.5rem; 
+    color: #333;
+    font-weight: 400;
+    display: block;
+  }
+
+  &__subtitle {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #202021;
+    margin-bottom: 1.5rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 450px;
+  }
+
+  &__field {
+    margin-bottom: 0;
+    width: 100%;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #f9f9f9;
+    border: none;
+    border-radius: 0.5rem;
+    color: #1f2937;
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.3s;
+
+    &--placeholder {
+      color: #9ca3af;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(247, 116, 51, 0.5);
+      background: #fff;
+    }
+  }
+
+  &__button {
+    width: 60%;
+    align-self: center;
+    padding: 0.75rem 1rem;
+    background-color: #f77433;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 1px solid #f77433;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.5s ease;
+
+    &:hover {
+      transform: scaleY(0.98);
+      color: #f77433;
+      background-color: #f9f9f9;
+      border: 1px solid #f77433;
+    }
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 1rem;
+    width: 100%;
+
+    a {
+      color: #f77433;
+      text-decoration: none;
+      font-size: 0.875rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .background-login {
+    display: flex;
+    width: 60%;
+    background: 
+      radial-gradient(circle at 20% 80%, #F77433 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, #F77433 0%, transparent 50%),
+      linear-gradient(135deg, #ff6b36 0%, #f1551c 100%);
+    justify-content: center;
+    padding: 2rem;
+    align-items: center;
+
+    img {
+      width: 60%;
+      height: auto;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .login {
+      flex-direction: column;
+    }
+
+    .login__container {
+      width: 100%;
+      max-width: 520px;
+      min-width: unset;
+    }
+
+    .background-login {
+      display: none;
+    }
+  }
+}
