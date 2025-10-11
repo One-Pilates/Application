@@ -1,4 +1,6 @@
 //validar a senha
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 function validacaoSenha(senha) {
     const erros = [];
     
@@ -49,16 +51,15 @@ console.log(validacaoSenha('Exemplo@123'));
 
 
 //validar email
-function validacaoEmail(email) {
+export function validacaoEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const valido = regex.test(email);
     
     if (!valido) {
-        console.log(`O email "${email}" é inválido.`);
-        return { valido: false, email };
+        return false;
     } else {
-        console.log(`O email "${email}" é válido.`);
-        return { valido: true, email };
+
+        return true;
     }
 }
 
