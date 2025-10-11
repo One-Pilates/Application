@@ -22,8 +22,8 @@ public class Professor extends Funcionario{
     public Professor() {
     }
 
-    public Professor(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, Endereco endereco, Set<Especialidade> especialidades) {
-        super(nome, email, cpf, idade, status, foto, observacoes, notificacaoAtiva, senha, endereco);
+    public Professor(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco, Set<Especialidade> especialidades) {
+        super(nome, email, cpf, idade, status, foto, observacoes, notificacaoAtiva, senha, cargo, endereco);
         this.especialidades = especialidades;
     }
 

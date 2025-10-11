@@ -5,17 +5,17 @@ import jakarta.validation.constraints.Pattern;
 
 public class EnderecoDTO {
 
-   @NotBlank(message = "O campo logradouro não pode estar vazio")
+    @NotBlank(message = "O campo logradouro não pode estar vazio")
     private String logradouro;
-   @NotBlank(message = "O campo numero não pode estar vazio ")
+    @NotBlank(message = "O campo numero não pode estar vazio ")
     private String numero;
-   @NotBlank(message = "O Campo bairro não pode estar vazio")
+    @NotBlank(message = "O Campo bairro não pode estar vazio")
     private String bairro;
-   @NotBlank(message = "o campo cidade não pode estar vazio")
+    @NotBlank(message = "o campo cidade não pode estar vazio")
     private String cidade;
-   @NotBlank(message = "O estado não pode estar vazio")
+    @NotBlank(message = "O estado não pode estar vazio")
     private String estado;
-   @NotBlank(message = "O codigo não pode estar vazio")
+    @NotBlank(message = "O codigo não pode estar vazio")
     private String cep;
     @NotBlank(message = "O campo UF não pode estar vazio")
     @Pattern(

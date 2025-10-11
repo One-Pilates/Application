@@ -1,5 +1,6 @@
 package com.onePilates.agendamento.handler;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,16 +14,49 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 🎯 Esse método é chamado sempre que alguma validação (@NotBlank, @Pattern...) falhar
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, String>> tratarErrosDeValidacao(MethodArgumentNotValidException excecao) {
 
-        Map<String, String> errors = new HashMap<>();
+        Map<String, String> erros = new HashMap<>();
 
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
+        for (FieldError erro : excecao.getBindingResult().getFieldErrors()) {
+            erros.put(erro.getField(), erro.getDefaultMessage());
         }
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(erros, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> tratarErrosDeBanco(DataIntegrityViolationException excecao) {
+
+        Map<String, String> erro = new HashMap<>();
+
+        String mensagem = excecao.getMostSpecificCause().getMessage();
+
+        if (mensagem.contains("cpf")) {
+            erro.put("erro", "Já existe um funcionário com esse CPF cadastrado.");
+        } else if (mensagem.contains("email")) {
+            erro.put("erro", "Já existe um funcionário com esse e-mail cadastrado.");
+        } else {
+            erro.put("erro", "Erro de integridade nos dados. Verifique os campos únicos.");
+        }
+
+        return new ResponseEntity<>(erro, HttpStatus.CONFLICT);
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> tratarErroGenerico(Exception excecao) {
+
+        Map<String, String> erro = new HashMap<>();
+        erro.put("erro", "Erro interno no servidor. Por favor, tente novamente mais tarde.");
+
+
+        return new ResponseEntity<>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+
+
