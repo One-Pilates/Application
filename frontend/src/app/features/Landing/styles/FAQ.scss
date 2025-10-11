@@ -1,0 +1,91 @@
+@use '../../../shared//styles/variables.scss' as *;
+
+.faq {
+  padding: 6rem 0;
+  background: $bg-claro;
+}
+
+.faq-subtitle {
+  text-align: center;
+  color: $text-cinza;
+  font-size: 1rem;
+  margin-bottom: 3rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.faq h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: $text-escuro;
+  font-weight: 700;
+}
+
+.faq-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  margin-bottom: 1rem;
+  background: $branco;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid $cor-borda;
+}
+
+.faq-item.active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.faq-question {
+  width: 100%;
+  padding: 1.5rem 1.5rem;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $text-escuro;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  border-bottom: 1px solid $cor-borda;
+
+  &:hover {
+    background: lighten($bg-claro, 3%);
+  }
+}
+
+.faq-icon {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+  color: $laranja-principal;
+
+  &.open {
+    transform: rotate(0deg);
+  }
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 1.5rem;
+  color: $text-cinza;
+  line-height: 1.7;
+  font-size: 1rem;
+  transition: all 0.4s ease;
+
+  &.show {
+    max-height: 200px;
+    padding: 1rem 1.5rem;
+  }
+}

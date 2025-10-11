@@ -1,0 +1,107 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.calendar-container {
+    min-height: 100vh;
+    background: #F5F5F5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.calendar-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.calendar-header-info {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.calendar-wrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+    min-height: 600px;
+}
+
+@media (max-width: 768px) {
+    .calendar-main {
+        padding: 1rem;
+    }
+
+    .calendar-header-info {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .calendar-wrapper {
+        padding: 1rem;
+        border-radius: 8px;
+    }
+}
+
+
+.fullcalendar {
+    font-family: inherit;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.fc .fc-button-primary {
+    background-color: $laranja-principal;
+    border-color: $laranja-principal;
+    text-transform: capitalize;
+    font-weight: 500;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: #e85a28;
+    border-color: #e85a28;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: #d04d1e;
+    border-color: #d04d1e;
+}
+
+.fc-event {
+    cursor: pointer;
+    border-radius: 4px;
+    border: none !important;
+    padding: 2px 4px;
+}
+
+.fc-event:hover {
+    opacity: 0.85;
+}
+
+.fc-daygrid-day-number {
+    color: #333;
+    font-weight: 500;
+}
+
+.fc-col-header-cell {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 0.75rem 0;
+}
+
+.fc-timegrid-slot {
+    height: 3rem;
+}
