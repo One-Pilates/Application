@@ -1,10 +1,13 @@
-import React from 'react';
-import './styles/Login.scss';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import LoginView from "./View"; 
+import { useLoginModel } from "./Model";
 
-export default function Login() {
-    return (
-        <div className="login">
-            <h1>Aqui vai ser a página de login</h1>
-        </div>
-    );
-}
+const Login = () => {
+  const navigate = useNavigate();
+  const model = useLoginModel();
+
+  return <LoginView {...model} navigate={navigate} />;
+};
+
+export default Login;
