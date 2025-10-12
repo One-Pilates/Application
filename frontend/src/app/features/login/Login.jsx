@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import LoginView from "./View"; 
-import { useLoginModel } from "./Model";
+import LoginView from "./view"; 
+import { useLoginModel } from "./model";
 
 const Login = () => {
   const navigate = useNavigate();

@@ -1,7 +1,6 @@
-@use '../../../shared//styles/variables.scss' as *;
+@use '../../../shared/styles/variables.scss' as *;
 
-
-.profile-teacher {
+.profile {
   background: $branco;
   border-radius: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -166,22 +165,19 @@
   }
 
   &__especialidades {
-    padding-top: 1rem;
-  }
-
-  &__checkbox {
     display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-direction: row;
+    flex-wrap: wrap;
     gap: 1rem;
     padding: 1rem;
+    background: #f9fafb;
     border-radius: 0.5rem;
+    margin-top: 1rem;
   }
 
   &__checkbox {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
     cursor: pointer;
 
     input {
@@ -194,8 +190,10 @@
     span {
       font-size: 0.875rem;
       color: #374151;
+      text-transform: capitalize;
     }
   }
+
 
   &__buttons {
     display: flex;

@@ -1,7 +1,7 @@
 import React from "react";
-import api from "../../provider/api.js";
+import api from "../../provider/api";
 import Swal from "sweetalert2";
-import { validacaoEmail } from "../../utils/funcoesUtils";
+import { validacaoEmail } from "../../shared/utils/funcoesUtils";
 
 export const useLoginModel = () => {
   const [email, setEmail] = React.useState("");

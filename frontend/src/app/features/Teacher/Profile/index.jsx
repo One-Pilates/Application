@@ -1,6 +1,6 @@
 import React from 'react';
-import { useProfileModel } from './model';
 import ProfileView from './view';
+import { useProfileModel } from './model';
 
 const Profile = () => {
   const model = useProfileModel();
