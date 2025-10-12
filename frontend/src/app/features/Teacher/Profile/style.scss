@@ -1,7 +1,5 @@
-@use '../../../shared/styles/variables.scss' as *;
-
-.profile {
-  background: $branco;
+.profile-teacher {
+  background: white;
   border-radius: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 2rem;
@@ -30,7 +28,7 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background: $branco;
+    background: white;
     border: none;
     border-radius: 50%;
     padding: 0.5rem;
@@ -96,7 +94,7 @@
   &__input {
     width: 100%;
     padding: 0.75rem 1rem;
-    background: #f9fafb;
+    background: #f9f9f9;
     border: none;
     border-radius: 0.5rem;
     color: #1f2937;
@@ -138,7 +136,7 @@
   }
   
   &__radio-group {
-    background-color: #f9fafb;
+    background-color: #f9f9f9;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     display: flex;
@@ -165,13 +163,14 @@
   }
 
   &__especialidades {
+    padding-top: 1.5rem;
+  }
+  
+  &__checkbox-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    padding: 1rem;
-    background: #f9fafb;
-    border-radius: 0.5rem;
-    margin-top: 1rem;
+    gap: 1rem 2rem;
+    margin-top: 0.5rem;
   }
 
   &__checkbox {
@@ -190,10 +189,8 @@
     span {
       font-size: 0.875rem;
       color: #374151;
-      text-transform: capitalize;
     }
   }
-
 
   &__buttons {
     display: flex;
@@ -212,7 +209,7 @@
 
     &--cancel {
       background: #ef4444;
-      color: $branco;
+      color: white;
 
       &:hover {
         background: #dc2626;
@@ -221,7 +218,7 @@
 
     &--save {
       background: #3b82f6;
-      color: $branco;
+      color: white;
 
       &:hover {
         background: #2563eb;

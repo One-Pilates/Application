@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 
-export const useProfileModel = () => {
+export const useProfileTeacherModel = () => {
   const [dadosProfessor, setDadosProfessor] = useState({
-    nome: 'Carregando...',
-    cargo: 'Carregando...',
-    email: '',
-    dataNascimento: '',
-    telefone: '',
-    senha: '',
+    nome: "",
+    cargo: "",
+    email: "",
+    dataNascimento: "",
+    telefone: "",
+    senha: "",
     receberNotificacao: false,
     especialidades: {
       fisioterapia: false,
@@ -21,28 +21,34 @@ export const useProfileModel = () => {
     },
   });
 
-  const [profileImage, setProfileImage] = useState(null); // null evita src=""
+  const [profileImage, setProfileImage] = useState("");
   const [editavel, setEditavel] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    const userId = 1; 
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get(`/funcionarios/${userId}`);
-        if (res.data) {
-          setDadosProfessor({
-            ...res.data,
-            especialidades: res.data.especialidades || dadosProfessor.especialidades
-          });
-          setProfileImage(res.data.profileImage || null);
-        }
-      } catch (err) {
-        console.error("Erro ao buscar dados do professor:", err);
-        // manter valores padrão para mostrar a página
-      }
+    const fetchData = async () => {
+      console.warn("API desativada, usando dados locais.");
+      setDadosProfessor({
+        nome: "Fulano de Tal",
+        cargo: "Professor de Pilates",
+        email: "fulano@onepilates.com",
+        dataNascimento: "1988-06-15",
+        telefone: "(11) 91234-5678",
+        senha: "********",
+        receberNotificacao: true,
+        especialidades: {
+          fisioterapia: true,
+          pilates: true,
+          drenagem: false,
+          rPG: false,
+          massagem: true,
+          massoterapia: false,
+          acupuntura: false,
+        },
+      });
     };
-    fetchProfile();
+
+    fetchData();
   }, []);
 
   const handleEditFotoClick = () => {
@@ -50,7 +56,7 @@ export const useProfileModel = () => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files && e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => setProfileImage(reader.result);
@@ -60,29 +66,35 @@ export const useProfileModel = () => {
   const handleEditInput = () => setEditavel(!editavel);
 
   const toggleEspecialidade = (especialidade) => {
-    setDadosProfessor(prev => ({
+    setDadosProfessor((prev) => ({
       ...prev,
       especialidades: {
         ...prev.especialidades,
-        [especialidade]: !prev.especialidades[especialidade]
-      }
+        [especialidade]: !prev.especialidades[especialidade],
+      },
     }));
   };
 
-  const handleSalvar = () => alert('Perfil salvo com sucesso!');
-  const handleCancelar = () => console.log('Cancelado');
+  const handleSalvar = () => {
+    console.log("Dados salvos:", dadosProfessor);
+    alert("Perfil salvo com sucesso!");
+  };
+
+  const handleCancelar = () => {
+    console.log("Edição cancelada.");
+  };
 
   return {
     dadosProfessor,
     setDadosProfessor,
     profileImage,
-    fileInputRef,
     editavel,
+    fileInputRef,
     handleEditFotoClick,
     handleFileChange,
     handleEditInput,
     toggleEspecialidade,
     handleSalvar,
-    handleCancelar
+    handleCancelar,
   };
 };

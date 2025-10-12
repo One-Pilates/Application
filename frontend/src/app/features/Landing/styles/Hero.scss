@@ -63,7 +63,7 @@
   transition: background 0.3s ease;
 
   &:hover {
-    background: darken($laranja-principal, 8%);
+    background: $laranja-principal, 8%
   }
 }
 

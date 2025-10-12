@@ -86,7 +86,7 @@
 }
 
 .btn-register:hover {
-  background: darken($laranja-principal, 10%);
+  background: $laranja-principal, 10%;
   transform: translateY(-2px);
 }
 

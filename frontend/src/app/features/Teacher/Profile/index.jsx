@@ -1,10 +1,10 @@
-import React from 'react';
-import ProfileView from './view';
-import { useProfileModel } from './model';
+import React from "react";
+import { useProfileTeacherModel } from "./model";
+import ProfileTeacherView from "./view";
 
-const Profile = () => {
-  const model = useProfileModel();
-  return <ProfileView {...model} />;
+const ProfileTeacher = () => {
+  const model = useProfileTeacherModel();
+  return <ProfileTeacherView {...model} />;
 };
 
-export default Profile;
+export default ProfileTeacher;

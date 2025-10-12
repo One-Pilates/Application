@@ -61,7 +61,7 @@
   border-bottom: 1px solid $cor-borda;
 
   &:hover {
-    background: lighten($bg-claro, 3%);
+    background: $bg-claro, 3%
   }
 }
 
