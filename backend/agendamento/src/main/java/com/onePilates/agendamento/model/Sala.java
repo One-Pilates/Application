@@ -21,4 +21,37 @@ public class Sala {
             inverseJoinColumns = @JoinColumn(name = "especialidade_id")
     )
     private Set<Especialidade> especialidades = new HashSet<>();
+
+    public Sala(Long id, String nome, Set<Especialidade> especialidades) {
+        this.id = id;
+        this.nome = nome;
+        this.especialidades = especialidades;
+    }
+
+    public Sala() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Set<Especialidade> getEspecialidades() {
+        return especialidades;
+    }
+
+    public void setEspecialidades(Set<Especialidade> especialidades) {
+        this.especialidades = especialidades;
+    }
 }

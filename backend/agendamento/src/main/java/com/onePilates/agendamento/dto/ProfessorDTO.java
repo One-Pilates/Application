@@ -1,22 +1,11 @@
-package com.onePilates.agendamento.model;
-
-
-import jakarta.persistence.*;
+package com.onePilates.agendamento.dto;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Funcionario {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ProfessorDTO {
     private String nome;
-    @Column(unique = true)
     private String email;
-    @Column(unique = true)
     private String cpf;
     private LocalDate idade;
     private Boolean status;
@@ -25,14 +14,10 @@ public abstract class Funcionario {
     private Boolean notificacaoAtiva;
     private String senha;
     private String cargo;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
+    private EnderecoDTO endereco;
+    private Set<Long> especialidadeIds;
 
-    public Funcionario() {
-    }
-
-    public Funcionario(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco) {
+    public ProfessorDTO(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, EnderecoDTO endereco, Set<Long> especialidadeIds) {
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
@@ -44,6 +29,10 @@ public abstract class Funcionario {
         this.senha = senha;
         this.cargo = cargo;
         this.endereco = endereco;
+        this.especialidadeIds = especialidadeIds;
+    }
+
+    public ProfessorDTO() {
     }
 
     public String getNome() {
@@ -126,19 +115,19 @@ public abstract class Funcionario {
         this.cargo = cargo;
     }
 
-    public Endereco getEndereco() {
+    public EnderecoDTO getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(Endereco endereco) {
+    public void setEndereco(EnderecoDTO endereco) {
         this.endereco = endereco;
     }
 
-    public Long getId() {
-        return id;
+    public Set<Long> getEspecialidadeIds() {
+        return especialidadeIds;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEspecialidadeIds(Set<Long> especialidadeIds) {
+        this.especialidadeIds = especialidadeIds;
     }
 }

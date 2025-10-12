@@ -1,49 +1,28 @@
-package com.onePilates.agendamento.model;
-
-
-import jakarta.persistence.*;
+package com.onePilates.agendamento.dto;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Funcionario {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProfessorResponseDTO {
     private Long id;
     private String nome;
-    @Column(unique = true)
     private String email;
-    @Column(unique = true)
     private String cpf;
     private LocalDate idade;
     private Boolean status;
     private String foto;
     private String observacoes;
     private Boolean notificacaoAtiva;
-    private String senha;
     private String cargo;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
+    private EnderecoResponseDTO  endereco;
+    private Set<String> especialidades;
 
-    public Funcionario() {
+    public Long getId() {
+        return id;
     }
 
-    public Funcionario(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco) {
-        this.nome = nome;
-        this.email = email;
-        this.cpf = cpf;
-        this.idade = idade;
-        this.status = status;
-        this.foto = foto;
-        this.observacoes = observacoes;
-        this.notificacaoAtiva = notificacaoAtiva;
-        this.senha = senha;
-        this.cargo = cargo;
-        this.endereco = endereco;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -110,14 +89,6 @@ public abstract class Funcionario {
         this.notificacaoAtiva = notificacaoAtiva;
     }
 
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
     public String getCargo() {
         return cargo;
     }
@@ -126,19 +97,19 @@ public abstract class Funcionario {
         this.cargo = cargo;
     }
 
-    public Endereco getEndereco() {
+    public EnderecoResponseDTO getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(Endereco endereco) {
+    public void setEndereco(EnderecoResponseDTO endereco) {
         this.endereco = endereco;
     }
 
-    public Long getId() {
-        return id;
+    public Set<String> getEspecialidades() {
+        return especialidades;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEspecialidades(Set<String> especialidades) {
+        this.especialidades = especialidades;
     }
 }
