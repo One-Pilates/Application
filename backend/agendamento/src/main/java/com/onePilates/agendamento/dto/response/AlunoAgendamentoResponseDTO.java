@@ -1,6 +1,6 @@
-package com.onePilates.agendamento.dto;
+package com.onePilates.agendamento.dto.response;
 
-public class EspecialidadeResponseDTO {
+public class AlunoAgendamentoResponseDTO {
     private Long id;
     private String nome;
 

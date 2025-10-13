@@ -9,7 +9,7 @@ public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String logradouro;
+    private String rua;
     private String numero;
     private String bairro;
     private String cidade;
@@ -20,8 +20,8 @@ public class Endereco {
     public Endereco() {
     }
 
-    public Endereco(String logradouro, String numero, String bairro, String cidade, String estado, String cep, String uf) {
-        this.logradouro = logradouro;
+    public Endereco(String rua, String numero, String bairro, String cidade, String estado, String cep, String uf) {
+        this.rua = rua;
         this.numero = numero;
         this.bairro = bairro;
         this.cidade = cidade;
@@ -38,12 +38,12 @@ public class Endereco {
         this.id = id;
     }
 
-    public String getLogradouro() {
-        return logradouro;
+    public String getRua() {
+        return rua;
     }
 
-    public void setLogradouro(String logradouro) {
-        this.logradouro = logradouro;
+    public void setRua(String logradouro) {
+        this.rua = logradouro;
     }
 
     public String getNumero() {

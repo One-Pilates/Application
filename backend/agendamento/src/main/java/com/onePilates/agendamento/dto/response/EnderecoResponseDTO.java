@@ -1,4 +1,4 @@
-package com.onePilates.agendamento.dto;
+package com.onePilates.agendamento.dto.response;
 
 public class EnderecoResponseDTO {
     private String rua;

@@ -1,7 +1,7 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.EspecialidadeDTO;
-import com.onePilates.agendamento.dto.EspecialidadeResponseDTO;
+import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.service.EspecialidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

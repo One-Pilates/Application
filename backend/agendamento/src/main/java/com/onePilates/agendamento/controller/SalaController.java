@@ -1,7 +1,7 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.SalaDTO;
-import com.onePilates.agendamento.dto.SalaResponseDTO;
+import com.onePilates.agendamento.dto.response.SalaResponseDTO;
 import com.onePilates.agendamento.service.SalaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

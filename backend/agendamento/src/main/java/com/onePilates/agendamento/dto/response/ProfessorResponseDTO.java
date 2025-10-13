@@ -1,4 +1,4 @@
-package com.onePilates.agendamento.dto;
+package com.onePilates.agendamento.dto.response;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -14,7 +14,7 @@ public class ProfessorResponseDTO {
     private String observacoes;
     private Boolean notificacaoAtiva;
     private String cargo;
-    private EnderecoResponseDTO  endereco;
+    private EnderecoResponseDTO endereco;
     private Set<String> especialidades;
 
     public Long getId() {

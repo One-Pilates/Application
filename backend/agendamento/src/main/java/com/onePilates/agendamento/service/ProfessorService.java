@@ -2,8 +2,8 @@ package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.EnderecoDTO;
 import com.onePilates.agendamento.dto.ProfessorDTO;
-import com.onePilates.agendamento.dto.EnderecoResponseDTO;
-import com.onePilates.agendamento.dto.ProfessorResponseDTO;
+import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
+import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
 import com.onePilates.agendamento.model.Endereco;
 import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Professor;
@@ -70,7 +70,7 @@ public class ProfessorService {
 
         EnderecoDTO enderecoDTO = dto.getEndereco();
         Endereco endereco = new Endereco();
-        endereco.setLogradouro(enderecoDTO.getLogradouro());
+        endereco.setRua(enderecoDTO.getRua());
         endereco.setCidade(enderecoDTO.getCidade());
         endereco.setEstado(enderecoDTO.getEstado());
         endereco.setCep(enderecoDTO.getCep());
@@ -99,7 +99,7 @@ public class ProfessorService {
         dto.setCargo(professor.getCargo());
 
         EnderecoResponseDTO enderecoDTO = new EnderecoResponseDTO();
-        enderecoDTO.setRua(professor.getEndereco().getLogradouro());
+        enderecoDTO.setRua(professor.getEndereco().getRua());
         enderecoDTO.setCidade(professor.getEndereco().getCidade());
         enderecoDTO.setEstado(professor.getEndereco().getEstado());
         enderecoDTO.setCep(professor.getEndereco().getCep());

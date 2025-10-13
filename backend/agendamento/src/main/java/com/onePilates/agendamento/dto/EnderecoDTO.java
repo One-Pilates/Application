@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 public class EnderecoDTO {
 
     @NotBlank(message = "O campo logradouro não pode estar vazio")
-    private String logradouro;
+    private String rua;
     @NotBlank(message = "O campo numero não pode estar vazio ")
     private String numero;
     @NotBlank(message = "O Campo bairro não pode estar vazio")
@@ -25,8 +25,8 @@ public class EnderecoDTO {
     private String uf;
 
 
-    public EnderecoDTO(String logradouro, String numero, String bairro, String cidade, String estado, String cep, String uf) {
-        this.logradouro = logradouro;
+    public EnderecoDTO(String rua, String numero, String bairro, String cidade, String estado, String cep, String uf) {
+        this.rua = rua;
         this.numero = numero;
         this.bairro = bairro;
         this.cidade = cidade;
@@ -39,12 +39,12 @@ public class EnderecoDTO {
     }
 
 
-    public String getLogradouro() {
-        return logradouro;
+    public String getRua() {
+        return rua;
     }
 
-    public void setLogradouro(String logradouro) {
-        this.logradouro = logradouro;
+    public void setRua(String rua) {
+        this.rua = rua;
     }
 
     public String getNumero() {

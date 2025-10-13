@@ -1,7 +1,7 @@
 package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.SalaDTO;
-import com.onePilates.agendamento.dto.SalaResponseDTO;
+import com.onePilates.agendamento.dto.response.SalaResponseDTO;
 import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Sala;
 import com.onePilates.agendamento.repository.EspecialidadeRepository;
