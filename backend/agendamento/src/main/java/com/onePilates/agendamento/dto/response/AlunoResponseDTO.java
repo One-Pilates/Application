@@ -1,8 +1,9 @@
-package com.onePilates.agendamento.dto;
+package com.onePilates.agendamento.dto.response;
 
 import java.time.LocalDate;
 
-public class AlunoDTO {
+public class AlunoResponseDTO {
+    private Long id;
     private String nome;
     private String email;
     private String cpf;
@@ -11,7 +12,15 @@ public class AlunoDTO {
     private Boolean alunoComLimitacoesFisicas;
     private String tipoContato;
     private Boolean notificacaoAtiva;
-    private EnderecoDTO endereco;
+    private EnderecoResponseDTO endereco;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;
@@ -77,11 +86,11 @@ public class AlunoDTO {
         this.notificacaoAtiva = notificacaoAtiva;
     }
 
-    public EnderecoDTO getEndereco() {
+    public EnderecoResponseDTO getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(EnderecoDTO endereco) {
+    public void setEndereco(EnderecoResponseDTO endereco) {
         this.endereco = endereco;
     }
 }

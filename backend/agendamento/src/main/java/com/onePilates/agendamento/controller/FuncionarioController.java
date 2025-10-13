@@ -1,5 +1,6 @@
 package com.onePilates.agendamento.controller;
 
+import com.onePilates.agendamento.dto.LoginRequestDTO;
 import com.onePilates.agendamento.model.Funcionario;
 import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.model.Secretaria;
@@ -20,20 +21,11 @@ public class FuncionarioController {
         this.service = service;
     }
 
-    @PostMapping("/secretaria")
-    public Secretaria criarFuncionario(@RequestBody Secretaria secretaria) {
-        return  service.criarFuncionario(secretaria);
 
-    }
 
-    @PostMapping("/professor")
-    public Professor criarFuncionario(@RequestBody Professor professor) {
-        return  service.criarProfessor(professor);
-
-    }
-    @GetMapping
-    public List<Professor> buscarProfessoresCadastrados(){
-        return service.buscarProfessores();
+    @PostMapping("/login")
+    public Funcionario login(@RequestBody LoginRequestDTO dados){
+        return service.login(dados);
     }
 }
 

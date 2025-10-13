@@ -1,47 +1,28 @@
-package com.onePilates.agendamento.dto;
-
-import com.onePilates.agendamento.model.Endereco;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+package com.onePilates.agendamento.dto.response;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-public class FuncionarioDTO {
-
-
-    @NotBlank(message = "O campo nome não pode estar em branco")
+public class ProfessorResponseDTO {
+    private Long id;
     private String nome;
-    @NotBlank(message = "O campo email não pode estar em branco")
     private String email;
-    @NotBlank(message = "O campo cpf não pode estar em branco")
     private String cpf;
-    @NotBlank(message = "O campo idade não pode estar em branco")
     private LocalDate idade;
-    @NotBlank(message = "O campo status não pode estar em branco")
     private Boolean status;
     private String foto;
     private String observacoes;
-    @NotBlank(message = "O campo notificacaoAtiva não pode estar em branco")
     private Boolean notificacaoAtiva;
-    @NotBlank(message = "O campo senha não pode estar em branco")
-    private String senha;
+    private String cargo;
+    private EnderecoResponseDTO endereco;
+    private Set<String> especialidades;
 
-    private Endereco endereco;
-
-    public FuncionarioDTO(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, Endereco endereco) {
-        this.nome = nome;
-        this.email = email;
-        this.cpf = cpf;
-        this.idade = idade;
-        this.status = status;
-        this.foto = foto;
-        this.observacoes = observacoes;
-        this.notificacaoAtiva = notificacaoAtiva;
-        this.senha = senha;
-        this.endereco = endereco;
+    public Long getId() {
+        return id;
     }
 
-    public FuncionarioDTO() {
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -108,19 +89,27 @@ public class FuncionarioDTO {
         this.notificacaoAtiva = notificacaoAtiva;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getCargo() {
+        return cargo;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
     }
 
-    public Endereco getEndereco() {
+    public EnderecoResponseDTO getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(Endereco endereco) {
+    public void setEndereco(EnderecoResponseDTO endereco) {
         this.endereco = endereco;
+    }
+
+    public Set<String> getEspecialidades() {
+        return especialidades;
+    }
+
+    public void setEspecialidades(Set<String> especialidades) {
+        this.especialidades = especialidades;
     }
 }

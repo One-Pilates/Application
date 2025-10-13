@@ -24,11 +24,15 @@ public abstract class Funcionario {
     private String observacoes;
     private Boolean notificacaoAtiva;
     private String senha;
+    private String cargo;
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
+    public Funcionario() {
+    }
 
-    public Funcionario(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, Endereco endereco) {
+    public Funcionario(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco) {
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
@@ -38,15 +42,8 @@ public abstract class Funcionario {
         this.observacoes = observacoes;
         this.notificacaoAtiva = notificacaoAtiva;
         this.senha = senha;
+        this.cargo = cargo;
         this.endereco = endereco;
-
-    }
-
-    public Funcionario() {
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getNome() {
@@ -113,7 +110,6 @@ public abstract class Funcionario {
         this.notificacaoAtiva = notificacaoAtiva;
     }
 
-
     public String getSenha() {
         return senha;
     }
@@ -122,11 +118,27 @@ public abstract class Funcionario {
         this.senha = senha;
     }
 
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
+    }
+
     public Endereco getEndereco() {
         return endereco;
     }
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

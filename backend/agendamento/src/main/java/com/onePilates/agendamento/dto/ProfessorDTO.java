@@ -1,34 +1,23 @@
 package com.onePilates.agendamento.dto;
 
-import com.onePilates.agendamento.model.Endereco;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-
 import java.time.LocalDate;
+import java.util.Set;
 
-public class FuncionarioDTO {
-
-
-    @NotBlank(message = "O campo nome não pode estar em branco")
+public class ProfessorDTO {
     private String nome;
-    @NotBlank(message = "O campo email não pode estar em branco")
     private String email;
-    @NotBlank(message = "O campo cpf não pode estar em branco")
     private String cpf;
-    @NotBlank(message = "O campo idade não pode estar em branco")
     private LocalDate idade;
-    @NotBlank(message = "O campo status não pode estar em branco")
     private Boolean status;
     private String foto;
     private String observacoes;
-    @NotBlank(message = "O campo notificacaoAtiva não pode estar em branco")
     private Boolean notificacaoAtiva;
-    @NotBlank(message = "O campo senha não pode estar em branco")
     private String senha;
+    private String cargo;
+    private EnderecoDTO endereco;
+    private Set<Long> especialidadeIds;
 
-    private Endereco endereco;
-
-    public FuncionarioDTO(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, Endereco endereco) {
+    public ProfessorDTO(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, EnderecoDTO endereco, Set<Long> especialidadeIds) {
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
@@ -38,10 +27,12 @@ public class FuncionarioDTO {
         this.observacoes = observacoes;
         this.notificacaoAtiva = notificacaoAtiva;
         this.senha = senha;
+        this.cargo = cargo;
         this.endereco = endereco;
+        this.especialidadeIds = especialidadeIds;
     }
 
-    public FuncionarioDTO() {
+    public ProfessorDTO() {
     }
 
     public String getNome() {
@@ -116,11 +107,27 @@ public class FuncionarioDTO {
         this.senha = senha;
     }
 
-    public Endereco getEndereco() {
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
+    }
+
+    public EnderecoDTO getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(Endereco endereco) {
+    public void setEndereco(EnderecoDTO endereco) {
         this.endereco = endereco;
+    }
+
+    public Set<Long> getEspecialidadeIds() {
+        return especialidadeIds;
+    }
+
+    public void setEspecialidadeIds(Set<Long> especialidadeIds) {
+        this.especialidadeIds = especialidadeIds;
     }
 }
