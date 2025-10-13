@@ -22,21 +22,6 @@ public class FuncionarioController {
     }
 
 
-    @PostMapping("/secretaria")
-    public Secretaria criarFuncionario(@RequestBody Secretaria secretaria) {
-        return  service.criarFuncionario(secretaria);
-
-    }
-
-    @PostMapping("/professor")
-    public Professor criarFuncionario(@RequestBody Professor professor) {
-        return  service.criarProfessor(professor);
-
-    }
-    @GetMapping
-    public List<Professor> buscarProfessoresCadastrados(){
-        return service.buscarProfessores();
-    }
 
     @PostMapping("/login")
     public Funcionario login(@RequestBody LoginRequestDTO dados){

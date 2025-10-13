@@ -7,8 +7,8 @@ public class SalaResponseDTO {
         private Long id;
         private String nome;
         private Set<String> especialidades;
-    private Integer quantidadeMaximaAlunos;
-    private Integer quantidadeEquipamentosPCD;
+        private Integer quantidadeMaximaAlunos;
+        private Integer quantidadeEquipamentosPCD;
 
         public Long getId() {
             return id;
