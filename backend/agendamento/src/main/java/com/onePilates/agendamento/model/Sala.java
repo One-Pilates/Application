@@ -14,6 +14,12 @@ public class Sala {
 
     private String nome;
 
+    @Column(nullable = false)
+    private Integer quantidadeMaximaAlunos;
+
+    @Column(nullable = false)
+    private Integer quantidadeEquipamentosPCD;
+
     @ManyToMany
     @JoinTable(
             name = "sala_especialidade",
@@ -22,9 +28,11 @@ public class Sala {
     )
     private Set<Especialidade> especialidades = new HashSet<>();
 
-    public Sala(Long id, String nome, Set<Especialidade> especialidades) {
+    public Sala(Long id, String nome, Integer quantidadeMaximaAlunos, Integer quantidadeEquipamentosPCD, Set<Especialidade> especialidades) {
         this.id = id;
         this.nome = nome;
+        this.quantidadeMaximaAlunos = quantidadeMaximaAlunos;
+        this.quantidadeEquipamentosPCD = quantidadeEquipamentosPCD;
         this.especialidades = especialidades;
     }
 
@@ -53,5 +61,21 @@ public class Sala {
 
     public void setEspecialidades(Set<Especialidade> especialidades) {
         this.especialidades = especialidades;
+    }
+
+    public Integer getQuantidadeMaximaAlunos() {
+        return quantidadeMaximaAlunos;
+    }
+
+    public void setQuantidadeMaximaAlunos(Integer quantidadeMaximaAlunos) {
+        this.quantidadeMaximaAlunos = quantidadeMaximaAlunos;
+    }
+
+    public Integer getQuantidadeEquipamentosPCD() {
+        return quantidadeEquipamentosPCD;
+    }
+
+    public void setQuantidadeEquipamentosPCD(Integer quantidadeEquipamentosPCD) {
+        this.quantidadeEquipamentosPCD = quantidadeEquipamentosPCD;
     }
 }

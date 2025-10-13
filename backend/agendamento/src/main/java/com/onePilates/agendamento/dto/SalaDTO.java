@@ -5,6 +5,8 @@ import java.util.Set;
 public class SalaDTO {
     private String nome;
     private Set<Long> especialidadeIds;
+    private Integer quantidadeMaximaAlunos;
+    private Integer quantidadeEquipamentosPCD;
 
     public SalaDTO(String nome, Set<Long> especialidadeIds) {
         this.nome = nome;
@@ -28,5 +30,21 @@ public class SalaDTO {
 
     public void setEspecialidadeIds(Set<Long> especialidadeIds) {
         this.especialidadeIds = especialidadeIds;
+    }
+
+    public Integer getQuantidadeMaximaAlunos() {
+        return quantidadeMaximaAlunos;
+    }
+
+    public void setQuantidadeMaximaAlunos(Integer quantidadeMaximaAlunos) {
+        this.quantidadeMaximaAlunos = quantidadeMaximaAlunos;
+    }
+
+    public Integer getQuantidadeEquipamentosPCD() {
+        return quantidadeEquipamentosPCD;
+    }
+
+    public void setQuantidadeEquipamentosPCD(Integer quantidadeEquipamentosPCD) {
+        this.quantidadeEquipamentosPCD = quantidadeEquipamentosPCD;
     }
 }

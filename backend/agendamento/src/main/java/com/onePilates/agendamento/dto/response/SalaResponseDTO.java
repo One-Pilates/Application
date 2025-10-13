@@ -7,6 +7,8 @@ public class SalaResponseDTO {
         private Long id;
         private String nome;
         private Set<String> especialidades;
+    private Integer quantidadeMaximaAlunos;
+    private Integer quantidadeEquipamentosPCD;
 
         public Long getId() {
             return id;
@@ -30,6 +32,22 @@ public class SalaResponseDTO {
 
         public void setEspecialidades(Set<String> especialidades) {
             this.especialidades = especialidades;
+        }
+
+        public Integer getQuantidadeMaximaAlunos() {
+            return quantidadeMaximaAlunos;
+        }
+
+        public void setQuantidadeMaximaAlunos(Integer quantidadeMaximaAlunos) {
+            this.quantidadeMaximaAlunos = quantidadeMaximaAlunos;
+        }
+
+        public Integer getQuantidadeEquipamentosPCD() {
+            return quantidadeEquipamentosPCD;
+        }
+
+        public void setQuantidadeEquipamentosPCD(Integer quantidadeEquipamentosPCD) {
+            this.quantidadeEquipamentosPCD = quantidadeEquipamentosPCD;
         }
 }
 

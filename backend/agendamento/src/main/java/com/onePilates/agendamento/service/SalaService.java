@@ -54,6 +54,8 @@ public class SalaService {
     private Sala mapDtoToEntity(SalaDTO dto) {
         Sala sala = new Sala();
         sala.setNome(dto.getNome());
+        sala.setQuantidadeMaximaAlunos(dto.getQuantidadeMaximaAlunos());
+        sala.setQuantidadeEquipamentosPCD(dto.getQuantidadeEquipamentosPCD());
 
         Set<Especialidade> especialidades = dto.getEspecialidadeIds().stream()
                 .map(id -> especialidadeRepository.findById(id)
@@ -68,6 +70,8 @@ public class SalaService {
         SalaResponseDTO dto = new SalaResponseDTO();
         dto.setId(sala.getId());
         dto.setNome(sala.getNome());
+        dto.setQuantidadeMaximaAlunos(sala.getQuantidadeMaximaAlunos());
+        dto.setQuantidadeEquipamentosPCD(sala.getQuantidadeEquipamentosPCD());
         dto.setEspecialidades(sala.getEspecialidades()
                 .stream()
                 .map(Especialidade::getNome)
