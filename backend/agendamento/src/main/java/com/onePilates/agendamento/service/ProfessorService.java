@@ -40,10 +40,33 @@ public class ProfessorService {
     }
 
     public ProfessorResponseDTO atualizarProfessor(Long id, ProfessorDTO dto) {
-        Professor existente = buscarPorId(id);
-        Professor atualizado = mapDtoToEntity(dto);
-        atualizado.setId(id);
-        return toResponseDTO(professorRepository.save(atualizado));
+        Professor professor = buscarPorId(id);
+        if (dto.getNome() != null) professor.setNome(dto.getNome());
+        if (dto.getEmail() != null) professor.setEmail(dto.getEmail());
+        if (dto.getCpf() != null) professor.setCpf(dto.getCpf());
+        if (dto.getIdade() != null) professor.setIdade(dto.getIdade());
+        if (dto.getStatus() != null) professor.setStatus(dto.getStatus());
+        if (dto.getFoto() != null) professor.setFoto(dto.getFoto());
+        if (dto.getObservacoes() != null) professor.setObservacoes(dto.getObservacoes());
+        if (dto.getNotificacaoAtiva() != null) professor.setNotificacaoAtiva(dto.getNotificacaoAtiva());
+        if (dto.getSenha() != null) professor.setSenha(dto.getSenha());
+        if (dto.getCargo() != null) professor.setCargo(dto.getCargo());
+        if (dto.getEndereco() != null) {
+            Endereco endereco = professor.getEndereco() != null ? professor.getEndereco() : new Endereco();
+            EnderecoDTO e = dto.getEndereco();
+            if (e.getRua() != null) endereco.setRua(e.getRua());
+            if (e.getCidade() != null) endereco.setCidade(e.getCidade());
+            if (e.getEstado() != null) endereco.setEstado(e.getEstado());
+            if (e.getCep() != null) endereco.setCep(e.getCep());
+            professor.setEndereco(endereco);
+        }
+        if (dto.getEspecialidadeIds() != null) {
+            Set<Especialidade> especialidades = dto.getEspecialidadeIds().stream()
+                    .map(idEsp -> especialidadeRepository.findById(idEsp).orElseThrow(() -> new RuntimeException("Especialidade não encontrada: " + idEsp)))
+                    .collect(Collectors.toSet());
+            professor.setEspecialidades(especialidades);
+        }
+        return toResponseDTO(professorRepository.save(professor));
     }
 
     public void excluirProfessor(Long id) {

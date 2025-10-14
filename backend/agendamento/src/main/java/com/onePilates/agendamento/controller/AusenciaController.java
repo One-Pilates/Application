@@ -32,6 +32,11 @@ public class AusenciaController {
         return ResponseEntity.ok(ausenciaService.listarPorProfessor(id));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<AusenciaResponseDTO> atualizarAusenciaParcial(@PathVariable Integer id, @RequestBody AusenciaDTO dto) {
+        return ResponseEntity.ok(ausenciaService.atualizarAusencia(id, dto));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deletar(@PathVariable Integer id) {
         ausenciaService.deletarAusencia(id);

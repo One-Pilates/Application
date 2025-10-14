@@ -20,6 +20,7 @@ public class Endereco {
     public Endereco() {
     }
 
+
     public Endereco(String rua, String numero, String bairro, String cidade, String estado, String cep, String uf) {
         this.rua = rua;
         this.numero = numero;

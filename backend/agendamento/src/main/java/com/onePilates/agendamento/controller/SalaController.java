@@ -32,8 +32,8 @@ public class SalaController {
         return ResponseEntity.ok(salaService.buscarPorIdDTO(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<SalaResponseDTO> atualizarSala(@PathVariable Long id, @RequestBody SalaDTO dto) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<SalaResponseDTO> atualizarSalaParcial(@PathVariable Long id, @RequestBody SalaDTO dto) {
         return ResponseEntity.ok(salaService.atualizarSala(id, dto));
     }
 

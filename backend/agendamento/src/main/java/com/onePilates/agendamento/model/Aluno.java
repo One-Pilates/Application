@@ -32,18 +32,6 @@ public class Aluno {
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
-    public Aluno(Long id, String nome, String email, String cpf, LocalDate dataNascimento, Boolean status, Boolean alunoComLimitacoesFisicas, String tipoContato, Boolean notificacaoAtiva, Endereco endereco) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.cpf = cpf;
-        this.dataNascimento = dataNascimento;
-        this.status = status;
-        this.alunoComLimitacoesFisicas = alunoComLimitacoesFisicas;
-        this.tipoContato = tipoContato;
-        this.notificacaoAtiva = notificacaoAtiva;
-        this.endereco = endereco;
-    }
 
     public Aluno() {
     }

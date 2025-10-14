@@ -26,7 +26,7 @@ public class Ausencia {
 
     private String motivo;
 
-    public Ausencia(Integer id, Professor professor, LocalDateTime dataInicio, LocalDateTime dataFim, DiaSemana diaSemanaInicio, DiaSemana diaSemanaFim, String motivo) {
+ public Ausencia(Integer id, Professor professor, LocalDateTime dataInicio, LocalDateTime dataFim, DiaSemana diaSemanaInicio, DiaSemana diaSemanaFim, String motivo) {
         this.id = id;
         this.professor = professor;
         this.dataInicio = dataInicio;

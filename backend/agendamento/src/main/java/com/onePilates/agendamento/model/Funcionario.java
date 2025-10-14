@@ -32,7 +32,8 @@ public abstract class Funcionario {
     public Funcionario() {
     }
 
-    public Funcionario(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco) {
+    public Funcionario(Long id, String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco) {
+        this.id = id;
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
@@ -45,6 +46,10 @@ public abstract class Funcionario {
         this.cargo = cargo;
         this.endereco = endereco;
     }
+
+    public Funcionario(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco) {
+    }
+
 
     public String getNome() {
         return nome;

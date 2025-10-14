@@ -37,9 +37,17 @@ public class SalaService {
     }
 
     public SalaResponseDTO atualizarSala(Long id, SalaDTO dto) {
-        Sala atualizada = mapDtoToEntity(dto);
-        atualizada.setId(id);
-        return toResponseDTO(salaRepository.save(atualizada));
+        Sala sala = buscarPorId(id);
+        if (dto.getNome() != null) sala.setNome(dto.getNome());
+        if (dto.getQuantidadeMaximaAlunos() != null) sala.setQuantidadeMaximaAlunos(dto.getQuantidadeMaximaAlunos());
+        if (dto.getQuantidadeEquipamentosPCD() != null) sala.setQuantidadeEquipamentosPCD(dto.getQuantidadeEquipamentosPCD());
+        if (dto.getEspecialidadeIds() != null) {
+            Set<Especialidade> especialidades = dto.getEspecialidadeIds().stream()
+                    .map(idEsp -> especialidadeRepository.findById(idEsp).orElseThrow(() -> new RuntimeException("Especialidade não encontrada: " + idEsp)))
+                    .collect(Collectors.toSet());
+            sala.setEspecialidades(especialidades);
+        }
+        return toResponseDTO(salaRepository.save(sala));
     }
 
     public void excluirSala(Long id) {

@@ -31,8 +31,8 @@ public class ProfessorController {
         return ResponseEntity.ok(professorService.buscarPorIdDTO(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProfessorResponseDTO> atualizarProfessor(@PathVariable Long id, @RequestBody ProfessorDTO dto) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<ProfessorResponseDTO> atualizarProfessorParcial(@PathVariable Long id, @RequestBody ProfessorDTO dto) {
         return ResponseEntity.ok(professorService.atualizarProfessor(id, dto));
     }
 

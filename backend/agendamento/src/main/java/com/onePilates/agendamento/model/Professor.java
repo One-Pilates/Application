@@ -19,14 +19,7 @@ public class Professor extends Funcionario{
     private Set<Especialidade> especialidades = new HashSet<>();
 
 
-    public Professor(Set<Especialidade> especialidades) {
-        this.especialidades = especialidades;
-    }
 
-    public Professor(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco, Set<Especialidade> especialidades) {
-        super(nome, email, cpf, idade, status, foto, observacoes, notificacaoAtiva, senha, cargo, endereco);
-        this.especialidades = especialidades;
-    }
 
     public Professor() {
     }

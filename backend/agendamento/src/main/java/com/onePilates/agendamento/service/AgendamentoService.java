@@ -67,30 +67,30 @@ public class AgendamentoService {
         return toResponseDTO(buscarPorId(id));
     }
 
-    public AgendamentoResponseDTO atualizarAgendamento(Long id, AgendamentoDTO dto) {
-        if (dto.getAlunoIds().size() > 5) {
-            throw new RuntimeException("Máximo de 5 alunos por agendamento.");
+    public AgendamentoResponseDTO atualizarAgendamento(Long agendamentoId, AgendamentoDTO dto) {
+        Agendamento agendamento = buscarPorId(agendamentoId);
+        if (dto.getDataHora() != null) agendamento.setDataHora(dto.getDataHora());
+        if (dto.getProfessorId() != null) {
+            Professor professor = professorRepository.findById(dto.getProfessorId())
+                    .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+            agendamento.setProfessor(professor);
         }
-
-        Agendamento agendamento = buscarPorId(id);
-        agendamento.setDataHora(dto.getDataHora());
-
-        agendamento.setProfessor(professorRepository.findById(dto.getProfessorId())
-                .orElseThrow(() -> new RuntimeException("Professor não encontrado")));
-
-        agendamento.setSala(salaRepository.findById(dto.getSalaId())
-                .orElseThrow(() -> new RuntimeException("Sala não encontrada")));
-
-        agendamento.setEspecialidade(especialidadeRepository.findById(dto.getEspecialidadeId())
-                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada")));
-
-        Set<Aluno> alunos = dto.getAlunoIds().stream()
-                .map(alunoId -> alunoRepository.findById(alunoId)
-                        .orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + alunoId)))
-                .collect(Collectors.toSet());
-
-        agendamento.setAlunos(alunos);
-
+        if (dto.getSalaId() != null) {
+            Sala sala = salaRepository.findById(dto.getSalaId())
+                    .orElseThrow(() -> new RuntimeException("Sala não encontrada"));
+            agendamento.setSala(sala);
+        }
+        if (dto.getEspecialidadeId() != null) {
+            Especialidade especialidade = especialidadeRepository.findById(dto.getEspecialidadeId())
+                    .orElseThrow(() -> new RuntimeException("Especialidade não encontrada"));
+            agendamento.setEspecialidade(especialidade);
+        }
+        if (dto.getAlunoIds() != null) {
+            Set<Aluno> alunos = dto.getAlunoIds().stream()
+                    .map(id -> alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + id)))
+                    .collect(Collectors.toSet());
+            agendamento.setAlunos(alunos);
+        }
         return toResponseDTO(agendamentoRepository.save(agendamento));
     }
 

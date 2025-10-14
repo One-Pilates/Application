@@ -30,14 +30,6 @@ public class Agendamento {
     )
     private Set<Aluno> alunos;
 
-    public Agendamento(Long id, LocalDateTime dataHora, Professor professor, Sala sala, Especialidade especialidade, Set<Aluno> alunos) {
-        this.id = id;
-        this.dataHora = dataHora;
-        this.professor = professor;
-        this.sala = sala;
-        this.especialidade = especialidade;
-        this.alunos = alunos;
-    }
 
     public Agendamento() {
     }

@@ -33,8 +33,8 @@ public class EspecialidadeController {
         return ResponseEntity.ok(especialidadeService.buscarPorIdDTO(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<EspecialidadeResponseDTO> atualizarEspecialidade(@PathVariable Long id, @RequestBody EspecialidadeDTO dto) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<EspecialidadeResponseDTO> atualizarEspecialidadeParcial(@PathVariable Long id, @RequestBody EspecialidadeDTO dto) {
         return ResponseEntity.ok(especialidadeService.atualizarEspecialidade(id, dto));
     }
 
