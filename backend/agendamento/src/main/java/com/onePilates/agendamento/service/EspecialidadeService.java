@@ -35,7 +35,7 @@ public class EspecialidadeService {
 
     public EspecialidadeResponseDTO atualizarEspecialidade(Long id, EspecialidadeDTO dto) {
         Especialidade especialidade = buscarPorId(id);
-        especialidade.setNome(dto.getNome());
+        if (dto.getNome() != null) especialidade.setNome(dto.getNome());
         return toResponseDTO(especialidadeRepository.save(especialidade));
     }
 

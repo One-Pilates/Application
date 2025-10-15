@@ -31,8 +31,8 @@ public class AlunoController {
         return ResponseEntity.ok(alunoService.buscarPorIdDTO(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AlunoResponseDTO> atualizarAluno(@PathVariable Long id, @RequestBody AlunoDTO dto) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<AlunoResponseDTO> atualizarAlunoParcial(@PathVariable Long id, @RequestBody AlunoDTO dto) {
         return ResponseEntity.ok(alunoService.atualizarAluno(id, dto));
     }
 

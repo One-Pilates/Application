@@ -31,8 +31,8 @@ public class AgendamentoController {
         return ResponseEntity.ok(agendamentoService.buscarPorIdDTO(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AgendamentoResponseDTO> atualizarAgendamento(@PathVariable Long id, @RequestBody AgendamentoDTO dto) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<AgendamentoResponseDTO> atualizarAgendamentoParcial(@PathVariable Long id, @RequestBody AgendamentoDTO dto) {
         return ResponseEntity.ok(agendamentoService.atualizarAgendamento(id, dto));
     }
 

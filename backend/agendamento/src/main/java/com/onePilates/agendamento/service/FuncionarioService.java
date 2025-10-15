@@ -25,48 +25,8 @@ public class FuncionarioService {
         this.funcionarioRepository = funcionarioRepository;
     }
 
-    public Secretaria criarFuncionario(Secretaria secretaria) {
 
-        Secretaria novaSecretaria = new Secretaria(
-                secretaria.getNome(),
-                secretaria.getEmail(),
-                secretaria.getCpf(),
-                secretaria.getIdade(),
-                secretaria.getStatus(),
-                secretaria.getFoto(),
-                secretaria.getObservacoes(),
-                secretaria.getNotificacaoAtiva(),
-                secretaria.getSenha(),
-                secretaria.getCargo(),
-                secretaria.getEndereco()
-        );
-       return secretariaRepository.save(novaSecretaria);
-        
-    }
 
-    public Professor criarProfessor(Professor professor) {
-
-        Professor novoProfessor = new Professor(
-                professor.getNome(),
-                professor.getEmail(),
-                professor.getCpf(),
-                professor.getIdade(),
-                professor.getStatus(),
-                professor.getFoto(),
-                professor.getObservacoes(),
-                professor.getNotificacaoAtiva(),
-                professor.getSenha(),
-                professor.getCargo(),
-                professor.getEndereco(),
-                professor.getEspecialidades()
-        );
-        return professorRepository.save(novoProfessor);
-
-    }
-
-    public List<Professor> buscarProfessores(){
-        return professorRepository.findAll();
-    }
 
    public Funcionario login(LoginRequestDTO dados){
         Funcionario  funcionario =funcionarioRepository.findByEmailAndSenha(dados.getEmail(), dados.getSenha());

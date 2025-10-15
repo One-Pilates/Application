@@ -56,6 +56,22 @@ public class AusenciaService {
         return dto;
     }
 
+    public AusenciaResponseDTO atualizarAusencia(Integer id, AusenciaDTO dto) {
+        Ausencia ausencia = ausenciaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ausência não encontrada"));
+        if (dto.getProfessorId() != null) {
+            Professor professor = professorRepository.findById(dto.getProfessorId())
+                    .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+            ausencia.setProfessor(professor);
+        }
+        if (dto.getDataInicio() != null) ausencia.setDataInicio(dto.getDataInicio());
+        if (dto.getDataFim() != null) ausencia.setDataFim(dto.getDataFim());
+        if (dto.getDiaSemanaInicio() != null) ausencia.setDiaSemanaInicio(dto.getDiaSemanaInicio());
+        if (dto.getDiaSemanaFim() != null) ausencia.setDiaSemanaFim(dto.getDiaSemanaFim());
+        if (dto.getMotivo() != null) ausencia.setMotivo(dto.getMotivo());
+        return toResponseDTO(ausenciaRepository.save(ausencia));
+    }
+
     public void deletarAusencia(Integer id) {
         Ausencia ausencia = ausenciaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ausência não encontrada"));

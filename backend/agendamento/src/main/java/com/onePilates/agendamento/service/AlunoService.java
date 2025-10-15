@@ -35,8 +35,27 @@ public class AlunoService {
     }
 
     public AlunoResponseDTO atualizarAluno(Long id, AlunoDTO dto) {
-        Aluno aluno = mapDtoToEntity(dto);
-        aluno.setId(id);
+        Aluno aluno = buscarPorId(id);
+
+        if (dto.getNome() != null) aluno.setNome(dto.getNome());
+        if (dto.getEmail() != null) aluno.setEmail(dto.getEmail());
+        if (dto.getCpf() != null) aluno.setCpf(dto.getCpf());
+        if (dto.getDataNascimento() != null) aluno.setDataNascimento(dto.getDataNascimento());
+        if (dto.getStatus() != null) aluno.setStatus(dto.getStatus());
+        if (dto.getAlunoComLimitacoesFisicas() != null) aluno.setAlunoComLimitacoesFisicas(dto.getAlunoComLimitacoesFisicas());
+        if (dto.getTipoContato() != null) aluno.setTipoContato(dto.getTipoContato());
+        if (dto.getNotificacaoAtiva() != null) aluno.setNotificacaoAtiva(dto.getNotificacaoAtiva());
+
+        if (dto.getEndereco() != null) {
+            Endereco endereco = aluno.getEndereco() != null ? aluno.getEndereco() : new Endereco();
+            EnderecoDTO e = dto.getEndereco();
+            if (e.getRua() != null) endereco.setRua(e.getRua());
+            if (e.getCidade() != null) endereco.setCidade(e.getCidade());
+            if (e.getEstado() != null) endereco.setEstado(e.getEstado());
+            if (e.getCep() != null) endereco.setCep(e.getCep());
+            aluno.setEndereco(endereco);
+        }
+
         return toResponseDTO(alunoRepository.save(aluno));
     }
 
