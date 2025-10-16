@@ -4,9 +4,11 @@ import com.onePilates.agendamento.dto.AgendamentoDTO;
 import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.dto.response.AlunoAgendamentoResponseDTO;
 import com.onePilates.agendamento.model.*;
+import com.onePilates.agendamento.observer.AgendamentoNotifier;
 import com.onePilates.agendamento.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,7 +31,20 @@ public class AgendamentoService {
     @Autowired
     private AlunoRepository alunoRepository;
 
+    @Autowired
+    private AgendamentoNotifier notifier;
+
+    @Transactional
     public Agendamento criarAgendamento(AgendamentoDTO dto) {
+        Agendamento agendamento = mapDtoToEntity(dto);
+        agendamento = agendamentoRepository.save(agendamento);
+
+        notifier.notificarTodos(agendamento); // 🔔 Observer
+
+        return agendamento;
+    }
+
+    private Agendamento mapDtoToEntity(AgendamentoDTO dto) {
         if (dto.getAlunoIds().size() > 5) {
             throw new RuntimeException("Máximo de 5 alunos por agendamento.");
         }
@@ -53,7 +68,7 @@ public class AgendamentoService {
 
         agendamento.setAlunos(alunos);
 
-        return agendamentoRepository.save(agendamento);
+        return agendamento;
     }
 
     public List<AgendamentoResponseDTO> listarTodosDTO() {

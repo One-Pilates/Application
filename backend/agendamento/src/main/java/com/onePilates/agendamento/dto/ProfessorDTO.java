@@ -1,5 +1,7 @@
 package com.onePilates.agendamento.dto;
 
+import com.onePilates.agendamento.model.Role;
+
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -16,21 +18,8 @@ public class ProfessorDTO {
     private String cargo;
     private EnderecoDTO endereco;
     private Set<Long> especialidadeIds;
+    private Role role;
 
-    public ProfessorDTO(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, EnderecoDTO endereco, Set<Long> especialidadeIds) {
-        this.nome = nome;
-        this.email = email;
-        this.cpf = cpf;
-        this.idade = idade;
-        this.status = status;
-        this.foto = foto;
-        this.observacoes = observacoes;
-        this.notificacaoAtiva = notificacaoAtiva;
-        this.senha = senha;
-        this.cargo = cargo;
-        this.endereco = endereco;
-        this.especialidadeIds = especialidadeIds;
-    }
 
     public ProfessorDTO() {
     }
@@ -129,5 +118,13 @@ public class ProfessorDTO {
 
     public void setEspecialidadeIds(Set<Long> especialidadeIds) {
         this.especialidadeIds = especialidadeIds;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

@@ -1,9 +1,8 @@
 package com.onePilates.agendamento.dto.response;
 
 import java.time.LocalDate;
-import java.util.Set;
 
-public class ProfessorResponseDTO {
+public class SecretariaResponseDTO {
     private Long id;
     private String nome;
     private String email;
@@ -16,9 +15,8 @@ public class ProfessorResponseDTO {
     private String cargo;
     private String role;
     private EnderecoResponseDTO endereco;
-    private Set<EspecialidadeResponseDTO> especialidades;
 
-    public ProfessorResponseDTO() {
+    public SecretariaResponseDTO() {
     }
 
     public Long getId() {
@@ -115,13 +113,5 @@ public class ProfessorResponseDTO {
 
     public void setEndereco(EnderecoResponseDTO endereco) {
         this.endereco = endereco;
-    }
-
-    public Set<EspecialidadeResponseDTO> getEspecialidades() {
-        return especialidades;
-    }
-
-    public void setEspecialidades(Set<EspecialidadeResponseDTO> especialidades) {
-        this.especialidades = especialidades;
     }
 }
