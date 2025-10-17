@@ -1,10 +1,8 @@
-package com.onePilates.agendamento.dto.response;
+package com.onePilates.agendamento.dto;
 
 import java.time.LocalDate;
-import java.util.Set;
 
-public class ProfessorResponseDTO {
-    private Long id;
+public class AdministradorDTO {
     private String nome;
     private String email;
     private String cpf;
@@ -13,20 +11,11 @@ public class ProfessorResponseDTO {
     private String foto;
     private String observacoes;
     private Boolean notificacaoAtiva;
+    private String senha;
     private String cargo;
-    private String role;
-    private EnderecoResponseDTO endereco;
-    private Set<EspecialidadeResponseDTO> especialidades;
+    private EnderecoDTO endereco;
 
-    public ProfessorResponseDTO() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public AdministradorDTO() {
     }
 
     public String getNome() {
@@ -93,6 +82,14 @@ public class ProfessorResponseDTO {
         this.notificacaoAtiva = notificacaoAtiva;
     }
 
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
     public String getCargo() {
         return cargo;
     }
@@ -101,27 +98,11 @@ public class ProfessorResponseDTO {
         this.cargo = cargo;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public EnderecoResponseDTO getEndereco() {
+    public EnderecoDTO getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(EnderecoResponseDTO endereco) {
+    public void setEndereco(EnderecoDTO endereco) {
         this.endereco = endereco;
-    }
-
-    public Set<EspecialidadeResponseDTO> getEspecialidades() {
-        return especialidades;
-    }
-
-    public void setEspecialidades(Set<EspecialidadeResponseDTO> especialidades) {
-        this.especialidades = especialidades;
     }
 }

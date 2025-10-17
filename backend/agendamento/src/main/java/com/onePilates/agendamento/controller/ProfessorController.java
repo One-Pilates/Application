@@ -3,22 +3,28 @@ package com.onePilates.agendamento.controller;
 import com.onePilates.agendamento.dto.ProfessorDTO;
 import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
 import com.onePilates.agendamento.service.ProfessorService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/professores")
 public class ProfessorController {
 
-    @Autowired
-    private ProfessorService professorService;
+    private final ProfessorService professorService;
+
+    public ProfessorController(ProfessorService professorService) {
+        this.professorService = professorService;
+    }
 
     @PostMapping
-    public ResponseEntity<ProfessorResponseDTO> criarProfessor(@RequestBody ProfessorDTO dto) {
-        return ResponseEntity.ok(professorService.toResponseDTO(professorService.criarProfessor(dto)));
+    public ResponseEntity<ProfessorResponseDTO> criarProfessor(@Valid @RequestBody ProfessorDTO dto) {
+        ProfessorResponseDTO response = professorService.criarProfessor(dto);
+        URI location = URI.create(String.format("/api/professores/%d", response.getId()));
+        return ResponseEntity.created(location).body(response);
     }
 
     @GetMapping
@@ -32,8 +38,10 @@ public class ProfessorController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProfessorResponseDTO> atualizarProfessorParcial(@PathVariable Long id, @RequestBody ProfessorDTO dto) {
-        return ResponseEntity.ok(professorService.atualizarProfessor(id, dto));
+    public ResponseEntity<ProfessorResponseDTO> atualizarProfessorParcial(@PathVariable Long id,
+                                                                          @RequestBody ProfessorDTO dto) {
+        ProfessorResponseDTO updated = professorService.atualizarProfessor(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")

@@ -19,9 +19,8 @@ public class Professor extends Funcionario{
     private Set<Especialidade> especialidades = new HashSet<>();
 
 
-
-
     public Professor() {
+        this.setRole(Role.PROFESSOR);
     }
 
     public Set<Especialidade> getEspecialidades() {

@@ -14,16 +14,24 @@ public abstract class Funcionario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-    @Column(unique = true)
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String senha; // armazenar hash BCrypt
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @Column(unique = true)
     private String cpf;
-    private LocalDate idade;
+    private LocalDate dataNascimento;
     private Boolean status;
     private String foto;
     private String observacoes;
     private Boolean notificacaoAtiva;
-    private String senha;
     private String cargo;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
@@ -32,22 +40,19 @@ public abstract class Funcionario {
     public Funcionario() {
     }
 
-    public Funcionario(Long id, String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco) {
-        this.id = id;
+    public Funcionario(String nome, String email, String senha, Role role, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco) {
         this.nome = nome;
         this.email = email;
+        this.senha = senha;
+        this.role = role;
         this.cpf = cpf;
-        this.idade = idade;
+        this.dataNascimento = idade;
         this.status = status;
         this.foto = foto;
         this.observacoes = observacoes;
         this.notificacaoAtiva = notificacaoAtiva;
-        this.senha = senha;
         this.cargo = cargo;
         this.endereco = endereco;
-    }
-
-    public Funcionario(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, String cargo, Endereco endereco) {
     }
 
 
@@ -75,12 +80,12 @@ public abstract class Funcionario {
         this.cpf = cpf;
     }
 
-    public LocalDate getIdade() {
-        return idade;
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
     }
 
-    public void setIdade(LocalDate idade) {
-        this.idade = idade;
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
     public Boolean getStatus() {
@@ -145,5 +150,13 @@ public abstract class Funcionario {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
