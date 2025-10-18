@@ -1,0 +1,50 @@
+@use '../../../shared//styles/variables.scss' as *;
+
+.info {
+  width: 100%;
+  min-height: 50vh;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 3rem;
+  padding: 5rem 25rem;
+  background: $bg-claro;
+  border-bottom: 1px dashed $cor-borda;
+  text-align: center;
+
+  .info-item {
+    flex: 1;
+    max-width: 350px;
+
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: $text-escuro;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: $text-cinza;
+    }
+
+    strong {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 0.7rem;
+      color: $text-escuro;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .info {
+    flex-direction: column;
+    padding: 3rem 2rem;
+    gap: 2.5rem;
+
+    .info-item {
+      max-width: 100%;
+    }
+  }
+}

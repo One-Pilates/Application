@@ -1,0 +1,72 @@
+@use '../../../shared//styles/variables.scss' as *;
+
+
+.about {
+  width: 100%;
+  background: $branco;
+  padding: 4rem 1.5rem;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  }
+
+  &__subtitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $text-cinza;
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-escuro;
+    margin-bottom: 1rem;
+  }
+
+  &__text {
+    font-size: 1rem;
+    color: $text-cinza;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  &__button {
+    background: $laranja-principal;
+    color: $branco;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: $laranja-principal, 10%
+    }
+  }
+
+  &__image {
+    display: flex;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border: 1px solid $cor-borda;
+      background: $bg-claro;
+    }
+  }
+}
