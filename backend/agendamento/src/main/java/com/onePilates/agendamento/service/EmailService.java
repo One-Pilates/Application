@@ -1,11 +1,14 @@
 package com.onePilates.agendamento.service;
 
-
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class EmailService {
@@ -13,20 +16,52 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-        @Value("${spring.mail.username}")
-        private String remetente;
+    @Value("${spring.mail.username}")
+    private String remetente;
 
-    public String enviarEmailTeste(String destinatario, String assunto, String corpo) {
 
+    public String enviarHTMLPersonalizadoTeste(String nomeProfessor, List<String> listaNomesAlunos , String email) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(remetente);
-            message.setTo(destinatario);
-            message.setSubject(assunto);
-            message.setText(corpo);
-            return "Email enviado com sucesso!";
-        }catch(Exception e) {
-            return e.getMessage();
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(remetente);
+            helper.setTo(email);
+            helper.setSubject("Novo agendamento");
+
+
+            StringBuilder listaAlunosHtml = new StringBuilder();
+            for (String aluno : listaNomesAlunos) {
+                listaAlunosHtml.append("<li style='margin:5px 0;padding:5px;background:#fff3e6;border-radius:4px;'>")
+                        .append(aluno)
+                        .append("</li>");
+            }
+
+
+            String corpoHtml = """
+                <html>
+                    <body style="font-family: Arial, sans-serif; background-color:#ffffff; margin:0; padding:0;">
+                        <div style="max-width:600px; margin:20px auto; padding:20px; border:1px solid #ff6600; border-radius:8px; background-color:#ffffff;">
+                            <h2 style="color:#FF6600; text-align:center;">Novo Agendamento</h2>
+                            <p style="color:#333333;">Olá, <b>%s</b>!</p>
+                            <p style="color:#333333;">Você recebeu um novo agendamento com os seguintes alunos:</p>
+                            <ul style="list-style:none; padding:0;">%s</ul>
+                            <p style="color:#333333;"><b>Data/Hora:</b> 15/10/2025 09:00</p>
+                            <p style="color:#333333;">Atenciosamente,<br><span style="color:#FF6600;">OnePilates</span></p>
+                        </div>
+                    </body>
+                </html>
+                """.formatted(nomeProfessor, listaAlunosHtml);
+
+            helper.setText(corpoHtml, true); // true indica HTML
+
+            mailSender.send(message);
+
+            System.out.println("Email HTML profissional enviado com sucesso!");
+            return "Email HTML profissional enviado com sucesso!";
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return "Erro ao enviar email HTML: " + e.getMessage();
         }
     }
 }
