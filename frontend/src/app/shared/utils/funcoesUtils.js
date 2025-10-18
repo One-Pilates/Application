@@ -1,5 +1,5 @@
 //validar a senha
-export function validacaoSenha(senha) {
+function validacaoSenha(senha) {
     const erros = [];
     
     if (senha.length < 8) {
@@ -53,13 +53,13 @@ export function validacaoEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const valido = regex.test(email);
     
-    // if (!valido) {
-    //     console.log(`O email "${email}" é inválido.`);
-    // } else {
-    //     console.log(`O email "${email}" é válido.`);
-    // }
-
-    return { valido, email };
+    if (!valido) {
+        console.log(`O email "${email}" é inválido.`);
+        return { valido: false, email };
+    } else {
+        console.log(`O email "${email}" é válido.`);
+        return { valido: true, email };
+    }
 }
 
 // Testando validação de email
