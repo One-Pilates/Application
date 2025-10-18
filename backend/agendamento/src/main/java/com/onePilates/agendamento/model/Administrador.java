@@ -5,9 +5,8 @@ import java.time.LocalDate;
 @Entity
 public class Administrador extends Funcionario{
     public Administrador() {
+        this.setRole(Role.ADMINISTRADOR);
     }
 
-    public Administrador(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, Endereco endereco) {
-        super(nome, email, cpf, idade, status, foto, observacoes, notificacaoAtiva, senha, endereco);
-    }
+
 }

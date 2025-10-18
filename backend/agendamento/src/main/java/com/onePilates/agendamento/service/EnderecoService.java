@@ -18,7 +18,7 @@ public class EnderecoService {
 
     public Endereco cadastrarEndereco(EnderecoDTO dto) {
         Endereco endereco = new Endereco(
-                dto.getLogradouro(),
+                dto.getRua(),
                 dto.getNumero(),
                 dto.getBairro(),
                 dto.getCidade(),
