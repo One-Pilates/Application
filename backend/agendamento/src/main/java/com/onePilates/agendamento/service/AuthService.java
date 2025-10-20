@@ -42,8 +42,11 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(funcionario);
-        return new LoginResponseDTO(token, funcionario.getRole().name());
+
+
+        return new LoginResponseDTO(token, funcionario.getRole().name(), funcionario);
     }
+
 
     private Funcionario buscarFuncionarioPorEmail(String email) {
         return administradorRepository.findByEmail(email)
