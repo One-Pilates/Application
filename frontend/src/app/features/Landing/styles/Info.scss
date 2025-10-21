@@ -1,50 +1,86 @@
 @use '../../../shared//styles/variables.scss' as *;
 
-.info {
+.info-section {
   width: 100%;
-  min-height: 50vh;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 3rem;
-  padding: 5rem 25rem;
-  background: $bg-claro;
-  border-bottom: 1px dashed $cor-borda;
+  padding: 6.5rem 4rem;
+}
+
+.info-container {
+  max-width: 1250px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4.5rem;
+}
+
+.info-card {
+  padding: 2rem 2rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
   text-align: center;
+}
 
-  .info-item {
-    flex: 1;
-    max-width: 350px;
+.info-card:hover {
+  transform: translateY(-4px);
+}
 
-    .icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      color: $text-escuro;
-    }
+.icon-wrapper {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #ff7043 0%, #ff8a65 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 112, 67, 0.25);
+}
 
-    p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: $text-cinza;
-    }
+.icon {
+  font-size: 2rem;
+  color: #ffffff;
+}
 
-    strong {
-      display: block;
-      font-size: 1.4rem;
-      margin-bottom: 0.7rem;
-      color: $text-escuro;
-    }
+h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.highlight {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ff7043;
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+
+.description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #666666;
+  margin: 0;
+}
+
+@media (max-width: 968px) {
+  .info-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .info-section {
+    padding: 4rem 1.5rem;
+  }
+
+  .info-card {
+    padding: 2rem 1.5rem;
   }
 }
 
-@media (max-width: 768px) {
-  .info {
-    flex-direction: column;
-    padding: 3rem 2rem;
-    gap: 2.5rem;
-
-    .info-item {
-      max-width: 100%;
-    }
+@media (min-width: 969px) and (max-width: 1200px) {
+  .info-container {
+    padding: 0 2rem;
   }
 }

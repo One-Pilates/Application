@@ -10,22 +10,46 @@ import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import Slider from './components/Slider';
 import Info from './components/Info';
-
+import ScrollReveal from '../../shared/components/ScrollReveal';
 export default function LandingPage() {
   return (
     <>
       <Navbar />
       <Hero />
-      <Slider /> 
-      <Services />
-      <About />
-      <Equipment />
-      <Info />
-      <Testimonials />
-      <FAQ />
-      <Contact />
+      
+      <ScrollReveal animation="fade-up">
+        <Slider />
+      </ScrollReveal>
+      
+      <ScrollReveal animation="fade-up" delay={0.2}>
+        <Services />
+      </ScrollReveal>
+      
+      <ScrollReveal animation="fade-up">
+        <About />
+      </ScrollReveal>
+      
+      <ScrollReveal animation="zoom-in">
+        <Equipment />
+      </ScrollReveal>
+      
+      <ScrollReveal animation="fade-up">
+        <Info />
+      </ScrollReveal>
+      
+      <ScrollReveal animation="fade-up">
+        <Testimonials />
+      </ScrollReveal>
+      
+      <ScrollReveal animation="fade-up">
+        <FAQ />
+      </ScrollReveal>
+      
+      <ScrollReveal animation="fade-up">
+        <Contact />
+      </ScrollReveal>
+      
       <Footer />
     </>
   );
 }
-

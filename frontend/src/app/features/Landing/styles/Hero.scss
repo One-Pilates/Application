@@ -12,7 +12,8 @@
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.205), rgba(0, 0, 0, 0.274));
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(3px);
   z-index: 1;
 }
 
