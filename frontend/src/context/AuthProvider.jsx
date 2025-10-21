@@ -1,34 +1,43 @@
 import { AuthContext } from "./AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../provider/api";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
-
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const userSaved = localStorage.getItem("user");
-    return userSaved ? JSON.parse(userSaved) : null;
-  });
-    const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  async function login(email, password) {
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  async function login(email, senha) {
     try {
-      const response = await api.post("/funcionarios/login", {
-        email,
-        password,
-      });
-
+      const response = await api.post("/auth/login", { email, senha });
       const data = response.data;
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
 
-      setUser(data.user);
-      console.log("Login bem-sucedido:", data.user);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.funcionario));
+
+      setUser(data.funcionario);
+      console.log("data:", data);
       console.log("Token:", data.token);
 
+      let urlNavigation = "";
+      if (data.funcionario.role === "PROFESSOR") {
+        urlNavigation = "/professora/agenda";
+      } else if (data.funcionario.role === "SECRETARIA") {
+        urlNavigation = "/secretaria/dashboard";
+      } else {
+        urlNavigation = "/";
+      }
+
       Swal.fire({ icon: "success", title: "Login bem-sucedido" });
-      navigate("/dashboardTeacher");
+      navigate(urlNavigation);
       return true;
     } catch (error) {
       const status = error.response?.status;
@@ -55,4 +64,3 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
