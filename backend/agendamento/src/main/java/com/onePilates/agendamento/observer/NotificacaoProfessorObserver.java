@@ -23,7 +23,7 @@ public class NotificacaoProfessorObserver implements AgendamentoObserver {
         System.out.println("🔔 Notificando professor " + agendamento.getProfessor().getNome() +
                 " sobre novo agendamento com os alunos: " + String.join(", ", nomesAlunos));
 
-        emailService.enviarHTMLPersonalizadoTeste(agendamento.getProfessor().getNome(), nomesAlunos, agendamento.getProfessor().getEmail());
+        emailService.enviarEmailAvisoDeAulaMarcada(agendamento.getProfessor().getNome(), nomesAlunos, agendamento.getProfessor().getEmail(),agendamento.getDataHora());
     }
 
 
