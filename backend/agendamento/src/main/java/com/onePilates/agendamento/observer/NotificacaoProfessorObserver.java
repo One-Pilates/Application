@@ -6,6 +6,8 @@ import com.onePilates.agendamento.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NotificacaoProfessorObserver implements AgendamentoObserver {
 
@@ -14,15 +16,15 @@ public class NotificacaoProfessorObserver implements AgendamentoObserver {
 
     @Override
     public void notificar(Agendamento agendamento) {
-        String nomesAlunos = agendamento.getAlunos().stream()
+        List<String> nomesAlunos = agendamento.getAlunos().stream()
                 .map(Aluno::getNome)
-                .reduce((a, b) -> a + ", " + b)
-                .orElse("nenhum aluno");
+                .toList();
 
         System.out.println("🔔 Notificando professor " + agendamento.getProfessor().getNome() +
-                " sobre novo agendamento com os alunos: " + nomesAlunos);
+                " sobre novo agendamento com os alunos: " + String.join(", ", nomesAlunos));
 
-        emailService.enviarEmailTeste("guilherme.lima@sptech.shcool","teste","teste OnePilates");
+        emailService.enviarEmailAvisoDeAulaMarcada(agendamento.getProfessor().getNome(), nomesAlunos, agendamento.getProfessor().getEmail(),agendamento.getDataHora());
     }
+
 
 }
