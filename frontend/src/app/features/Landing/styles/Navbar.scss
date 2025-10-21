@@ -12,9 +12,9 @@
 }
 
 .navbar-scrolled {
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(0, 0, 0, 0.515);
   backdrop-filter: blur(10px);
-  padding: 1rem 0;
+  padding: 1.5rem 0;
 }
 
 .navbar-container {
@@ -43,6 +43,7 @@
   font-weight: 500;
   font-size: 1.1rem;
   transition: color 0.3s ease;
+  color: white;
 }
 
 .navbar-scrolled .navbar-menu a {
@@ -57,37 +58,6 @@
   display: flex;
   gap: 1rem;
   align-items: center;
-}
-
-.btn-login {
-  background: transparent;
-  color: $branco;
-  border: 2px solid $branco;
-  padding: 8px 20px;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-login:hover {
-  background: $branco;
-  color: $text-escuro;
-}
-
-.btn-register {
-  background: $laranja-principal;
-  color: $branco;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.btn-register:hover {
-  background: $laranja-principal, 10%;
-  transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {

@@ -29,7 +29,6 @@ export default function Navbar() {
           <li><a href="#equipment">Equipamentos</a></li>
           <li><a href="#testimonials">Depoimentos</a></li>
           <li><a href="#contact">Contato</a></li>
-          <Link to="/login"><Botao texto="Login" cor="bg-main"/></Link>
         </ul>
       </div>
     </nav>
