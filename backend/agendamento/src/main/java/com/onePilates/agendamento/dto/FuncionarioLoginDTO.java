@@ -1,47 +1,48 @@
 package com.onePilates.agendamento.dto;
 
 import com.onePilates.agendamento.model.Endereco;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import com.onePilates.agendamento.model.Role;
 
 import java.time.LocalDate;
 
-public class FuncionarioDTO {
-
-
-    @NotBlank(message = "O campo nome não pode estar em branco")
+public class FuncionarioLoginDTO {
+    private Long id;
     private String nome;
-    @NotBlank(message = "O campo email não pode estar em branco")
     private String email;
-    @NotBlank(message = "O campo cpf não pode estar em branco")
+    private Role role;
     private String cpf;
-    @NotBlank(message = "O campo idade não pode estar em branco")
-    private LocalDate idade;
-    @NotBlank(message = "O campo status não pode estar em branco")
+    private LocalDate dataNascimento;
     private Boolean status;
     private String foto;
     private String observacoes;
-    @NotBlank(message = "O campo notificacaoAtiva não pode estar em branco")
     private Boolean notificacaoAtiva;
-    @NotBlank(message = "O campo senha não pode estar em branco")
-    private String senha;
-
+    private String cargo;
     private Endereco endereco;
 
-    public FuncionarioDTO(String nome, String email, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String senha, Endereco endereco) {
+    public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf,
+                               LocalDate dataNascimento, Boolean status, String foto,
+                               String observacoes, Boolean notificacaoAtiva, String cargo,
+                               Endereco endereco) {
+        this.id = id;
         this.nome = nome;
         this.email = email;
+        this.role = role;
         this.cpf = cpf;
-        this.idade = idade;
+        this.dataNascimento = dataNascimento;
         this.status = status;
         this.foto = foto;
         this.observacoes = observacoes;
         this.notificacaoAtiva = notificacaoAtiva;
-        this.senha = senha;
+        this.cargo = cargo;
         this.endereco = endereco;
     }
 
-    public FuncionarioDTO() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -60,6 +61,14 @@ public class FuncionarioDTO {
         this.email = email;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public String getCpf() {
         return cpf;
     }
@@ -68,12 +77,12 @@ public class FuncionarioDTO {
         this.cpf = cpf;
     }
 
-    public LocalDate getIdade() {
-        return idade;
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
     }
 
-    public void setIdade(LocalDate idade) {
-        this.idade = idade;
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
     public Boolean getStatus() {
@@ -108,12 +117,12 @@ public class FuncionarioDTO {
         this.notificacaoAtiva = notificacaoAtiva;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getCargo() {
+        return cargo;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
     }
 
     public Endereco getEndereco() {

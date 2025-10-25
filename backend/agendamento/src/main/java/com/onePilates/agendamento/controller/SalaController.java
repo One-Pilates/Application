@@ -25,13 +25,13 @@ public class SalaController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<List<SalaResponseDTO>> listarSalas() {
         return ResponseEntity.ok(salaService.listarTodasDTO());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<SalaResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(salaService.buscarPorIdDTO(id));
     }

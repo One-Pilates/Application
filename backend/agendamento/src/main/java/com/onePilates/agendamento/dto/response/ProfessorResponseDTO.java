@@ -1,5 +1,7 @@
 package com.onePilates.agendamento.dto.response;
 
+import com.onePilates.agendamento.model.Role;
+
 import java.time.LocalDate;
 import java.util.Set;
 

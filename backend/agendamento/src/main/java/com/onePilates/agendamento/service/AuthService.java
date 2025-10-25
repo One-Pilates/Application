@@ -1,5 +1,6 @@
 package com.onePilates.agendamento.service;
 
+import com.onePilates.agendamento.dto.FuncionarioLoginDTO;
 import com.onePilates.agendamento.dto.LoginDTO;
 import com.onePilates.agendamento.dto.response.LoginResponseDTO;
 import com.onePilates.agendamento.model.Funcionario;
@@ -43,8 +44,23 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(funcionario);
 
+        FuncionarioLoginDTO funcionarioDTO = new FuncionarioLoginDTO(
+                funcionario.getId(),
+                funcionario.getNome(),
+                funcionario.getEmail(),
+                funcionario.getRole(),
+                funcionario.getCpf(),
+                funcionario.getDataNascimento(),
+                funcionario.getStatus(),
+                funcionario.getFoto(),
+                funcionario.getObservacoes(),
+                funcionario.getNotificacaoAtiva(),
+                funcionario.getCargo(),
+                funcionario.getEndereco()
+        );
 
-        return new LoginResponseDTO(token, funcionario.getRole().name(), funcionario);
+        return new LoginResponseDTO(token,funcionario.getRole().name(), funcionarioDTO);
+
     }
 
 

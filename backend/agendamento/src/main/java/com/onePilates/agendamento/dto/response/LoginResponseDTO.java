@@ -1,5 +1,6 @@
 package com.onePilates.agendamento.dto.response;
 
+import com.onePilates.agendamento.dto.FuncionarioLoginDTO;
 import com.onePilates.agendamento.model.Endereco;
 import com.onePilates.agendamento.model.Funcionario;
 import com.onePilates.agendamento.model.Role;
@@ -11,9 +12,9 @@ public class LoginResponseDTO {
     private String token;
     private String role;
 
-    private Funcionario funcionario;
+    private FuncionarioLoginDTO funcionario;
 
-    public LoginResponseDTO(String token, String role, Funcionario funcionario) {
+    public LoginResponseDTO(String token, String role, FuncionarioLoginDTO funcionario) {
         this.token = token;
         this.role = role;
         this.funcionario = funcionario;
@@ -38,11 +39,11 @@ public class LoginResponseDTO {
         this.role = role;
     }
 
-    public Funcionario getFuncionario() {
+    public FuncionarioLoginDTO getFuncionario() {
         return funcionario;
     }
 
-    public void setFuncionario(Funcionario funcionario) {
+    public void setFuncionario(FuncionarioLoginDTO funcionario) {
         this.funcionario = funcionario;
     }
 }
