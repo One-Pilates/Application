@@ -7,6 +7,7 @@ import Register from './pages/register/Register';
 import DashboardTeacher from './pages/dashboardTeacher/DashboardTeacher';
 import ProfileTeacher from './pages/dashboardTeacher/ProfileTeacher';
 import AgendaTeacher from './pages/dashboardTeacher/CalendarTeacher';
+import OverviewTeacher from './pages/dashboardTeacher/OverviewTeacher';
 
 import DashboardSecretary from './pages/dashboardSecretary/DashboardSecretary';
 import ProfileSecretary from './pages/dashboardSecretary/ProfileSecretary';
@@ -26,6 +27,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         
         <Route path="/dashboardTeacher" element={<DashboardTeacher />}>
+          <Route index element={<OverviewTeacher />} />
           <Route path="perfil" element={<ProfileTeacher />} />
           <Route path="agenda" element={<AgendaTeacher />} />
         </Route>

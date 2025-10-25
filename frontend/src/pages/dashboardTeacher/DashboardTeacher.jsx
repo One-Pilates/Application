@@ -7,6 +7,7 @@ import NavbarTeacher from "../components/Navbar";
 function DashboardTeacher() {
   const [navAberta, setNavAberta] = useState(true);
 
+ 
   return (
     <div className="flex h-screen bg-gray-100">
       <NavbarTeacher navAberta={navAberta} userType="teacher" />
