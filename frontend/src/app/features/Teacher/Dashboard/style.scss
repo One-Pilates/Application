@@ -1,0 +1,124 @@
+.overview-teacher {
+    background-color: #f9fafb;
+    padding: 24px;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header */
+.overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.overview-header h1 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #111827;
+}
+
+.overview-header select {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+/* KPI Cards */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.kpi-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.kpi-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.kpi-icon.purple { background-color: #a855f7; }
+.kpi-icon.orange { background-color: #f97316; }
+.kpi-icon.blue { background-color: #3b82f6; }
+.kpi-icon.yellow { background-color: #facc15; }
+
+.kpi-card-body {
+    margin-top: 16px;
+}
+
+.kpi-title {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.kpi-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #111827;
+    margin-top: 8px;
+}
+
+.kpi-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 8px;
+}
+
+/* Gráficos */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+    .charts-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.chart-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.chart-header {
+    background: #f97316;
+    padding: 12px 24px;
+}
+
+.chart-header h3 {
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.chart-body {
+    padding: 24px;
+}
