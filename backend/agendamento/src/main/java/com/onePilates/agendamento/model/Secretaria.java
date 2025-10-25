@@ -9,6 +9,7 @@ public class Secretaria extends Funcionario{
 
 
     public Secretaria() {
+        this.setRole(Role.SECRETARIA);
     }
 
 }

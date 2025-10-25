@@ -19,11 +19,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final ProfessorService professorService;
 
-    public AuthController(AuthService authService, ProfessorService professorService) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.professorService = professorService;
     }
 
     @PostMapping("/login")
@@ -32,21 +30,5 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // Endpoint público de registro: força Role.PROFESSOR independentemente do dto.role
-    @PostMapping("/register/professor")
-    public ResponseEntity<ProfessorResponseDTO> registerProfessorPublic(@Valid @RequestBody ProfessorDTO dto) {
-        dto.setRole(Role.PROFESSOR);
-        ProfessorResponseDTO response = professorService.criarProfessor(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    // Endpoint protegido: somente ADMINISTRADOR pode criar professor com role arbitrária
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @PostMapping("/admin/create-professor")
-    public ResponseEntity<ProfessorResponseDTO> createProfessorAdmin(@Valid @RequestBody ProfessorDTO dto) {
-        // aqui dto.role é respeitado (pode ser ADMINISTRADOR, SECRETARIA ou PROFESSOR)
-        ProfessorResponseDTO response = professorService.criarProfessorAsAdmin(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 
 }

@@ -40,12 +40,6 @@ public class ProfessorService {
         return criarProfessorInterno(dto, roleToSet);
     }
 
-    @Transactional
-    public ProfessorResponseDTO criarProfessorAsAdmin(ProfessorDTO dto) {
-        // método usado por endpoint admin que já tem @PreAuthorize
-        Role roleToSet = dto.getRole() != null ? dto.getRole() : Role.PROFESSOR;
-        return criarProfessorInterno(dto, roleToSet);
-    }
 
     private ProfessorResponseDTO criarProfessorInterno(ProfessorDTO dto, Role roleToSet) {
         validateDto(dto);

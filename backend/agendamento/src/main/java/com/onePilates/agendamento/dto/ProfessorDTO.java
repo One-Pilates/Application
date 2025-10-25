@@ -16,9 +16,10 @@ public class ProfessorDTO {
     private Boolean notificacaoAtiva;
     private String senha;
     private String cargo;
+    private Role role;
     private EnderecoDTO endereco;
     private Set<Long> especialidadeIds;
-    private Role role;
+
 
 
     public ProfessorDTO() {

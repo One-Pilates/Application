@@ -24,7 +24,7 @@ public class SecretariaController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR')")
     public ResponseEntity<List<SecretariaResponseDTO>> listarSecretarias() {
         return ResponseEntity.ok(secretariaService.listarTodosDTO());
     }
@@ -36,7 +36,7 @@ public class SecretariaController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
     public ResponseEntity<SecretariaResponseDTO> atualizarSecretariaParcial(@PathVariable Long id, @RequestBody SecretariaDTO dto) {
         return ResponseEntity.ok(secretariaService.atualizarSecretaria(id, dto));
     }

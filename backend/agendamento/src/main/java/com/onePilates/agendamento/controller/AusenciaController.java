@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class AusenciaController {
     private AusenciaService ausenciaService;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<AusenciaResponseDTO> registrar( @Valid @RequestBody AusenciaDTO dto) {
         AusenciaResponseDTO response = ausenciaService.registrarAusencia(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -28,16 +30,19 @@ public class AusenciaController {
 
 
     @GetMapping("/professor/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<List<AusenciaResponseDTO>> listarPorProfessor(@PathVariable Long id) {
         return ResponseEntity.ok(ausenciaService.listarPorProfessor(id));
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<AusenciaResponseDTO> atualizarAusenciaParcial(@PathVariable Integer id, @RequestBody AusenciaDTO dto) {
         return ResponseEntity.ok(ausenciaService.atualizarAusencia(id, dto));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<Map<String, String>> deletar(@PathVariable Integer id) {
         ausenciaService.deletarAusencia(id);
 

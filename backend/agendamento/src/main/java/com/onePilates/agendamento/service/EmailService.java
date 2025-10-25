@@ -22,49 +22,129 @@ public class EmailService {
     private String remetente;
 
 
-    public String enviarEmailAvisoDeAulaMarcada(String nomeProfessor, List<String> listaNomesAlunos, String email, LocalDateTime dataHoraAgendamento) {
+    public String enviarEmailAvisoDeAulaMarcada(String nomeProfessor, List<String> listaNomesAlunos, String email,
+                                                LocalDateTime dataHoraAgendamento) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setFrom(remetente);
             helper.setTo(email);
-            helper.setSubject("Novo agendamento");
-
+            helper.setSubject("Novo Agendamento Confirmado - OnePilates");
 
             StringBuilder listaAlunosHtml = new StringBuilder();
             for (String aluno : listaNomesAlunos) {
-                listaAlunosHtml.append("<li style='margin:5px 0;padding:5px;background:#fff3e6;border-radius:4px;'>")
-                        .append(aluno)
-                        .append("</li>");
+                listaAlunosHtml
+                        .append("""
+                                    <tr>
+                                        <td style="padding:10px 16px; background-color:#ffffff; border-left:3px solid #FF6600; border-radius:4px;">
+                                            <p style="margin:0; font-size:15px; color:#1a1a1a; font-weight:500;">%s</p>
+                                        </td>
+                                    </tr>
+                                """
+                                .formatted(aluno));
             }
 
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy 'às' HH:mm");
             String dataHoraFormatada = dataHoraAgendamento.format(formatter);
 
-
             String corpoHtml = """
-            <html>
-                <body style="font-family: Arial, sans-serif; background-color:#ffffff; margin:0; padding:0;">
-                    <div style="max-width:600px; margin:20px auto; padding:20px; border:1px solid #ff6600; border-radius:8px; background-color:#ffffff;">
-                        <h2 style="color:#FF6600; text-align:center;">Novo Agendamento</h2>
-                        <p style="color:#333333;">Olá, <b>%s</b>!</p>
-                        <p style="color:#333333;">Você recebeu um novo agendamento com os seguintes alunos:</p>
-                        <ul style="list-style:none; padding:0;">%s</ul>
-                        <p style="color:#333333;"><b>Data/Hora:</b> %s</p>
-                        <p style="color:#333333;">Atenciosamente,<br><span style="color:#FF6600;">OnePilates</span></p>
-                    </div>
-                </body>
-            </html>
-            """.formatted(nomeProfessor, listaAlunosHtml, dataHoraFormatada);
+                    <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>Email OnePilates - Novo Agendamento</title>
+                                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+                            </head>
+                            <body style="margin:0; padding:0; font-family:'Poppins', Arial, Helvetica, sans-serif;">
+                                <table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="background-color:#e5e5e5; font-family:'Poppins', Arial, Helvetica, sans-serif;">
+                                    <tr>
+                                        <td align="center" style="padding:40px 20px;">
+                                            <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; max-width:600px; font-family:'Poppins', Arial, Helvetica, sans-serif;">
+                                                <tr>
+                                                    <td align="center" style="padding:40px 40px 30px 40px; background-color:#ffffff;">
+                                                        <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block; max-width:160px; height:auto; border:0;">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="height:4px; background-color:#FF6600; font-size:0; line-height:0;">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:40px 40px 30px 40px;">
+                                                        <h1 style="margin:0 0 24px 0; font-size:22px; font-weight:600; color:#1a1a1a;">
+                                                            Novo Agendamento Confirmado
+                                                        </h1>
+                                                        <p style="margin:0 0 16px 0; font-size:15px; line-height:1.6; color:#333333;">
+                                                            Olá <strong>%s</strong>,
+                                                        </p>
+                                                        <p style="margin:0 0 24px 0; font-size:15px; line-height:1.6; color:#333333;">
+                                                            Informamos que você possui um novo agendamento registrado em nosso sistema.
+                                                        </p>
+                                                        <table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f9f9f9; border:1px solid #e0e0e0; border-radius:6px; margin:0 0 24px 0;">
+                                                            <tr>
+                                                                <td style="padding:24px;">
+                                                                    <table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0">
+                                                                        <tr>
+                                                                            <td style="padding:0 0 16px 0;">
+                                                                                <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666666; text-transform:uppercase; letter-spacing:0.5px;">
+                                                                                    Data e Horário
+                                                                                </p>
+                                                                                <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                                                    %s
+                                                                                </p>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="padding:16px 0 0 0; border-top:1px solid #e0e0e0;">
+                                                                                <p style="margin:0 0 12px 0; font-size:13px; font-weight:600; color:#666666; text-transform:uppercase; letter-spacing:0.5px;">
+                                                                                    Alunos Confirmados
+                                                                                </p>
+                                                                                <table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0">
+                                                                                    %s
+                                                                                </table>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                        <p style="margin:0 0 8px 0; font-size:15px; line-height:1.6; color:#333333;">
+                                                            Qualquer dúvida, estamos à disposição.
+                                                        </p>
+                                                        <p style="margin:0; font-size:15px; line-height:1.6; color:#666666;">
+                                                            Atenciosamente,<br>
+                                                            <strong style="color:#FF6600;">Equipe OnePilates</strong>
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:0 40px;">
+                                                        <div style="height:1px; background-color:#e0e0e0;"></div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:24px 40px; background-color:#f9f9f9; border-top:1px solid #e0e0e0;">
+                                                        <p style="margin:0; font-size:12px; line-height:1.6; color:#999999; text-align:center;">
+                                                            Este é um e-mail automático, por favor não responda.<br>
+                                                            © 2025 OnePilates. Todos os direitos reservados.
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </body>
+                            </html>
+                            """
+                    .formatted(nomeProfessor, dataHoraFormatada, listaAlunosHtml);
 
-            helper.setText(corpoHtml, true); // true indica HTML
-
+            helper.setText(corpoHtml, true);
             mailSender.send(message);
 
-            System.out.println("Email HTML profissional enviado com sucesso!");
-            return "Email HTML profissional enviado com sucesso!";
+            System.out.println("Email profissional enviado com sucesso!");
+            return "Email profissional enviado com sucesso!";
         } catch (MessagingException e) {
             e.printStackTrace();
             return "Erro ao enviar email HTML: " + e.getMessage();
