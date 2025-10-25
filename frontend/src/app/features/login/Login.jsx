@@ -3,8 +3,10 @@ import "./Login.scss";
 import { validacaoEmail } from "../../shared/utils/funcoesUtils";
 import { useAuth } from "../../../hooks/useAuth"
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -78,7 +80,7 @@ export default function Login() {
             Entrar
           </button>
           <div className="login__links" id="login-help">
-            <a href="#/recuperar-senha" className="login__forgot">
+            <a onClick={() => navigate("/login/esqueci-senha")} className="login__forgot">
               Esqueci minha senha
             </a>
             <p className="login__contact">
