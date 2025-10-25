@@ -1,4 +1,3 @@
-// OverviewDashboard.js
 export const getKpiData = () => [
     { title: 'Sessões Realizadas', value: '54', subtitle: '12% de Aumento do Último Mês', iconBgColor: 'purple' },
     { title: 'Ausências de Alunos', value: '9%', subtitle: '50% de Redução do Último Mês', iconBgColor: 'orange' },

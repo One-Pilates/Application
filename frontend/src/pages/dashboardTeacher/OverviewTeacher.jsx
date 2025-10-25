@@ -1,4 +1,3 @@
-// OverviewTeacher.jsx
 import React from 'react';
 import KPICard from './components/KPICard';
 import FrequenciaChart from './components/FrequenciaChart';
