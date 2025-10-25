@@ -7,10 +7,10 @@ export const useDashboardModel = () => {
 
   useEffect(() => {
     const kpiData = [
-      { title: 'Sessões Realizadas', value: '54', subtitle: '12% de Aumento do Último Mês', iconBgColor: 'purple', icon: <FiActivity size={24} color="#fff" /> },
-      { title: 'Ausências de Alunos', value: '9%', subtitle: '50% de Redução do Último Mês', iconBgColor: 'orange', icon: <FiUserX size={24} color="#fff" /> },
-      { title: 'Suas Ausências', value: '2%', subtitle: 'Por dia', iconBgColor: 'blue', icon: <FiUserCheck size={24} color="#fff" /> },
-      { title: 'Alunos ativos', value: '10', subtitle: 'Por dia', iconBgColor: 'yellow', icon: <FiUsers size={24} color="#fff" /> }
+      { title: 'Sessões Realizadas', value: '54', subtitle: '12% de Aumento do Último Mês', iconBgColor: '#d8b4fe', icon: <FiActivity size={24} color="#fff" /> },
+      { title: 'Ausências de Alunos', value: '9%', subtitle: '50% de Redução do Último Mês', iconBgColor: '#fdba74', icon: <FiUserX size={24} color="#fff" /> },
+      { title: 'Suas Ausências', value: '2%', subtitle: 'Por dia', iconBgColor: '#93c5fd', icon: <FiUserCheck size={24} color="#fff" /> },
+      { title: 'Alunos ativos', value: '10', subtitle: 'Por dia',  iconBgColor: '#fef08a', icon: <FiUsers size={24} color="#fff" /> }
     ];
 
     const frequenciaData = [
