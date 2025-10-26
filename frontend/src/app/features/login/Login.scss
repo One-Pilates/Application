@@ -192,8 +192,15 @@
   &__contact {
     font-size: 0.75rem;
     color: #f77433;
+    position: relative;
+    top: 5rem;
     margin: 1rem 0 0 0;
     text-align: center;
+    cursor: pointer;
+    
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .background-login {

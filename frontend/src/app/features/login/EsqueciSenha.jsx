@@ -45,7 +45,6 @@ export default function EsqueciSenha() {
 
             </div>
 
-
             <div className="background-login">
                 <img src="/logoBranca.png" alt="Logo branca" />
             </div>
