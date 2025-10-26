@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,6 +17,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function login(email, senha) {
+    setIsLoading(true);
     try {
       const response = await api.post("/auth/login", { email, senha });
       const data = response.data;
@@ -25,6 +27,7 @@ export function AuthProvider({ children }) {
 
       setUser(data.funcionario);
       console.log("data:", data);
+      console.log("Funcionario:", data.funcionario);
       console.log("Token:", data.token);
 
       let urlNavigation = "";
@@ -48,6 +51,8 @@ export function AuthProvider({ children }) {
 
       Swal.fire({ icon: "error", title: "Erro ao fazer login", text: message });
       return false;
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -59,7 +64,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

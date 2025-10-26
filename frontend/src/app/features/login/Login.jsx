@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -76,7 +76,7 @@ export default function Login() {
               required
             />
           </div>
-          <button type="submit" className="login__button">
+          <button type="submit" className="login__button" disabled={isLoading}>
             Entrar
           </button>
           <div className="login__links" id="login-help">

@@ -21,6 +21,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
+      try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      } catch (e) {
+        console.warn("Falha ao limpar localStorage:", e);
+      }
       window.location.href = "/login";
     }
     return Promise.reject(error);

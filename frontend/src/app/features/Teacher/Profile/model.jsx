@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import axios from "axios";
 
 export const useProfileTeacherModel = () => {
   const [dadosProfessor, setDadosProfessor] = useState({
@@ -18,20 +17,22 @@ export const useProfileTeacherModel = () => {
       massagem: false,
       massoterapia: false,
       acupuntura: false,
+      osteopatia: false,
     },
   });
 
-  const [profileImage, setProfileImage] = useState("");
-  const [editavel, setEditavel] = useState(false);
+  const [profileImage, setProfileImage] = useState("https://i.pravatar.cc/150?img=45");;
+  const [originalDados, setOriginalDados] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
       console.warn("API desativada, usando dados locais.");
-      setDadosProfessor({
-        nome: "Fulano de Tal",
-        cargo: "Professor de Pilates",
-        email: "fulano@onepilates.com",
+      const initialData = {
+        nome: "Flavia Lima Silva",
+        cargo: "Professor",
+        email: "flavia@onepilates.com",
         dataNascimento: "1988-06-15",
         telefone: "(11) 91234-5678",
         senha: "********",
@@ -44,16 +45,32 @@ export const useProfileTeacherModel = () => {
           massagem: true,
           massoterapia: false,
           acupuntura: false,
+          osteopatia: false,
         },
-      });
-    };
+      };
 
+      setDadosProfessor(initialData);
+      // guarda cópia original para comparação de alterações
+      setOriginalDados(initialData);
+    };
     fetchData();
   }, []);
 
   const handleEditFotoClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
+  
+  useEffect(() => {
+    if (!originalDados) {
+      setHasChanges(false);
+      return;
+    }
+    try {
+      setHasChanges(JSON.stringify(dadosProfessor) !== JSON.stringify(originalDados));
+    } catch {
+      setHasChanges(false);
+    }
+  }, [dadosProfessor, originalDados]);
 
   const handleFileChange = (e) => {
     const file = e.target.files && e.target.files[0];
@@ -62,8 +79,6 @@ export const useProfileTeacherModel = () => {
     reader.onload = () => setProfileImage(reader.result);
     reader.readAsDataURL(file);
   };
-
-  const handleEditInput = () => setEditavel(!editavel);
 
   const toggleEspecialidade = (especialidade) => {
     setDadosProfessor((prev) => ({
@@ -78,23 +93,29 @@ export const useProfileTeacherModel = () => {
   const handleSalvar = () => {
     console.log("Dados salvos:", dadosProfessor);
     alert("Perfil salvo com sucesso!");
+    // após salvar, atualiza a cópia original para refletir que não há mais mudanças
+    setOriginalDados(dadosProfessor);
   };
 
   const handleCancelar = () => {
     console.log("Edição cancelada.");
+    // restaurar os dados originais e resetar o estado de alterações
+    if (originalDados) {
+      setDadosProfessor(originalDados);
+      setHasChanges(false);
+    }
   };
 
   return {
     dadosProfessor,
     setDadosProfessor,
     profileImage,
-    editavel,
     fileInputRef,
     handleEditFotoClick,
     handleFileChange,
-    handleEditInput,
     toggleEspecialidade,
     handleSalvar,
     handleCancelar,
+    hasChanges,
   };
 };

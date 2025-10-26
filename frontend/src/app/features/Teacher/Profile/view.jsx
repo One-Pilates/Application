@@ -6,14 +6,13 @@ const ProfileTeacherView = ({
   dadosProfessor,
   profileImage,
   fileInputRef,
-  editavel,
   handleEditFotoClick,
   handleFileChange,
-  handleEditInput,
   toggleEspecialidade,
   handleSalvar,
   handleCancelar,
   setDadosProfessor,
+  hasChanges,
 }) => {
   return (
     <div className="profile-teacher">
@@ -54,7 +53,7 @@ const ProfileTeacherView = ({
           </p>
         </div>
       </div>
-
+      <hr className="mt-2 mb-2" />
       {/* FORM */}
       <div className="profile-teacher__form">
         {/* NOME / EMAIL */}
@@ -63,7 +62,6 @@ const ProfileTeacherView = ({
             <label className="profile-teacher__label">Nome Completo</label>
             <div className="profile-teacher__input-group">
               <input
-                disabled={!editavel}
                 type="text"
                 value={dadosProfessor.nome}
                 onChange={(e) =>
@@ -71,12 +69,6 @@ const ProfileTeacherView = ({
                 }
                 className="profile-teacher__input"
               />
-              <button
-                onClick={handleEditInput}
-                className="profile-teacher__edit-icon"
-              >
-                <FaPen size={14} />
-              </button>
             </div>
           </div>
 
@@ -84,20 +76,16 @@ const ProfileTeacherView = ({
             <label className="profile-teacher__label">Email</label>
             <div className="profile-teacher__input-group">
               <input
-                disabled={!editavel}
                 type="email"
                 value={dadosProfessor.email}
                 onChange={(e) =>
-                  setDadosProfessor({ ...dadosProfessor, email: e.target.value })
+                  setDadosProfessor({
+                    ...dadosProfessor,
+                    email: e.target.value,
+                  })
                 }
                 className="profile-teacher__input"
               />
-              <button
-                onClick={handleEditInput}
-                className="profile-teacher__edit-icon"
-              >
-                <FaPen size={14} />
-              </button>
             </div>
           </div>
         </div>
@@ -107,7 +95,6 @@ const ProfileTeacherView = ({
           <div className="profile-teacher__field">
             <label className="profile-teacher__label">Data de nascimento</label>
             <input
-              disabled={!editavel}
               type="date"
               value={dadosProfessor.dataNascimento}
               onChange={(e) =>
@@ -123,7 +110,6 @@ const ProfileTeacherView = ({
           <div className="profile-teacher__field">
             <label className="profile-teacher__label">Telefone</label>
             <input
-              disabled={!editavel}
               type="tel"
               value={dadosProfessor.telefone}
               onChange={(e) =>
@@ -142,7 +128,6 @@ const ProfileTeacherView = ({
           <div className="profile-teacher__field">
             <label className="profile-teacher__label">Senha</label>
             <input
-              disabled={!editavel}
               type="text"
               value={dadosProfessor.senha}
               onChange={(e) =>
@@ -156,43 +141,30 @@ const ProfileTeacherView = ({
           </div>
 
           <div className="profile-teacher__notification">
-            <span className="profile-teacher__notification-text">
-              Deseja receber notificação?
-            </span>
-            <label>
-              <input
-                type="radio"
-                checked={!dadosProfessor.receberNotificacao}
-                onChange={() =>
-                  setDadosProfessor({
-                    ...dadosProfessor,
-                    receberNotificacao: false,
-                  })
-                }
-              />
-              Não
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={dadosProfessor.receberNotificacao}
-                onChange={() =>
-                  setDadosProfessor({
-                    ...dadosProfessor,
-                    receberNotificacao: true,
-                  })
-                }
-              />
-              Sim
-            </label>
-          </div>
+              <span className="profile-teacher__notification-text">
+                Deseja receber notificação?
+              </span>
+              <label className="profile-teacher__switch">
+                <input
+                  type="checkbox"
+                  checked={Boolean(dadosProfessor.receberNotificacao)}
+                  onChange={(e) =>
+                    setDadosProfessor({
+                      ...dadosProfessor,
+                      receberNotificacao: e.target.checked,
+                    })
+                  }
+                  aria-label="Receber notificações"
+                />
+                <span className="profile-teacher__switch-slider" />
+              </label>
+            </div>
         </div>
 
-{/* ESPECIALIDADES */}
+        {/* ESPECIALIDADES */}
         <div className="profile-teacher__especialidades">
           <label className="profile-teacher__label">Especialidades</label>
-          {/* Adicionei a classe CSS que configura o grid de 2 colunas */}
-          <div className="profile-teacher__checkbox-container"> 
+          <div className="profile-teacher__checkbox-container">
             {Object.keys(dadosProfessor.especialidades).map((key) => (
               <label key={key} className="profile-teacher__checkbox">
                 <input
@@ -209,6 +181,7 @@ const ProfileTeacherView = ({
         {/* BOTÕES */}
         <div className="profile-teacher__buttons">
           <button
+            hidden={hasChanges}
             onClick={handleCancelar}
             className="profile-teacher__btn profile-teacher__btn--cancel"
           >
@@ -217,6 +190,7 @@ const ProfileTeacherView = ({
           <button
             onClick={handleSalvar}
             className="profile-teacher__btn profile-teacher__btn--save"
+            disabled={!hasChanges}
           >
             Salvar
           </button>
