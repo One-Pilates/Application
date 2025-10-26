@@ -1,47 +1,52 @@
 .overview-teacher {
-    padding: 24px;
-    border-radius: 8px;
+    padding: 3vh 2vw;
+    border-radius: 8px; 
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
-/* Header */
+
 .overview-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 3vh;
+    flex-wrap: wrap;
+    gap: 1.5vh;
 }
 
 .overview-header h1 {
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 2vw, 2rem);
     font-weight: 500;
     color: #111827;
 }
 
 .overview-header select {
-    padding: 8px 12px;
+    padding: 1vh 1.5vw;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border-radius: 6px; 
     font-size: 0.875rem;
+    width: auto;
 }
 
 /* KPI Cards */
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(20%, 1fr));
+    gap: 2vh;
+    margin-bottom: 3vh;
 }
 
 .kpi-card {
     background: #fff;
     border-radius: 8px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 3vh 2vw;
+    box-shadow: 0 0.1vh 0.3vh rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.2s ease;
 }
 
 .kpi-card:hover {
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 0.4vh 0.6vh rgba(0, 0, 0, 0.1);
 }
 
 .kpi-card-header {
@@ -51,17 +56,21 @@
 }
 
 .kpi-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+    width: 6vh;
+    height: 6vh;
+    border-radius: 50%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .kpi-icon.purple { background-color: #8b5cf6; }  
 .kpi-icon.orange { background-color: #fb923c; } 
 .kpi-icon.blue { background-color: #60a5fa; }    
 .kpi-icon.yellow { background-color: #fde68a; } 
+
 .kpi-card-body {
-    margin-top: 16px;
+    margin-top: 2vh;
 }
 
 .kpi-title {
@@ -71,61 +80,113 @@
 }
 
 .kpi-value {
-    font-size: 1.875rem;
+    font-size: clamp(1.5rem, 2vw, 2rem);
     font-weight: 700;
     color: #111827;
-    margin-top: 8px;
+    margin-top: 1vh;
 }
 
 .kpi-subtitle {
     font-size: 0.875rem;
     color: #6b7280;
-    margin-top: 8px;
+    margin-top: 1vh;
 }
-
-.kpi-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 
 /* Gráficos */
 .charts-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 24px;
-    max-width: 1200px;
+    gap: 3vh;
+    width: 100%;
+    max-width: 90vw;
     margin: 0 auto;
-}
-
-@media (min-width: 1024px) {
-    .charts-grid {
-        grid-template-columns: 1fr 1fr;
-    }
+    box-sizing: border-box;
 }
 
 .chart-container {
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 8px; 
+    box-shadow: 0 0.1vh 0.3vh rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
 .chart-header {
     background: #f97316;
-    padding: 12px 24px;
+    padding: 1.5vh 2vw;
 }
 
 .chart-header h3 {
     color: #fff;
-    font-size: 1.125rem;
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
     font-weight: 600;
 }
 
 .chart-body {
-    padding: 24px;
+    padding: 3vh 2vw;
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+
+/* Telas pequenas  */
+@media (max-width: 640px) {
+    .overview-teacher {
+        padding: 2vh 4vw;
+    }
+
+    .chart-body {
+        padding: 2vh 4vw;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .overview-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Telas médias */
+@media (min-width: 641px) and (max-width: 1023px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 3vh;
+    }
+}
+
+/* Telas grandes  */
+@media (min-width: 1024px) {
+    .charts-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4vh;
+    }
+}
+
+/* Telas muito grandes */
+@media (min-width: 1920px) {
+    .overview-teacher {
+        padding: 5vh 4vw;
+    }
+
+    .charts-grid {
+        grid-template-columns: repeat(2, minmax(40%, 1fr));
+        gap: 6vh;
+        max-width: 85vw;
+    }
+
+    .chart-body {
+        padding: 5vh 3vw;
+        min-height: 60vh;
+    }
+
+    .kpi-card {
+        padding: 5vh 3vw;
+    }
+
+    .kpi-value {
+        font-size: 3rem;
+    }
 }
