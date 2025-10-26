@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from './Components/Button';
 import LoadingSpinner from './Components/LoadingSpinner';
 import AulaModal from './Components/AulaModal';
@@ -13,37 +13,83 @@ const CalendarView = ({
   isAusenciaModalOpen,
   setIsAusenciaModalOpen,
   isLoading,
-  calendarRef
-}) => (
-  <div className="calendar-container">
-    <main className="calendar-main">
-      <div className="calendar-header-info">
-        <Button onClick={() => setIsAusenciaModalOpen(true)} disabled={isLoading}>
-          Definir Ausência
-        </Button>
-      </div>
+  calendarRef,
+  calendarInstance
+}) => {
+  const [activeView, setActiveView] = useState('timeGridWeek'); // 👈 estado da view atual
 
-      <div className="calendar-wrapper">
-        {isLoading && <LoadingSpinner />}
-        <div
-          ref={calendarRef}
-          className="fullcalendar"
-          style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.3s' }}
-        />
-      </div>
-    </main>
+  const handleChangeView = (viewName) => {
+    const calendar = calendarInstance.current;
+    if (calendar) {
+      calendar.changeView(viewName);
+      setActiveView(viewName); // 👈 atualiza botão ativo
+    }
+  };
 
-    <AulaModal
-      isOpen={isAulaModalOpen}
-      aula={selectedAula}
-      onClose={() => { setIsAulaModalOpen(false); setSelectedAula(null); }}
-    />
+  useEffect(() => {
+    // quando o calendário carregar, define a view inicial
+    if (calendarInstance.current) {
+      setActiveView(calendarInstance.current.view?.type || 'timeGridWeek');
+    }
+  }, [calendarInstance]);
 
-    <DefinirAusenciaModal
-      isOpen={isAusenciaModalOpen}
-      onClose={() => setIsAusenciaModalOpen(false)}
-    />
-  </div>
-);
+  return (
+    <div className="calendar-container">
+      <main className="calendar-main">
+        <div className="calendar-header-info">
+          {/* Botões de view à esquerda */}
+          <div className="calendar-view-buttons">
+            <button
+              className={`filter-button ${activeView === 'dayGridMonth' ? 'active' : ''}`}
+              onClick={() => handleChangeView('dayGridMonth')}
+            >
+              Mês
+            </button>
+            <button
+              className={`filter-button ${activeView === 'timeGridWeek' ? 'active' : ''}`}
+              onClick={() => handleChangeView('timeGridWeek')}
+            >
+              Semana
+            </button>
+            <button
+              className={`filter-button ${activeView === 'timeGridDay' ? 'active' : ''}`}
+              onClick={() => handleChangeView('timeGridDay')}
+            >
+              Dia
+            </button>
+          </div>
+
+          {/* Botão Definir Ausência à direita */}
+          <Button onClick={() => setIsAusenciaModalOpen(true)} disabled={isLoading}>
+            Definir Ausência
+          </Button>
+        </div>
+
+        <div className="calendar-wrapper">
+          {isLoading && <LoadingSpinner />}
+          <div
+            ref={calendarRef}
+            className="fullcalendar"
+            style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.3s' }}
+          />
+        </div>
+      </main>
+
+      <AulaModal
+        isOpen={isAulaModalOpen}
+        aula={selectedAula}
+        onClose={() => {
+          setIsAulaModalOpen(false);
+          setSelectedAula(null);
+        }}
+      />
+
+      <DefinirAusenciaModal
+        isOpen={isAusenciaModalOpen}
+        onClose={() => setIsAusenciaModalOpen(false)}
+      />
+    </div>
+  );
+};
 
 export default CalendarView;

@@ -10,62 +10,62 @@
     border: none;
     font-family: inherit;
     background-color: $azul-principal;
-    color: #ffffff; /* White text for contrast */
+    color: #ffffff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
 .btn-primary {
-    background: $azul-principal; /* #2962ff */
+    background: $azul-principal; 
     color: #ffffff;
-    box-shadow: 0 2px 4px rgba(41, 98, 255, 0.2); /* Shadow using blue tint */
+    box-shadow: 0 2px 4px rgba(41, 98, 255, 0.2); 
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: #1a4ed4; /* Darker blue for hover */
+    background: #1a4ed4; 
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(41, 98, 255, 0.3);
 }
 
 .btn-primary:active:not(:disabled) {
-    background: #143fab; /* Even darker blue for active */
+    background: #143fab; 
     transform: translateY(0);
 }
 
 .btn-primary:focus-visible {
-    outline: 3px solid #1a4ed4; /* Darker blue for focus outline */
+    outline: 3px solid #1a4ed4; 
     outline-offset: 2px;
     box-shadow: 0 0 0 5px rgba(41, 98, 255, 0.3);
 }
 
 .btn-primary:disabled,
 .btn-primary[aria-disabled="true"] {
-    background: #80a1ff; /* Lighter blue for disabled */
-    color: #e0e0e0; /* Light gray for contrast */
+    background: #80a1ff;
+    color: #e0e0e0; 
     opacity: 0.6;
     cursor: not-allowed;
 }
 
 .btn-secondary {
-    background: #d6e0ff; /* Very light blue for secondary */
-    color: #1a1a1a; /* Dark text for contrast */
-    border: 1px solid #4d7cff; /* Medium blue border */
+    background: #f73737; 
+    color: #ffffff; 
+    border: 1px solid #f7373754; 
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: #b3c7ff; /* Slightly darker light blue */
+    background: #f7373754; 
 }
 
 .btn-secondary:focus-visible {
-    outline: 3px solid #1a4ed4;
+    outline: 3px solid #f73737;
     outline-offset: 2px;
-    box-shadow: 0 0 0 5px rgba(41, 98, 255, 0.3);
+    box-shadow: 0 0 0 5px  #f7373754; 
 }
 
 .btn-secondary:disabled,
 .btn-secondary[aria-disabled="true"] {
-    background: #e6ebff; /* Lightest blue for disabled */
+    background: #f73737;
     color: #666666;
     opacity: 0.6;
     cursor: not-allowed;
@@ -74,6 +74,6 @@
 @media (max-width: 768px) {
     .btn {
         width: 100%;
-        font-size: 1rem; /* Slightly larger for mobile */
+        font-size: 1rem; 
     }
 }

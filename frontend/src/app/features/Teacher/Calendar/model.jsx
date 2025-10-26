@@ -4,8 +4,8 @@ const MOCK_AULAS = [
   {
     id: '1',
     title: 'Aula Pilates',
-    start: '2025-10-06T10:00:00',
-    end: '2025-10-06T11:00:00',
+    start: '2025-10-27T10:00:00',
+    end: '2025-10-27T11:00:00',
     tipo: 'Aula Pilates',
     alunos: [
       { nome: 'Gustavo', status: 'confirmado' },
@@ -24,8 +24,8 @@ const MOCK_AULAS = [
   {
     id: '2',
     title: 'Fisioterapia',
-    start: '2025-10-06T11:00:00',
-    end: '2025-10-06T12:00:00',
+    start: '2025-10-27T11:00:00',
+    end: '2025-10-27T12:00:00',
     tipo: 'Fisioterapia',
     alunos: [
       { nome: 'Pedro Oliveira', status: 'confirmado' }
@@ -42,8 +42,8 @@ const MOCK_AULAS = [
   {
     id: '3',
     title: 'Aula Pilates',
-    start: '2025-10-06T12:00:00',
-    end: '2025-10-06T13:00:00',
+    start: '2025-10-28T12:00:00',
+    end: '2025-10-28T13:00:00',
     tipo: 'Aula Pilates',
     alunos: [
       { nome: 'Gustavo', status: 'confirmado' },
@@ -62,8 +62,8 @@ const MOCK_AULAS = [
   {
     id: '4',
     title: 'RPG',
-    start: '2025-10-06T13:00:00',
-    end: '2025-10-06T14:00:00',
+    start: '2025-10-29T13:00:00',
+    end: '2025-10-29T14:00:00',
     tipo: 'RPG',
     alunos: [
       { nome: 'Fernanda Lima', status: 'confirmado' },
@@ -84,8 +84,8 @@ const MOCK_AULAS = [
   {
     id: '5',
     title: 'Aula Pilates',
-    start: '2025-10-07T10:00:00',
-    end: '2025-10-07T11:00:00',
+    start: '2025-10-29T10:00:00',
+    end: '2025-10-29T11:00:00',
     tipo: 'Aula Pilates',
     alunos: [
       { nome: 'Amanda Souza', status: 'confirmado' },
@@ -104,8 +104,8 @@ const MOCK_AULAS = [
   {
     id: '6',
     title: 'Aula Pilates',
-    start: '2025-10-08T14:00:00',
-    end: '2025-10-08T15:00:00',
+    start: '2025-10-29T14:00:00',
+    end: '2025-10-29T15:00:00',
     tipo: 'Aula Pilates',
     alunos: [
       { nome: 'Lucas Ferreira', status: 'confirmado' },
@@ -124,8 +124,8 @@ const MOCK_AULAS = [
   {
     id: '7',
     title: 'RPG',
-    start: '2025-10-08T16:00:00',
-    end: '2025-10-08T17:00:00',
+    start: '2025-10-30T16:00:00',
+    end: '2025-10-30T17:00:00',
     tipo: 'RPG',
     alunos: [
       { nome: 'Gabriel Santos', status: 'confirmado' }
@@ -142,7 +142,7 @@ const MOCK_AULAS = [
   {
     id: '8',
     title: 'Aula Pilates',
-    start: '2025-10-09T10:00:00',
+    start: '2025-10-31T10:00:00',
     end: '2025-10-09T11:00:00',
     tipo: 'Aula Pilates',
     alunos: [
@@ -198,13 +198,18 @@ export const useCalendarModel = () => {
       if (calendarInstance.current) calendarInstance.current.destroy();
 
       const calendar = new window.FullCalendar.Calendar(calendarRef.current, {
-        initialView: 'timeGridWeek',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        buttonText: { today: 'Hoje', month: 'Mês', week: 'Semana', day: 'Dia' },
+         initialView: 'timeGridWeek',
+headerToolbar: {
+  left: '',       // vazio (sem botões de view)
+  center: 'title',
+  right: 'prev,next' // setas permanecem no calendário
+},
+
+    buttonText: { 
+      month: 'Mês', 
+      week: 'Semana', 
+      day: 'Dia' 
+    },
         locale: 'pt-br',
         slotMinTime: '07:00:00',
         slotMaxTime: '22:00:00',
@@ -246,6 +251,7 @@ export const useCalendarModel = () => {
     isAusenciaModalOpen,
     setIsAusenciaModalOpen,
     isLoading,
-    calendarRef
+    calendarRef,
+    calendarInstance 
   };
 };
