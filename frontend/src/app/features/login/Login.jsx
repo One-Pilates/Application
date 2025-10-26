@@ -1,15 +1,18 @@
 import { useState } from "react";
 import "./Login.scss";
 import { validacaoEmail } from "../../shared/utils/funcoesUtils";
-import { useAuth } from "../../../hooks/useAuth"
+import { useAuth } from "../../../hooks/useAuth";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function Login() {
   const navigate = useNavigate();
   const { login, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,7 +24,9 @@ export default function Login() {
         text: "Por favor, insira um email válido.",
       });
       return;
-    } else if (!password) {
+    }
+    
+    if (!password) {
       Swal.fire({
         icon: "error",
         title: "Senha inválida",
@@ -29,6 +34,7 @@ export default function Login() {
       });
       return;
     }
+    
     await login(email, password);
   };
 
@@ -45,6 +51,7 @@ export default function Login() {
           </h1>
           <p className="login__subtitle">Porque seu corpo é único!</p>
         </div>
+        
         <form
           className="login__form"
           onSubmit={handleLogin}
@@ -58,39 +65,76 @@ export default function Login() {
               type="email"
               id="email"
               name="email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="login__input"
+              placeholder="onepilates@onepilates.com"
               required
             />
           </div>
+          
           <div className="login__field">
             <label htmlFor="password" className="login__label">
               Senha
             </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              onChange={(e) => setPassword(e.target.value)}
-              className="login__input"
-              required
-            />
+            <div className="login__password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="login__input"
+                placeholder="********"
+                required
+              />
+              <button
+                type="button"
+                className="login__password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible size={20} />
+                ) : (
+                  <AiOutlineEye size={20} />
+                )}
+              </button>
+            </div>
           </div>
+
+          <div className="login__checkbox">
+            <input
+              type="checkbox"
+              id="remember"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="remember">Lembrar senha</label>
+          </div>
+
           <button type="submit" className="login__button" disabled={isLoading}>
-            Entrar
+            {isLoading ? "Entrando..." : "Entrar"}
           </button>
+          
           <div className="login__links" id="login-help">
-            <a onClick={() => navigate("/login/esqueci-senha")} className="login__forgot">
+            <button
+              type="button"
+              onClick={() => navigate("/login/esqueci-senha")}
+              className="login__forgot"
+            >
               Esqueci minha senha
-            </a>
-            <p className="login__contact">
-              Precisa de acesso? Contate o administrador.
-            </p>
+            </button>
           </div>
         </form>
+        
+        <p className="login__contact">
+          Precisa de acesso? Contate o administrador.
+        </p>
       </div>
+      
       <div className="background-login" aria-hidden="true">
-        <img src="/logoBranca.png" alt="Logo branca" />
+        <img src="/logoBranca.png" alt="Logo OnePilates" />
       </div>
     </div>
   );
