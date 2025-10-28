@@ -1,18 +1,22 @@
+import { useState } from 'react';
 import './style.scss';
 import KPICard from './components/KPICard';
 import FrequenciaChart from './components/FrequenciaChart';
 import PieChart from './components/PieChart';
+import Filter from './components/Filter';
 
 const DashboardView = ({ kpis, frequencia, pie }) => {
+  const [selectedPeriod, setSelectedPeriod] = useState(30);
+
+  const handleFilterChange = (newPeriod) => {
+    setSelectedPeriod(newPeriod);
+  };
+
   return (
     <div className="overview-teacher">
       <div className="overview-header">
         <h1>Visão Geral</h1>
-        <select>
-          <option>Últimos 30 dias</option>
-          <option>Últimos 7 dias</option>
-          <option>Últimos 90 dias</option>
-        </select>
+        <Filter value={selectedPeriod} onChange={handleFilterChange} />
       </div>
 
       <div className="kpi-grid">
