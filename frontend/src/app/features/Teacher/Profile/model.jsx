@@ -110,7 +110,7 @@ export const useProfileTeacherModel = () => {
   };
 
   const cancelChanges = () => {
-    console.log("cancelando alterações")
+
     setDadosProfessor(originalDados);
     setHasChanged(false);
   }
