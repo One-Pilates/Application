@@ -9,10 +9,9 @@ const ProfileTeacherView = ({
   handleEditFotoClick,
   handleFileChange,
   toggleEspecialidade,
-  handleSalvar,
-  handleCancelar,
   setDadosProfessor,
-  hasChanges,
+  hasChanged,
+  cancelChanges,
 }) => {
   return (
     <div className="profile-teacher">
@@ -181,16 +180,15 @@ const ProfileTeacherView = ({
         {/* BOTÕES */}
         <div className="profile-teacher__buttons">
           <button
-            hidden={hasChanges}
-            onClick={handleCancelar}
+            onClick={cancelChanges}
+            hidden={!hasChanged}
             className="profile-teacher__btn profile-teacher__btn--cancel"
           >
             Cancelar
           </button>
           <button
-            onClick={handleSalvar}
+            disabled={!hasChanged}
             className="profile-teacher__btn profile-teacher__btn--save"
-            disabled={!hasChanges}
           >
             Salvar
           </button>
