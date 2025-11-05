@@ -1,5 +1,4 @@
 import '../styles/Contact.scss';
-import Botao from "../../../shared/components/Button";
 import { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import Swal from 'sweetalert2';
@@ -117,19 +116,22 @@ export default function Contact() {
 
             <form ref={form} onSubmit={confirmAndSend}>
               <div className="form-group">
-                <input type="text" name="user_name" placeholder="Nome *" required />
+                <label htmlFor="user_name">Nome *</label>
+                <input type="text" name="user_name" id="user_name" placeholder="Digite seu nome" required />
               </div>
               <div className="form-group">
-                <input type="email" name="user_email" placeholder="Email" />
+                <label htmlFor="user_email">Email</label>
+                <input type="email" name="user_email" id="user_email" placeholder="Digite seu email" />
               </div>
               <div className="form-group">
-                <textarea name="message" placeholder="Mensagem *" required></textarea>
+                <label htmlFor="message">Mensagem *</label>
+                <textarea name="message" id="message" placeholder="Digite sua mensagem" required></textarea>
               </div>
-              <Botao
-                cor="bg-main" 
-                texto={isSending ? "Enviando..." : "Enviar Mensagem"}
-                className='btn-submit'
-              />
+
+              <button type="submit" className="btn-submit" disabled={isSending}>
+                <FaPaperPlane className="icon" />
+                {isSending ? "Enviando..." : "Enviar Mensagem"}
+              </button>
             </form>
           </div>
 

@@ -1,5 +1,5 @@
 import '../styles/Footer.scss';
-import { FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 
 export default function Footer() {
   return (
@@ -11,25 +11,28 @@ export default function Footer() {
             <img src="/logoOriginal.png" alt="One Pilates" />
             <h3>One Pilates</h3>
             <span>Porque seu Corpo é Único</span>
-          </div>
-
-          <div className="footer-about">
-            <p>
-              Somos um Studio de Pilates localizado em São Paulo com excelentes profissionais
-              e equipamentos de última geração.
-            </p>
+            <div className="footer-contact">
+              <p><FaMapMarkerAlt /> R. Abílio Soares, 233 - Paraíso, São Paulo - SP</p>
+              <p><FaPhoneAlt /> (11) 97215-7232</p>
+              <p><FaEnvelope /> contato@onepilates.com.br</p>
+            </div>
           </div>
 
           <div className="footer-links">
             <h4>Navegação</h4>
+            <nav>
               <a href="#home">Home</a>
               <a href="#services">Serviços</a>
               <a href="#about">Sobre</a>
               <a href="#equipment">Equipamentos</a>
               <a href="#testimonials">Depoimentos</a>
               <a href="#contact">Contato</a>
+            </nav>
+          </div>
 
-            <div className="footer-social">
+          <div className="footer-social">
+            <h4>Redes Sociais</h4>
+            <div className="social-icons">
               <a 
                 href="https://www.facebook.com/onepilates31" 
                 target="_blank" 
@@ -52,9 +55,9 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2025 One Pilates – Todos os direitos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} One Pilates – Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>
   );
-};
+}

@@ -19,10 +19,7 @@
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph / Facebook -->
-    <meta
-      property="og:title"
-      content="One Pilates - Porque seu corpo é único"
-    />
+    <meta property="og:title" content="One Pilates - Porque seu corpo é único" />
     <meta
       property="og:description"
       content="One Pilates - A melhor experiência para cuidar do seu corpo com profissionais especializados."
@@ -37,10 +34,7 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="One Pilates - Porque seu corpo é único"
-    />
+    <meta name="twitter:title" content="One Pilates - Porque seu corpo é único" />
     <meta
       name="twitter:description"
       content="One Pilates - A melhor experiência para cuidar do seu corpo com profissionais especializados."
@@ -79,19 +73,36 @@
     <!-- Robots / Google -->
     <link rel="canonical" href="https://www.onepilates.com.br" />
 
-    <!-- Fonts / Styles -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    
-    <script>
-      new window.VLibras.Widget("https://vlibras.gov.br/app");
-    </script>
-
+    <!-- ⚙️ IMPORTANTE: esse é o ponto de montagem do React -->
   </head>
+
   <body>
     <div id="root"></div>
-    <script type="module" src="./src/main.jsx"></script>
+
+    <!-- 🧩 VLibras oficial -->
+    <div vw class="enabled">
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+      </div>
+    </div>
+
+    <!-- 🔹 Script do VLibras -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        new window.VLibras.Widget("https://vlibras.gov.br/app");
+      });
+    </script>
+
+    <!-- 🔹 Script principal do React (gerado pelo build) -->
+    <!-- Exemplo no Vite -->
+    <script type="module" src="/src/main.jsx"></script>
+    <!-- ou no CRA (Create React App)
+    <script src="%PUBLIC_URL%/static/js/bundle.js"></script> -->
   </body>
 </html>

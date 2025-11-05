@@ -10,7 +10,6 @@ import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import Slider from './components/Slider';
 import Info from './components/Info';
-import VLibras from './components/VLibras';
 import WhatsAppButton from './components/WhatsAppButton';
 import ScrollReveal from '../../shared/components/ScrollReveal';
 
@@ -53,9 +52,7 @@ export default function LandingPage() {
       </ScrollReveal>
       
       <Footer />
-      
-      <VLibras />
-      
+            
       <WhatsAppButton />
     </>
   );

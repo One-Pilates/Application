@@ -12,6 +12,7 @@
   align-items: stretch;
 }
 
+
 .contact h2 {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
@@ -47,6 +48,15 @@
     box-shadow: 0 0 5px rgba($laranja-principal, 0.4);
   }
 }
+
+.form-group label {
+  font-weight: 600;
+  color: $text-escuro;
+  margin-bottom: 0.4rem;
+  display: block;
+  font-size: 0.95rem;
+}
+
 
 textarea {
   min-height: 120px;
@@ -85,5 +95,48 @@ textarea {
 @media (max-width: 768px) {
   .contact-content {
     grid-template-columns: 1fr;
+  }
+}
+
+.btn-submit {
+  align-self: flex-start;
+  background: $laranja-principal;
+  color: $branco;
+  border: none;
+  padding: 0.9rem 2rem;
+  border-radius: 30px; 
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 10px rgba($laranja-principal, 0.3);
+
+  .icon {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background: rgba($laranja-principal, 0.85);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba($laranja-principal, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba($laranja-principal, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  @media (max-width: 900px) {
+    align-self: center;
   }
 }
