@@ -1,6 +1,5 @@
 import "../styles/About.scss";
-import { FaPlus, FaTimes, FaCalendarPlus, FaAddressBook } from "react-icons/fa";
-import Botao from "../../../shared/components/Button";
+import { FaPlus } from "react-icons/fa";
 
 export default function About() {
   return (
@@ -8,18 +7,21 @@ export default function About() {
       <div className="about__container">
         
         <div className="about__content">
-          <p className="about__subtitle">+20 ANOS DE HISTORIA</p>
+          <p className="about__subtitle">+20 ANOS DE HISTÓRIA</p>
           <h2 className="about__title">Sobre nossa trajetória...</h2>
           <p className="about__text">
-            Somos um Studio de Pilates localizado em São Paulo com excelentes profissionais e
-            equipamentos de última geração, estamos localizados bem próximos à Av. Paulista e ao Metrô Paraíso.
+            Somos um Studio de Pilates localizado em São Paulo, com profissionais experientes e
+            equipamentos de última geração. Nosso estúdio está situado próximo à Av. Paulista e ao Metrô Paraíso,
+            proporcionando fácil acesso e conforto a todos os alunos.
           </p>
-          <Botao cor="bg-main" icone={FaPlus} texto="Mais Detalhes"/>
+          <button className="about__button">
+            <FaPlus className="about__icon" /> Mais Detalhes
+          </button>
         </div>
 
         <div className="about__image">
           <img
-            src="/about.png" 
+            src="/about.png"
             alt="Studio de Pilates"
           />
         </div>
