@@ -1,9 +1,9 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.ProfessorDTO;
+import com.onePilates.agendamento.dto.RespostaDashProfessoraDTO;
 import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
 import com.onePilates.agendamento.service.ProfessorService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,4 +57,15 @@ public class ProfessorController {
         professorService.excluirProfessor(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/{qtdUltimosDias}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'PROFESSOR')")
+    public ResponseEntity<RespostaDashProfessoraDTO> buscarPorIdDados(@PathVariable Long id , @PathVariable Integer qtdUltimosDias) {
+        return ResponseEntity.ok(professorService.respostaDashProfessora(id,qtdUltimosDias));
+    }
+
+
+
+
+
 }

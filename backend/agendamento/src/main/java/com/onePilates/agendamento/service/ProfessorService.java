@@ -1,7 +1,6 @@
 package com.onePilates.agendamento.service;
 
-import com.onePilates.agendamento.dto.EnderecoDTO;
-import com.onePilates.agendamento.dto.ProfessorDTO;
+import com.onePilates.agendamento.dto.*;
 import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
@@ -9,12 +8,15 @@ import com.onePilates.agendamento.model.Endereco;
 import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.model.Role;
+import com.onePilates.agendamento.repository.AgendamentoRepository;
 import com.onePilates.agendamento.repository.EspecialidadeRepository;
 import com.onePilates.agendamento.repository.ProfessorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,13 +25,15 @@ public class ProfessorService {
 
     private final ProfessorRepository professorRepository;
     private final EspecialidadeRepository especialidadeRepository;
+    private final AgendamentoRepository agendamentoRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ProfessorService(ProfessorRepository professorRepository,
-                            EspecialidadeRepository especialidadeRepository,
+                            EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository,
                             PasswordEncoder passwordEncoder) {
         this.professorRepository = professorRepository;
         this.especialidadeRepository = especialidadeRepository;
+        this.agendamentoRepository = agendamentoRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -197,4 +201,27 @@ public class ProfessorService {
         if (dto.getEmail() == null || dto.getEmail().isBlank()) throw new RuntimeException("Email é obrigatório");
         if (dto.getSenha() == null || dto.getSenha().isBlank()) throw new RuntimeException("Senha é obrigatória");
     }
+
+    public RespostaDashProfessoraDTO respostaDashProfessora(Long id , Integer qtdUltimosDias) {
+
+        LocalDateTime inicio = LocalDate.now().minusDays(qtdUltimosDias).atStartOfDay();
+        LocalDateTime fim = LocalDate.now().plusDays(1).atStartOfDay();
+
+        List<AgendamentoPorDiaDTO> grafico1 = agendamentoRepository.buscarAgendamentosPorDiaSemana(id, inicio, fim);
+
+        Map<String, Integer> ordemDias = Map.of(
+                "Sunday", 1, "Monday", 2, "Tuesday", 3, "Wednesday", 4,
+                "Thursday", 5, "Friday", 6, "Saturday", 7
+        );
+
+        grafico1.sort(Comparator.comparingInt(dto -> ordemDias.getOrDefault(dto.getDiaSemana(), 8)));
+
+        List<AulaPorEspecialidadeDTO> grafico2 =agendamentoRepository.buscarDistribuicaoAulasPorEspecialidade(id, qtdUltimosDias);
+
+        return new RespostaDashProfessoraDTO(grafico1, grafico2);
+
+    }
+
+
+
 }
