@@ -18,11 +18,12 @@ public class FuncionarioLoginDTO {
     private Boolean notificacaoAtiva;
     private String cargo;
     private Endereco endereco;
+    private String telefone;
 
     public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf,
                                LocalDate dataNascimento, Boolean status, String foto,
                                String observacoes, Boolean notificacaoAtiva, String cargo,
-                               Endereco endereco) {
+                               Endereco endereco ,  String telefone) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -35,6 +36,15 @@ public class FuncionarioLoginDTO {
         this.notificacaoAtiva = notificacaoAtiva;
         this.cargo = cargo;
         this.endereco = endereco;
+        this.telefone = telefone;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public Long getId() {
