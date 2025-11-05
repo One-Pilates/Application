@@ -36,25 +36,31 @@ public abstract class Funcionario {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
+    private String telefone;
 
     public Funcionario() {
     }
 
-    public Funcionario(String nome, String email, String senha, Role role, String cpf, LocalDate idade, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco) {
+    public Funcionario(Long id, String nome, String email, String senha, Role role, String cpf, LocalDate dataNascimento, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco, String telefone) {
+        this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.role = role;
         this.cpf = cpf;
-        this.dataNascimento = idade;
+        this.dataNascimento = dataNascimento;
         this.status = status;
         this.foto = foto;
         this.observacoes = observacoes;
         this.notificacaoAtiva = notificacaoAtiva;
         this.cargo = cargo;
         this.endereco = endereco;
+        this.telefone = telefone;
     }
 
+    public Long getId() {
+        return id;
+    }
 
     public String getNome() {
         return nome;
@@ -70,6 +76,22 @@ public abstract class Funcionario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getCpf() {
@@ -120,14 +142,6 @@ public abstract class Funcionario {
         this.notificacaoAtiva = notificacaoAtiva;
     }
 
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
     public String getCargo() {
         return cargo;
     }
@@ -144,19 +158,11 @@ public abstract class Funcionario {
         this.endereco = endereco;
     }
 
-    public Long getId() {
-        return id;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 }

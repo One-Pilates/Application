@@ -56,7 +56,8 @@ public class AuthService {
                 funcionario.getObservacoes(),
                 funcionario.getNotificacaoAtiva(),
                 funcionario.getCargo(),
-                funcionario.getEndereco()
+                funcionario.getEndereco(),
+                funcionario.getTelefone()
         );
 
         return new LoginResponseDTO(token,funcionario.getRole().name(), funcionarioDTO);
