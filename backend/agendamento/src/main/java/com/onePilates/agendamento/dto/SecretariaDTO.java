@@ -1,18 +1,45 @@
 package com.onePilates.agendamento.dto;
 
+import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.br.CPF;
+
 import java.time.LocalDate;
 
 public class SecretariaDTO {
+    @NotBlank(message = "O campo nome não pode ser nulo nem vazio")
     private String nome;
+
+    @NotBlank(message = "O campo email é obrigatório")
+    @Email(message = "Informe um e-mail válido")
     private String email;
+
+    @NotBlank(message = "O campo CPF é obrigatório")
+    @CPF(message = "Informe um CPF válido")
     private String cpf;
+
+    @NotNull(message = "O campo idade é obrigatório")
+    @Past(message = "A data de nascimento deve ser no passado")
     private LocalDate idade;
+
+    @NotNull(message = "O campo status é obrigatório")
     private Boolean status;
+
+    @NotBlank(message = "O campo foto é obrigatório")
     private String foto;
+
+    @Size(max = 500, message = "O campo observações deve ter no máximo 500 caracteres")
     private String observacoes;
+
+    @NotNull(message = "O campo de notificação ativa é obrigatório")
     private Boolean notificacaoAtiva;
+
+    @NotBlank(message = "O campo senha é obrigatório")
+    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
     private String senha;
+
+    @NotBlank(message = "O campo cargo é obrigatório")
     private String cargo;
+
     private EnderecoDTO endereco;
 
     public SecretariaDTO() {

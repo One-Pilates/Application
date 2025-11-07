@@ -1,24 +1,55 @@
 package com.onePilates.agendamento.dto;
 
 import com.onePilates.agendamento.model.Role;
+import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 public class ProfessorDTO {
+
+    @NotBlank(message = "O campo nome não pode ser nulo nem vazio")
     private String nome;
+
+    @Email(message = "Coloque um email válido")
+    @NotBlank(message = "O campo email é obrigatório")
     private String email;
+
+    @CPF(message = "Coloque um CPF válido")
+    @NotBlank(message = "O campo CPF é obrigatório")
     private String cpf;
+
+    @Past(message = "A data de nascimento deve ser no passado")
+    @NotNull(message = "O campo idade é obrigatório")
     private LocalDate idade;
+
+    @NotNull(message = "O campo status é obrigatório")
     private Boolean status;
+
+    @NotBlank(message = "O campo foto é obrigatório")
     private String foto;
+
+    @Size(max = 500, message = "O campo observações deve ter no máximo 500 caracteres")
     private String observacoes;
+
+    @NotNull(message = "O campo de notificação ativa é obrigatório")
     private Boolean notificacaoAtiva;
+
+    @NotBlank(message = "O campo senha é obrigatório")
+    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
     private String senha;
+
+    @NotBlank(message = "O campo cargo é obrigatório")
     private String cargo;
+
+    @NotNull(message = "O campo role é obrigatório")
     private Role role;
+
     private EnderecoDTO endereco;
-    private Set<Long> especialidadeIds;
+
+    @NotEmpty(message = "É necessário informar ao menos uma especialidade")
+    private Set<@NotNull(message = "ID de especialidade não pode ser nulo") Long> especialidadeIds;
 
 
 
