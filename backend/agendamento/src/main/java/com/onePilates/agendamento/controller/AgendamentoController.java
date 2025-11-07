@@ -3,6 +3,7 @@ package com.onePilates.agendamento.controller;
 import com.onePilates.agendamento.dto.AgendamentoDTO;
 import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.service.AgendamentoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +20,7 @@ public class AgendamentoController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
-    public ResponseEntity<AgendamentoResponseDTO> criarAgendamento(@RequestBody AgendamentoDTO dto) {
+    public ResponseEntity<AgendamentoResponseDTO> criarAgendamento( @Valid @RequestBody AgendamentoDTO dto) {
         return ResponseEntity.ok(agendamentoService.toResponseDTO(agendamentoService.criarAgendamento(dto)));
     }
 

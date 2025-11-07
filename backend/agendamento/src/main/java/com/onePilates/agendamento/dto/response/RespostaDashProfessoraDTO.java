@@ -1,4 +1,7 @@
-package com.onePilates.agendamento.dto;
+package com.onePilates.agendamento.dto.response;
+
+import com.onePilates.agendamento.dto.AgendamentoPorDiaDTO;
+import com.onePilates.agendamento.dto.AulaPorEspecialidadeDTO;
 
 import java.util.List;
 

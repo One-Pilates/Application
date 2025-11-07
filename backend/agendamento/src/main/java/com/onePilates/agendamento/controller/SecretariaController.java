@@ -3,6 +3,7 @@ package com.onePilates.agendamento.controller;
 import com.onePilates.agendamento.dto.SecretariaDTO;
 import com.onePilates.agendamento.dto.response.SecretariaResponseDTO;
 import com.onePilates.agendamento.service.SecretariaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,7 @@ public class SecretariaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMINISTRADOR')")
-    public ResponseEntity<SecretariaResponseDTO> criarSecretaria(@RequestBody SecretariaDTO dto) {
+    public ResponseEntity<SecretariaResponseDTO> criarSecretaria( @Valid @RequestBody SecretariaDTO dto) {
         return ResponseEntity.ok(secretariaService.toResponseDTO(secretariaService.criarSecretaria(dto)));
     }
 

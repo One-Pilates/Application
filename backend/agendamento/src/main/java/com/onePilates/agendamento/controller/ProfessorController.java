@@ -1,7 +1,7 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.ProfessorDTO;
-import com.onePilates.agendamento.dto.RespostaDashProfessoraDTO;
+import com.onePilates.agendamento.dto.response.RespostaDashProfessoraDTO;
 import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
 import com.onePilates.agendamento.service.ProfessorService;
 import jakarta.validation.Valid;

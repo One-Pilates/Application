@@ -4,6 +4,7 @@ import com.onePilates.agendamento.dto.*;
 import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
+import com.onePilates.agendamento.dto.response.RespostaDashProfessoraDTO;
 import com.onePilates.agendamento.model.Endereco;
 import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Professor;
