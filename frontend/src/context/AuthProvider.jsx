@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
       } else if (data.funcionario.role === "SECRETARIA") {
         urlNavigation = "/secretaria/dashboard";
       } else {
-        urlNavigation = "/";
+        urlNavigation = "/professora/agenda";
       }
 
       Swal.fire({ icon: "success", title: "Login bem-sucedido" });

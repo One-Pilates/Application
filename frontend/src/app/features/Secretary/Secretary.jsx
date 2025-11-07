@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { SidebarSecretary } from "../../../shared/components/Sidebar";
-import Navbar from "../../../shared/components/Navbar";
+import { SidebarSecretary } from "../../shared/components/Sidebar";
+import Navbar from "../../shared/components/Navbar";
 
 export default function Secretary() {
   const [navAberta, setNavAberta] = useState(true);
