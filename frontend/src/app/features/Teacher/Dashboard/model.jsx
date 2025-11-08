@@ -66,3 +66,4 @@ export const useDashboardModel = (period) => {
 
   return { kpis, pie, frequencia, loading };
 };
+  
