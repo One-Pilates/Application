@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../../../hooks/useAuth";
 import api from "../../../../provider/api"
+import Swal from "sweetalert2";
 
 export const useProfileTeacherModel = () => {
   const [dadosProfessor, setDadosProfessor] = useState({
@@ -124,7 +125,14 @@ export const useProfileTeacherModel = () => {
       setOriginalDados(dadosProfessor);
       setEspecialidadesOriginais(new Set(especialidadesSelecionadas));
       setHasChanged(false);
-      
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Perfil atualizado!',
+        text: 'Seus dados foram atualizados com sucesso.',
+        confirmButtonText: 'OK',
+
+      });
     } catch (error) {
       console.error("========== ERRO ==========");
       console.error("❌ Erro ao atualizar dados:", error.message);
