@@ -134,6 +134,12 @@ export const useProfileTeacherModel = () => {
 
       });
     } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao atualizar perfil',
+        text: 'Ocorreu um erro ao atualizar seus dados. Por favor, tente novamente mais tarde.',
+        confirmButtonText: 'OK',
+      });
       console.error("========== ERRO ==========");
       console.error("❌ Erro ao atualizar dados:", error.message);
       console.error("Status HTTP:", error.response?.status);
