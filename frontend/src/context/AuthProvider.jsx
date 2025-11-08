@@ -31,16 +31,27 @@ export function AuthProvider({ children }) {
       console.log("Token:", data.token);
 
       let urlNavigation = "";
+      let mensagem = "";
       if (data.funcionario.role === "PROFESSOR") {
         urlNavigation = "/professora/agenda";
+        mensagem = `Bem-vindo a sua agenda, ${user.nome}!`;
       } else if (data.funcionario.role === "SECRETARIA") {
         urlNavigation = "/secretaria/dashboard";
+        mensagem = `Bem-vindo ao painel da One Pilates, ${user.nome}!`;
       } else {
         urlNavigation = "/professora/agenda";
       }
 
-      Swal.fire({ icon: "success", title: "Login bem-sucedido" });
-      navigate(urlNavigation);
+      Swal.fire({ icon: "success", 
+        title: "Login bem-sucedido", 
+        showConfirmButton: false,
+        text: mensagem,
+        timer: 3000
+      });
+
+      setTimeout(() => {
+        navigate(urlNavigation);
+      }, 3000);
       return true;
     } catch (error) {
       const status = error.response?.status;
@@ -57,10 +68,22 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    navigate("/login");
+    Swal.fire({
+      title: 'Tem certeza que deseja sair?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, sair',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+        navigate("/login");
+      }
+    });
   }
 
   return (

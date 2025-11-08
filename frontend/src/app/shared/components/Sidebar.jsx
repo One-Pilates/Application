@@ -2,10 +2,12 @@ import React from "react";
 import { FaChartBar, FaUser, FaCalendarAlt, FaSignOutAlt, FaChalkboardTeacher, FaUsers } from "react-icons/fa";
 import ItemSidebar from "./ItemSidebar";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
 
 
-export default function SidebarTeacher({ navAberta, userType }) {
+export default function SidebarTeacher({ navAberta}) {
   const navigate = useNavigate();
+  const {logout} = useAuth();
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -52,7 +54,7 @@ export default function SidebarTeacher({ navAberta, userType }) {
 
       <div className="mb-6">
         <div
-          onClick={() => navigate("/login")}
+          onClick={logout}
           className="flex items-center gap-4 px-4 py-3 cursor-pointer transition rounded-full mx-2 my-2 hover:bg-orange-600"
         >
           <FaSignOutAlt size={22} />

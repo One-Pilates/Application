@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../../../../hooks/useAuth";
+import api from "../../../../provider/api"
+import Swal from "sweetalert2";
 
 export const useProfileTeacherModel = () => {
   const [dadosProfessor, setDadosProfessor] = useState({
@@ -7,70 +10,82 @@ export const useProfileTeacherModel = () => {
     email: "",
     dataNascimento: "",
     telefone: "",
-    senha: "",
     receberNotificacao: false,
-    especialidades: {
-      fisioterapia: false,
-      pilates: false,
-      drenagem: false,
-      rPG: false,
-      massagem: false,
-      massoterapia: false,
-      acupuntura: false,
-      osteopatia: false,
-    },
   });
-
-  const [profileImage, setProfileImage] = useState("https://i.pravatar.cc/150?img=45");;
-  const [originalDados, setOriginalDados] = useState(null);
-  const [hasChanges, setHasChanges] = useState(false);
+  const [profileImage, setProfileImage] = useState(
+    "https://i.pravatar.cc/150?img=45"
+  );
   const fileInputRef = useRef(null);
+  const { user } = useAuth();
+  const [originalDados, setOriginalDados] = useState(dadosProfessor);
+  const [hasChanged, setHasChanged] = useState(false);
+  const [especialidadesMap, setEspecialidadesMap] = useState([]);
+  const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState(new Set());
+  const [especialidadesOriginais, setEspecialidadesOriginais] = useState(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
-      console.warn("API desativada, usando dados locais.");
-      const initialData = {
-        nome: "Flavia Lima Silva",
-        cargo: "Professor",
-        email: "flavia@onepilates.com",
-        dataNascimento: "1988-06-15",
-        telefone: "(11) 91234-5678",
-        senha: "********",
-        receberNotificacao: true,
-        especialidades: {
-          fisioterapia: true,
-          pilates: true,
-          drenagem: false,
-          rPG: false,
-          massagem: true,
-          massoterapia: false,
-          acupuntura: false,
-          osteopatia: false,
-        },
-      };
+      if (!user) return;
+      try {
+        const response = await api.get(`api/professores/${user.id}`);
+        const data = response.data;
+        console.log('data', data);
 
-      setDadosProfessor(initialData);
-      // guarda cópia original para comparação de alterações
-      setOriginalDados(initialData);
+        const especialidadesResponse = await api.get(`api/especialidades`);
+        const especialidadesData = await especialidadesResponse.data;
+        console.log('especialidadesData', especialidadesData);
+        console.log('professorEspecialidadedata', data.especialidades);
+
+        const dadosCarregados = {
+          nome: data.nome || "",
+          cargo: data.cargo || data.role || "",
+          email: data.email || "",
+          dataNascimento: data.idade || "",
+          telefone: data.telefone || "",
+          receberNotificacao: data.notificacaoAtiva || false,
+        };
+        
+        if (data.especialidades) {
+          const idsEspecialidadesProfessor = new Set(
+            data.especialidades.map(esp => esp.id)
+          
+          );
+          setEspecialidadesSelecionadas(idsEspecialidadesProfessor);
+          setEspecialidadesOriginais(new Set(idsEspecialidadesProfessor));
+        }
+
+        setDadosProfessor(dadosCarregados);
+        setOriginalDados(dadosCarregados);
+        setEspecialidadesMap(especialidadesData);
+
+        console.log('dadosProfessor carregados com sucesso');
+      } catch (err) {
+        console.error(err);
+      }
     };
     fetchData();
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    const verificarMudancas = () => {
+      const dadosMudaram = JSON.stringify(dadosProfessor) !== JSON.stringify(originalDados);
+      
+      const especialidadesMudaram = 
+        especialidadesSelecionadas.size !== especialidadesOriginais.size ||
+        ![...especialidadesSelecionadas].every(id => especialidadesOriginais.has(id));
+      
+      if (dadosMudaram || especialidadesMudaram) {
+        setHasChanged(true);
+      } else {
+        setHasChanged(false);
+      }
+    };
+    verificarMudancas();
+  }, [dadosProfessor, originalDados, especialidadesSelecionadas, especialidadesOriginais]);
 
   const handleEditFotoClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
-  
-  useEffect(() => {
-    if (!originalDados) {
-      setHasChanges(false);
-      return;
-    }
-    try {
-      setHasChanges(JSON.stringify(dadosProfessor) !== JSON.stringify(originalDados));
-    } catch {
-      setHasChanges(false);
-    }
-  }, [dadosProfessor, originalDados]);
 
   const handleFileChange = (e) => {
     const file = e.target.files && e.target.files[0];
@@ -80,30 +95,78 @@ export const useProfileTeacherModel = () => {
     reader.readAsDataURL(file);
   };
 
-  const toggleEspecialidade = (especialidade) => {
-    setDadosProfessor((prev) => ({
-      ...prev,
-      especialidades: {
-        ...prev.especialidades,
-        [especialidade]: !prev.especialidades[especialidade],
-      },
-    }));
-  };
+  const cancelChanges = () => {
+    setDadosProfessor(originalDados);
+    setEspecialidadesSelecionadas(new Set(especialidadesOriginais));
+    setHasChanged(false);
+  }
 
-  const handleSalvar = () => {
-    console.log("Dados salvos:", dadosProfessor);
-    alert("Perfil salvo com sucesso!");
-    // após salvar, atualiza a cópia original para refletir que não há mais mudanças
-    setOriginalDados(dadosProfessor);
-  };
-
-  const handleCancelar = () => {
-    console.log("Edição cancelada.");
-    // restaurar os dados originais e resetar o estado de alterações
-    if (originalDados) {
-      setDadosProfessor(originalDados);
-      setHasChanges(false);
+  const saveChanges = async () => {
+    if (!hasChanged) {
+      console.log("Nenhuma alteração detectada");
+      return;
     }
+
+    try {
+      const professorDTO = {
+        nome: dadosProfessor.nome,
+        email: dadosProfessor.email,
+        idade: dadosProfessor.dataNascimento,
+        notificacaoAtiva: dadosProfessor.receberNotificacao,
+        especialidadeIds: Array.from(especialidadesSelecionadas),
+      };
+
+      const response = await api.patch(`api/professores/${user.id}`, professorDTO);
+      const data = response.data;
+      
+      console.log("✅ Dados atualizados com sucesso:", data);
+      console.log("Headers da resposta:", response.headers);
+
+      setOriginalDados(dadosProfessor);
+      setEspecialidadesOriginais(new Set(especialidadesSelecionadas));
+      setHasChanged(false);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Perfil atualizado!',
+        text: 'Seus dados foram atualizados com sucesso.',
+        confirmButtonText: 'OK',
+
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao atualizar perfil',
+        text: 'Ocorreu um erro ao atualizar seus dados. Por favor, tente novamente mais tarde.',
+        confirmButtonText: 'OK',
+      });
+      console.error("========== ERRO ==========");
+      console.error("❌ Erro ao atualizar dados:", error.message);
+      console.error("Status HTTP:", error.response?.status);
+      console.error("Mensagem do backend:", error.response?.data);
+      console.error("Token usado na requisição:", error.config?.headers?.Authorization?.substring(0, 50) + "...");
+    }
+  };
+
+  const toggleEspecialidade = (especialidadeId) => {
+    setEspecialidadesSelecionadas((prev) => {
+      const novoSet = new Set(prev);
+      
+      if (novoSet.has(especialidadeId)) {
+        novoSet.delete(especialidadeId);
+        console.log(`Especialidade ${especialidadeId} desmarcada`);
+      } else {
+        novoSet.add(especialidadeId);
+        console.log(`Especialidade ${especialidadeId} marcada`);
+      }
+      
+      console.log('Especialidades atuais:', Array.from(novoSet));
+      return novoSet;
+    });
+  };
+  
+  const isEspecialidadeSelecionada = (especialidadeId) => {
+    return especialidadesSelecionadas.has(especialidadeId);
   };
 
   return {
@@ -113,9 +176,11 @@ export const useProfileTeacherModel = () => {
     fileInputRef,
     handleEditFotoClick,
     handleFileChange,
+    hasChanged,
     toggleEspecialidade,
-    handleSalvar,
-    handleCancelar,
-    hasChanges,
+    isEspecialidadeSelecionada,
+    cancelChanges,
+    especialidadesMap,
+    saveChanges
   };
 };
