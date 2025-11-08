@@ -32,5 +32,3 @@ build/
 ### VS Code ###
 .vscode/
 
-#Credenciais do Banco de Dados
-src/main/resources/application.properties
