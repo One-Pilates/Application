@@ -8,10 +8,13 @@ const ProfileTeacherView = ({
   fileInputRef,
   handleEditFotoClick,
   handleFileChange,
-  toggleEspecialidade,
   setDadosProfessor,
   hasChanged,
   cancelChanges,
+  toggleEspecialidade,
+  isEspecialidadeSelecionada,
+  especialidadesMap,
+  saveChanges,
 }) => {
   return (
     <div className="profile-teacher">
@@ -124,7 +127,7 @@ const ProfileTeacherView = ({
 
         {/* SENHA / NOTIFICAÇÃO */}
         <div className="profile-teacher__row profile-teacher__row--align-end">
-          <div className="profile-teacher__field">
+          {/* <div className="profile-teacher__field">
             <label className="profile-teacher__label">Senha</label>
             <input
               type="text"
@@ -137,7 +140,7 @@ const ProfileTeacherView = ({
               }
               className="profile-teacher__input"
             />
-          </div>
+          </div> */}
 
           <div className="profile-teacher__notification">
               <span className="profile-teacher__notification-text">
@@ -164,14 +167,17 @@ const ProfileTeacherView = ({
         <div className="profile-teacher__especialidades">
           <label className="profile-teacher__label">Especialidades</label>
           <div className="profile-teacher__checkbox-container">
-            {Object.keys(dadosProfessor.especialidades).map((key) => (
-              <label key={key} className="profile-teacher__checkbox">
+            {especialidadesMap && especialidadesMap.map((especialidade) => (
+              <label
+                key={especialidade.id}
+                className="profile-teacher__checkbox"
+              >
                 <input
                   type="checkbox"
-                  checked={dadosProfessor.especialidades[key]}
-                  onChange={() => toggleEspecialidade(key)}
+                  checked={isEspecialidadeSelecionada(especialidade.id)}
+                  onChange={() => toggleEspecialidade(especialidade.id)}
                 />
-                <span>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                <span>{especialidade.nome}</span>
               </label>
             ))}
           </div>
@@ -187,6 +193,7 @@ const ProfileTeacherView = ({
             Cancelar
           </button>
           <button
+            onClick={saveChanges}
             disabled={!hasChanged}
             className="profile-teacher__btn profile-teacher__btn--save"
           >

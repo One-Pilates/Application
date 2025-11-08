@@ -39,8 +39,15 @@ export function AuthProvider({ children }) {
         urlNavigation = "/";
       }
 
-      Swal.fire({ icon: "success", title: "Login bem-sucedido" });
-      navigate(urlNavigation);
+      Swal.fire({ icon: "success", 
+        title: "Login bem-sucedido", 
+        showConfirmButton: false,
+        timer: 3000 
+      });
+
+      setTimeout(() => {
+        navigate(urlNavigation);
+      }, 3000);
       return true;
     } catch (error) {
       const status = error.response?.status;
