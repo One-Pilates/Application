@@ -10,8 +10,10 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Verificando usuário autenticado...");
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
+      console.log("Usuário autenticado encontrado.", JSON.parse(savedUser));
       setUser(JSON.parse(savedUser));
     }
   }, []);
@@ -34,10 +36,10 @@ export function AuthProvider({ children }) {
       let mensagem = "";
       if (data.funcionario.role === "PROFESSOR") {
         urlNavigation = "/professora/agenda";
-        mensagem = `Bem-vindo a sua agenda, ${user.nome}!`;
+        mensagem = `Bem-vindo a sua agenda, ${data.funcionario.nome}!`;
       } else if (data.funcionario.role === "SECRETARIA") {
         urlNavigation = "/secretaria/dashboard";
-        mensagem = `Bem-vindo ao painel da One Pilates, ${user.nome}!`;
+        mensagem = `Bem-vindo ao painel da One Pilates, ${data.funcionario.nome}!`;
       } else {
         urlNavigation = "/professora/agenda";
       }
