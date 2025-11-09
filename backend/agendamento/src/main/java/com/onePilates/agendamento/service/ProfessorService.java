@@ -60,6 +60,7 @@ public class ProfessorService {
         professor.setNotificacaoAtiva(dto.getNotificacaoAtiva() != null ? dto.getNotificacaoAtiva() : Boolean.FALSE);
         professor.setCargo(dto.getCargo());
         professor.setRole(roleToSet);
+        professor.setTelefone(dto.getTelefone());
 
         if (dto.getSenha() != null) {
             professor.setSenha(passwordEncoder.encode(dto.getSenha()));

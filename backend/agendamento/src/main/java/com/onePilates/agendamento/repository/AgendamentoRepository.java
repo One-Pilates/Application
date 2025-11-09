@@ -45,6 +45,6 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
             @Param("dias") Integer dias
     );
 
-
+    List<Agendamento> findByProfessorId(Long professorId);
 
 }

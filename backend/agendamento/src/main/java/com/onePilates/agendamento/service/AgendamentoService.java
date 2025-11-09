@@ -44,6 +44,34 @@ public class AgendamentoService {
         return agendamento;
     }
 
+    public List<AgendamentoResponseDTO> buscarAgendamentosPorIdProfessor(Long id) {
+        List<Agendamento> agendamentos = agendamentoRepository.findByProfessorId(id);
+
+        return agendamentos.stream().map(agendamento -> {
+            Set<AlunoAgendamentoResponseDTO> alunosDTO = agendamento.getAlunos().stream()
+                    .map(aluno -> new AlunoAgendamentoResponseDTO(
+                            aluno.getId(),
+                            aluno.getNome(),
+                            aluno.getObservacao(),
+                            aluno.getStatus()
+                    ))
+                    .collect(Collectors.toSet());
+
+            return new AgendamentoResponseDTO(
+                    agendamento.getId(),
+                    agendamento.getDataHora(),
+                    agendamento.getProfessor().getNome(),
+                    agendamento.getSala().getNome(),
+                    agendamento.getEspecialidade().getNome(),
+                    alunosDTO
+            );
+        }).collect(Collectors.toList());
+    }
+
+
+
+
+
     private Agendamento mapDtoToEntity(AgendamentoDTO dto) {
         if (dto.getAlunoIds().size() > 5) {
             throw new RuntimeException("Máximo de 5 alunos por agendamento.");

@@ -28,9 +28,12 @@ public class Aluno {
 
     private Boolean notificacaoAtiva;
 
+    private String observacao;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
+
 
 
     public Aluno() {
@@ -114,5 +117,13 @@ public class Aluno {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
     }
 }
