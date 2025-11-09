@@ -26,7 +26,8 @@ const DashboardView = ({ kpis, frequencia, pie }) => {
       </div>
 
       <div className="charts-grid">
-        <FrequenciaChart title="Frequência por Dia da Semana" series={frequencia} />
+        <FrequenciaChart title="Frequência por Dia da Semana" data={frequencia} />
+        
         <PieChart title="TOP 3 Aulas mais Realizadas" data={pie} />
       </div>
     </div>
