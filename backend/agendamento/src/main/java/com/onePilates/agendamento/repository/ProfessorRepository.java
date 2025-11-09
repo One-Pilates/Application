@@ -1,6 +1,7 @@
 package com.onePilates.agendamento.repository;
 
 import com.onePilates.agendamento.dto.AgendamentoPorDiaDTO;
+import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Professor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,5 +14,5 @@ import java.util.Optional;
 public interface ProfessorRepository extends JpaRepository<Professor,Long>  {
     Optional<Professor> findByEmail(String email);
 
-
+    List<Professor> findByEspecialidadesId(Long Id);
 }
