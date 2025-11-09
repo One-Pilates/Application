@@ -5,7 +5,11 @@ public class EspecialidadeResponseDTO {
     private String nome;
 
     public EspecialidadeResponseDTO() {}
-    public EspecialidadeResponseDTO(Long id, String nome) {}
+    public EspecialidadeResponseDTO(Long id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
 
     public Long getId() {
         return id;

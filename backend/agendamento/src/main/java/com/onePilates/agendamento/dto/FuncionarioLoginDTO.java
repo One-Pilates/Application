@@ -45,6 +45,23 @@ public class FuncionarioLoginDTO {
         this.telefone = telefone;
     }
 
+    public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf, LocalDate dataNascimento, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco, String telefone, List<EspecialidadeResponseDTO> especialidades) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.role = role;
+        this.cpf = cpf;
+        this.dataNascimento = dataNascimento;
+        this.status = status;
+        this.foto = foto;
+        this.observacoes = observacoes;
+        this.notificacaoAtiva = notificacaoAtiva;
+        this.cargo = cargo;
+        this.endereco = endereco;
+        this.telefone = telefone;
+        this.especialidades = especialidades;
+    }
+
     public String getTelefone() {
         return telefone;
     }

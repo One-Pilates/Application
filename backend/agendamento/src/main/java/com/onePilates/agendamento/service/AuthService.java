@@ -7,6 +7,7 @@ import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.LoginResponseDTO;
 import com.onePilates.agendamento.model.Funcionario;
 import com.onePilates.agendamento.model.Professor;
+import com.onePilates.agendamento.model.Role;
 import com.onePilates.agendamento.repository.AdministradorRepository;
 import com.onePilates.agendamento.repository.FuncionarioRepository;
 import com.onePilates.agendamento.repository.ProfessorRepository;
@@ -44,36 +45,59 @@ public class AuthService {
     public LoginResponseDTO authenticate(LoginDTO request) {
         Funcionario funcionario = buscarFuncionarioPorEmail(request.getEmail());
 
+        if (funcionario == null) {
+            throw new RuntimeException("Funcionário não encontrado");
+        }
+
         if (!passwordEncoder.matches(request.getSenha(), funcionario.getSenha())) {
             throw new RuntimeException("Credenciais inválidas");
         }
 
         String token = jwtUtil.generateToken(funcionario);
 
-        FuncionarioLoginDTO funcionarioDTO = new FuncionarioLoginDTO(
-                funcionario.getId(),
-                funcionario.getNome(),
-                funcionario.getEmail(),
-                funcionario.getRole(),
-                funcionario.getCpf(),
-                funcionario.getDataNascimento(),
-                funcionario.getStatus(),
-                funcionario.getFoto(),
-                funcionario.getObservacoes(),
-                funcionario.getNotificacaoAtiva(),
-                funcionario.getCargo(),
-                funcionario.getEndereco(),
-                funcionario.getTelefone()
-        );
+        FuncionarioLoginDTO funcionarioDTO;
 
+        if (funcionario.getRole() == Role.PROFESSOR && funcionario instanceof Professor professor) {
 
-        if (funcionario instanceof Professor professor) {
             List<EspecialidadeResponseDTO> especialidades = professor.getEspecialidades()
                     .stream()
                     .map(e -> new EspecialidadeResponseDTO(e.getId(), e.getNome()))
                     .collect(Collectors.toList());
 
-            funcionarioDTO.setEspecialidades(especialidades);
+            funcionarioDTO = new FuncionarioLoginDTO(
+                    funcionario.getId(),
+                    funcionario.getNome(),
+                    funcionario.getEmail(),
+                    funcionario.getRole(),
+                    funcionario.getCpf(),
+                    funcionario.getDataNascimento(),
+                    funcionario.getStatus(),
+                    funcionario.getFoto(),
+                    funcionario.getObservacoes(),
+                    funcionario.getNotificacaoAtiva(),
+                    funcionario.getCargo(),
+                    funcionario.getEndereco(),
+                    funcionario.getTelefone(),
+                    especialidades
+            );
+
+        } else {
+
+            funcionarioDTO = new FuncionarioLoginDTO(
+                    funcionario.getId(),
+                    funcionario.getNome(),
+                    funcionario.getEmail(),
+                    funcionario.getRole(),
+                    funcionario.getCpf(),
+                    funcionario.getDataNascimento(),
+                    funcionario.getStatus(),
+                    funcionario.getFoto(),
+                    funcionario.getObservacoes(),
+                    funcionario.getNotificacaoAtiva(),
+                    funcionario.getCargo(),
+                    funcionario.getEndereco(),
+                    funcionario.getTelefone()
+            );
         }
 
         return new LoginResponseDTO(token, funcionario.getRole().name(), funcionarioDTO);
