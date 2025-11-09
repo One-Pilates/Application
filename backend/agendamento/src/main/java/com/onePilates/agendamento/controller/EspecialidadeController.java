@@ -2,6 +2,7 @@ package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.EspecialidadeDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
+import com.onePilates.agendamento.dto.response.ProfessorPorEspecialidadeResponseDTO;
 import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.repository.ProfessorRepository;
 import com.onePilates.agendamento.service.EspecialidadeService;
@@ -11,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/especialidades")
@@ -57,8 +59,13 @@ public class EspecialidadeController {
     }
 
     @GetMapping("/teste/{id}")
-    public List<Professor> teste(@PathVariable Long id){
-        return professorRepository.findByEspecialidadesId(id);
+    public List<ProfessorPorEspecialidadeResponseDTO> teste(@PathVariable Long id) {
+        List<Professor> professores = professorRepository.findByEspecialidadesId(id);
+
+        return professores.stream()
+                .map(professor -> new ProfessorPorEspecialidadeResponseDTO(professor.getId(), professor.getNome()))
+                .collect(Collectors.toList());
     }
+
 
 }
