@@ -63,7 +63,7 @@ export const useProfileTeacherModel = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const verificarMudancas = () => {
@@ -112,7 +112,7 @@ export const useProfileTeacherModel = () => {
     try {
       
       const professorDTO = {
-        nome: dadosProfessor.nome,
+        nome: dadosProfessor.nome.trim(),
         email: dadosProfessor.email,
         idade: dadosProfessor.dataNascimento,
         telefone: dadosProfessor.telefone,
