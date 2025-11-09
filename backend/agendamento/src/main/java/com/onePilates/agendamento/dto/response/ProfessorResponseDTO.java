@@ -18,9 +18,18 @@ public class ProfessorResponseDTO {
     private String cargo;
     private String role;
     private EnderecoResponseDTO endereco;
+    private String telefone;
     private Set<EspecialidadeResponseDTO> especialidades;
 
     public ProfessorResponseDTO() {
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public Long getId() {

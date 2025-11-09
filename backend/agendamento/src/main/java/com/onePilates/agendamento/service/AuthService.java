@@ -1,9 +1,12 @@
 package com.onePilates.agendamento.service;
 
+import com.onePilates.agendamento.dto.EspecialidadeDTO;
 import com.onePilates.agendamento.dto.FuncionarioLoginDTO;
 import com.onePilates.agendamento.dto.LoginDTO;
+import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.LoginResponseDTO;
 import com.onePilates.agendamento.model.Funcionario;
+import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.repository.AdministradorRepository;
 import com.onePilates.agendamento.repository.FuncionarioRepository;
 import com.onePilates.agendamento.repository.ProfessorRepository;
@@ -11,6 +14,9 @@ import com.onePilates.agendamento.repository.SecretariaRepository;
 import com.onePilates.agendamento.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -60,9 +66,19 @@ public class AuthService {
                 funcionario.getTelefone()
         );
 
-        return new LoginResponseDTO(token,funcionario.getRole().name(), funcionarioDTO);
 
+        if (funcionario instanceof Professor professor) {
+            List<EspecialidadeResponseDTO> especialidades = professor.getEspecialidades()
+                    .stream()
+                    .map(e -> new EspecialidadeResponseDTO(e.getId(), e.getNome()))
+                    .collect(Collectors.toList());
+
+            funcionarioDTO.setEspecialidades(especialidades);
+        }
+
+        return new LoginResponseDTO(token, funcionario.getRole().name(), funcionarioDTO);
     }
+
 
 
     private Funcionario buscarFuncionarioPorEmail(String email) {

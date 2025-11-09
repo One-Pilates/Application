@@ -20,6 +20,7 @@ public class AdministradorResponseDTO {
     public AdministradorResponseDTO() {
     }
 
+
     public Long getId() {
         return id;
     }

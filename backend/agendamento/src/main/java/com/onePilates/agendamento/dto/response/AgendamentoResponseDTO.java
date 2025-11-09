@@ -11,6 +11,17 @@ public class AgendamentoResponseDTO {
     private String especialidade;
     private Set<AlunoAgendamentoResponseDTO> alunos;
 
+    public AgendamentoResponseDTO(Long id, LocalDateTime dataHora, String professor, String sala, String especialidade, Set<AlunoAgendamentoResponseDTO> alunos) {
+        this.id = id;
+        this.dataHora = dataHora;
+        this.professor = professor;
+        this.sala = sala;
+        this.especialidade = especialidade;
+        this.alunos = alunos;
+    }
+
+    public AgendamentoResponseDTO() {
+    }
 
     public Long getId() {
         return id;

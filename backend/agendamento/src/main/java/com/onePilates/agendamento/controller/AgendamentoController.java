@@ -49,4 +49,9 @@ public class AgendamentoController {
         agendamentoService.excluirAgendamento(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/professorId/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
+    public ResponseEntity<List<AgendamentoResponseDTO>> listarPorProfessorId(@PathVariable Long id) {
+       return  ResponseEntity.ok(agendamentoService.buscarAgendamentosPorIdProfessor(id));
+    }
 }

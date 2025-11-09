@@ -4,6 +4,9 @@ public class EspecialidadeResponseDTO {
     private Long id;
     private String nome;
 
+    public EspecialidadeResponseDTO() {}
+    public EspecialidadeResponseDTO(Long id, String nome) {}
+
     public Long getId() {
         return id;
     }

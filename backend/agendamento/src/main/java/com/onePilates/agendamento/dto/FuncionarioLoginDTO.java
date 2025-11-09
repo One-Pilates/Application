@@ -1,9 +1,13 @@
 package com.onePilates.agendamento.dto;
 
+import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.model.Endereco;
+import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Role;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 public class FuncionarioLoginDTO {
     private Long id;
@@ -19,6 +23,8 @@ public class FuncionarioLoginDTO {
     private String cargo;
     private Endereco endereco;
     private String telefone;
+    private List<EspecialidadeResponseDTO> especialidades;
+
 
     public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf,
                                LocalDate dataNascimento, Boolean status, String foto,
@@ -66,6 +72,8 @@ public class FuncionarioLoginDTO {
     public String getEmail() {
         return email;
     }
+
+
 
     public void setEmail(String email) {
         this.email = email;
@@ -141,5 +149,13 @@ public class FuncionarioLoginDTO {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public List<EspecialidadeResponseDTO> getEspecialidades() {
+        return especialidades;
+    }
+
+    public void setEspecialidades(List<EspecialidadeResponseDTO> especialidades) {
+        this.especialidades = especialidades;
     }
 }

@@ -12,6 +12,7 @@ public class ProfessorDTO {
     @NotBlank(message = "O campo nome não pode ser nulo nem vazio")
     private String nome;
 
+
     @Email(message = "Coloque um email válido")
     @NotBlank(message = "O campo email é obrigatório")
     private String email;
@@ -47,6 +48,8 @@ public class ProfessorDTO {
     private Role role;
 
     private EnderecoDTO endereco;
+
+    private String telefone;
 
     @NotEmpty(message = "É necessário informar ao menos uma especialidade")
     private Set<@NotNull(message = "ID de especialidade não pode ser nulo") Long> especialidadeIds;
@@ -158,5 +161,13 @@ public class ProfessorDTO {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 }
