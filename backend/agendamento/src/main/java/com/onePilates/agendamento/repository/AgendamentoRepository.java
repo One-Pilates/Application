@@ -47,4 +47,13 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
 
     List<Agendamento> findByProfessorId(Long professorId);
 
+//    Validação de agendamento
+    boolean existsByProfessorIdAndDataHora(Long professorId, LocalDateTime dataHora);
+
+    boolean existsBySalaIdAndDataHora(Long salaId, LocalDateTime dataHora);
+
+    @Query("SELECT a FROM Agendamento a JOIN a.alunos al WHERE al = :aluno AND a.dataHora = :dataHora")
+    List<Agendamento> findAgendamentosByAlunoAndDataHora(@Param("aluno") com.onePilates.agendamento.model.Aluno aluno,
+                                                         @Param("dataHora") LocalDateTime dataHora);
+
 }

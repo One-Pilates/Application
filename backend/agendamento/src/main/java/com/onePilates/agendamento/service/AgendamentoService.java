@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,13 +70,48 @@ public class AgendamentoService {
     }
 
 
+    private void validarAgendamento(AgendamentoDTO dto){
+        LocalDateTime dataHora = dto.getDataHora();
 
+        Sala sala = salaRepository.findById(dto.getSalaId())
+                .orElseThrow(() -> new RuntimeException("Sala não encontrada"));
+
+        Professor professor = professorRepository.findById(dto.getProfessorId())
+                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+
+        if (agendamentoRepository.existsBySalaIdAndDataHora(dto.getSalaId(), dataHora)) {
+            throw new RuntimeException("Sala indisponível para o horário agendado.");
+        }
+
+        if (agendamentoRepository.existsByProfessorIdAndDataHora(dto.getProfessorId(), dataHora)) {
+            throw new RuntimeException("Professor indisponível para o horário agendado.");
+        }
+
+        List<String> nomesIndisponiveis = new ArrayList<>();
+
+        for (Long alunoId : dto.getAlunoIds()) {
+            Aluno aluno = alunoRepository.findById(alunoId)
+                    .orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + alunoId));
+
+            List<Agendamento> agendamentos = agendamentoRepository.findAgendamentosByAlunoAndDataHora(aluno, dataHora);
+            if (!agendamentos.isEmpty()) {
+                nomesIndisponiveis.add(aluno.getNome());
+            }
+        }
+
+        if (!nomesIndisponiveis.isEmpty()) {
+            throw new RuntimeException("Alunos indisponíveis para o horário: " + String.join(", ", nomesIndisponiveis));
+        }
+
+    }
 
 
     private Agendamento mapDtoToEntity(AgendamentoDTO dto) {
         if (dto.getAlunoIds().size() > 5) {
             throw new RuntimeException("Máximo de 5 alunos por agendamento.");
         }
+
+        validarAgendamento(dto);
 
         Agendamento agendamento = new Agendamento();
         agendamento.setDataHora(dto.getDataHora());
