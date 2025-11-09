@@ -215,6 +215,18 @@
     border-top: 1px solid #f0f0f0;
 }
 
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 140px;
+}
+
+
 @media (max-width: 768px) {
     .modal-content {
         max-width: 100%;

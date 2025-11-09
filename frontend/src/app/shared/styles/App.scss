@@ -10,6 +10,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-color: #ff7043 #f5f5f5;
+  scrollbar-width: thin;
 }
 
 body {
@@ -65,4 +67,26 @@ body {
 .slide-in-right.animate {
   opacity: 1;
   transform: translateX(0);
+}
+
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ff7043;
+  border-radius: 10px;
+  border: 2px solid #f5f5f5;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #ff5722;
 }

@@ -1,239 +1,144 @@
 import { useState, useEffect, useRef } from 'react';
-
-const MOCK_AULAS = [
-  {
-    id: '1',
-    title: 'Aula Pilates',
-    start: '2025-10-27T10:00:00',
-    end: '2025-10-27T11:00:00',
-    tipo: 'Aula Pilates',
-    alunos: [
-      { nome: 'Gustavo', status: 'confirmado' },
-      { nome: 'Maria Silva', status: 'confirmado' },
-      { nome: 'João Santos', status: 'pendente' }
-    ],
-    andar: '1º Andar',
-    sala: 'Sala 1',
-    professor: 'Flávia',
-    servico: 'Pilates Mat',
-    observacoes: 'Trazer tapete próprio',
-    backgroundColor: '#FF6B35',
-    borderColor: '#FF6B35',
-    textColor: '#ffffff'
-  },
-  {
-    id: '2',
-    title: 'Fisioterapia',
-    start: '2025-10-27T11:00:00',
-    end: '2025-10-27T12:00:00',
-    tipo: 'Fisioterapia',
-    alunos: [
-      { nome: 'Pedro Oliveira', status: 'confirmado' }
-    ],
-    andar: '2º Andar',
-    sala: 'Sala 3',
-    professor: 'Flávia',
-    servico: 'Sessão Individual',
-    observacoes: 'Paciente com restrição lombar',
-    backgroundColor: '#4169E1',
-    borderColor: '#4169E1',
-    textColor: '#ffffff'
-  },
-  {
-    id: '3',
-    title: 'Aula Pilates',
-    start: '2025-10-28T12:00:00',
-    end: '2025-10-28T13:00:00',
-    tipo: 'Aula Pilates',
-    alunos: [
-      { nome: 'Gustavo', status: 'confirmado' },
-      { nome: 'Ana Costa', status: 'confirmado' },
-      { nome: 'Carlos Mendes', status: 'confirmado' }
-    ],
-    andar: '1º Andar',
-    sala: 'Sala 2',
-    professor: 'Flávia',
-    servico: 'Pilates Reformer',
-    observacoes: '',
-    backgroundColor: '#FF6B35',
-    borderColor: '#FF6B35',
-    textColor: '#ffffff'
-  },
-  {
-    id: '4',
-    title: 'RPG',
-    start: '2025-10-29T13:00:00',
-    end: '2025-10-29T14:00:00',
-    tipo: 'RPG',
-    alunos: [
-      { nome: 'Fernanda Lima', status: 'confirmado' },
-      { nome: 'Roberto Alves', status: 'confirmado' },
-      { nome: 'Juliana Rocha', status: 'confirmado' },
-      { nome: 'Paulo Dias', status: 'pendente' },
-      { nome: 'Mariana Castro', status: 'confirmado' }
-    ],
-    andar: '1º Andar',
-    sala: 'Sala 1',
-    professor: 'Flávia',
-    servico: 'Reeducação Postural Global',
-    observacoes: '',
-    backgroundColor: '#2ECC71',
-    borderColor: '#2ECC71',
-    textColor: '#ffffff'
-  },
-  {
-    id: '5',
-    title: 'Aula Pilates',
-    start: '2025-10-29T10:00:00',
-    end: '2025-10-29T11:00:00',
-    tipo: 'Aula Pilates',
-    alunos: [
-      { nome: 'Amanda Souza', status: 'confirmado' },
-      { nome: 'Marcos Pereira', status: 'confirmado' },
-      { nome: 'Patrícia Lima', status: 'cancelado' }
-    ],
-    andar: '1º Andar',
-    sala: 'Sala 1',
-    professor: 'Flávia',
-    servico: 'Pilates Mat',
-    observacoes: '',
-    backgroundColor: '#FF6B35',
-    borderColor: '#FF6B35',
-    textColor: '#ffffff'
-  },
-  {
-    id: '6',
-    title: 'Aula Pilates',
-    start: '2025-10-29T14:00:00',
-    end: '2025-10-29T15:00:00',
-    tipo: 'Aula Pilates',
-    alunos: [
-      { nome: 'Lucas Ferreira', status: 'confirmado' },
-      { nome: 'Beatriz Moura', status: 'confirmado' },
-      { nome: 'Rafael Gomes', status: 'confirmado' }
-    ],
-    andar: '1º Andar',
-    sala: 'Sala 1',
-    professor: 'Flávia',
-    servico: 'Pilates Reformer',
-    observacoes: '',
-    backgroundColor: '#FF6B35',
-    borderColor: '#FF6B35',
-    textColor: '#ffffff'
-  },
-  {
-    id: '7',
-    title: 'RPG',
-    start: '2025-10-30T16:00:00',
-    end: '2025-10-30T17:00:00',
-    tipo: 'RPG',
-    alunos: [
-      { nome: 'Gabriel Santos', status: 'confirmado' }
-    ],
-    andar: '2º Andar',
-    sala: 'Sala 3',
-    professor: 'Flávia',
-    servico: 'Reeducação Postural Global',
-    observacoes: '',
-    backgroundColor: '#2ECC71',
-    borderColor: '#2ECC71',
-    textColor: '#ffffff'
-  },
-  {
-    id: '8',
-    title: 'Aula Pilates',
-    start: '2025-10-31T10:00:00',
-    end: '2025-10-09T11:00:00',
-    tipo: 'Aula Pilates',
-    alunos: [
-      { nome: 'Camila Rodrigues', status: 'confirmado' },
-      { nome: 'Diego Martins', status: 'confirmado' },
-      { nome: 'Letícia Cardoso', status: 'confirmado' },
-      { nome: 'Bruno Tavares', status: 'pendente' }
-    ],
-    andar: '1º Andar',
-    sala: 'Sala 2',
-    professor: 'Flávia',
-    servico: 'Pilates Mat',
-    observacoes: '',
-    backgroundColor: '#FF6B35',
-    borderColor: '#FF6B35',
-    textColor: '#ffffff'
-  }
-];
+import api from '../../../../provider/api';
 
 export const useCalendarModel = () => {
-  const [selectedAula, setSelectedAula] = useState(null);
-  const [isAulaModalOpen, setIsAulaModalOpen] = useState(false);
+  const [selectedAgendamento, setSelectedAgendamento] = useState(null);
+  const [isAgendamentoModalOpen, setIsAgendamentoModalOpen] = useState(false);
   const [isAusenciaModalOpen, setIsAusenciaModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [agendamentos, setAgendamentos] = useState([]);
+
   const calendarRef = useRef(null);
   const calendarInstance = useRef(null);
 
-  useEffect(() => {
-    const loadFullCalendar = async () => {
-      try {
-        if (window.FullCalendar) {
-          initCalendar();
-          return;
+
+  const especialidadeCores = {
+    'Pilates': '#ff6600',             
+    'Fisioterapia': '#4CAF50',        
+    'Osteopatia': '#2196F3',          
+    'RPG': '#009688',                 
+    'Microfisioterapia': '#9C27B0',   
+    'Shiatsu': '#673AB7',             
+    'Drenagem Linfática': '#03A9F4',  
+    'Acupuntura': '#E91E63'           
+  };
+
+  const getColorForEspecialidade = (esp) => {
+    const backgroundColor = especialidadeCores[esp] || '#3788d8';
+    const textColor = ['#ff6600', '#4CAF50', '#2196F3', '#9C27B0', '#673AB7', '#E91E63', '#009688', '#03A9F4'].includes(backgroundColor)
+      ? '#fff'
+      : '#000';
+    return { backgroundColor, textColor };
+  };
+
+  async function fetchAgendamentos() {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const response = await api.get('/api/agendamentos');
+      if (!Array.isArray(response.data)) {
+        setAgendamentos([]);
+        return;
+      }
+
+      const agendamentosFiltrados = response.data.filter(
+        (aula) =>
+          aula.professor === user.nome || aula.professor?.id === user.id
+      );
+
+      setAgendamentos(agendamentosFiltrados);
+    } catch (error) {
+      console.error('Erro ao buscar agendamentos:', error);
+      setAgendamentos([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function calcularDuracao(dataHora) {
+    const inicio = new Date(dataHora);
+    const fim = new Date(inicio.getTime() + 60 * 60 * 1000);
+    return fim.toISOString();
+  }
+
+  function initCalendar() {
+    if (!calendarRef.current) return;
+    if (calendarInstance.current) calendarInstance.current.destroy();
+
+    const eventos = agendamentos.map((aula) => {
+      const { backgroundColor, textColor } = getColorForEspecialidade(aula.especialidade);
+      return {
+        id: String(aula.id),
+        title: `${aula.especialidade} - ${new Date(aula.dataHora).toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })}`,
+        start: aula.dataHora,
+        end: calcularDuracao(aula.dataHora),
+        backgroundColor,
+        borderColor: backgroundColor,
+        textColor,
+        extendedProps: aula
+      };
+    });
+
+    const calendar = new window.FullCalendar.Calendar(calendarRef.current, {
+      initialView: 'timeGridWeek',
+      locale: 'pt-br',
+      height: 'auto',
+      slotMinTime: '07:00:00',
+      slotMaxTime: '22:00:00',
+      allDaySlot: false,
+      expandRows: true,
+      slotDuration: '00:30:00',
+      headerToolbar: {
+        left: '',
+        center: 'title',
+        right: 'prev,next'
+      },
+      events: eventos,
+
+      eventClick: (info) => {
+        const agendamentoData = info.event.extendedProps;
+        if (agendamentoData) {
+          setSelectedAgendamento(agendamentoData);
+          setIsAgendamentoModalOpen(true);
         }
+      },
 
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css';
-        document.head.appendChild(link);
+      eventDidMount: (info) => {
+        info.el.style.cursor = 'pointer';
+      }
+    });
 
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js';
-        script.onload = () => setTimeout(initCalendar, 100);
-        script.onerror = () => setIsLoading(false);
-        document.body.appendChild(script);
-      } catch {
+    calendar.render();
+    calendarInstance.current = calendar;
+  }
+
+  useEffect(() => {
+    const loadCalendar = async () => {
+      try {
+        if (!window.FullCalendar) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css';
+          document.head.appendChild(link);
+
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js';
+          script.onload = async () => {
+            await fetchAgendamentos();
+          };
+          document.body.appendChild(script);
+        } else {
+          await fetchAgendamentos();
+        }
+      } catch (error) {
+        console.error('Erro ao carregar calendário:', error);
         setIsLoading(false);
       }
     };
 
-    const initCalendar = () => {
-      if (!calendarRef.current) return;
-      if (calendarInstance.current) calendarInstance.current.destroy();
-
-      const calendar = new window.FullCalendar.Calendar(calendarRef.current, {
-         initialView: 'timeGridWeek',
-headerToolbar: {
-  left: '',       // vazio (sem botões de view)
-  center: 'title',
-  right: 'prev,next' // setas permanecem no calendário
-},
-
-    buttonText: { 
-      month: 'Mês', 
-      week: 'Semana', 
-      day: 'Dia' 
-    },
-        locale: 'pt-br',
-        slotMinTime: '07:00:00',
-        slotMaxTime: '22:00:00',
-        allDaySlot: false,
-        height: 'auto',
-        slotDuration: '00:30:00',
-        expandRows: true,
-        events: MOCK_AULAS,
-        eventClick: (info) => {
-          const aulaData = MOCK_AULAS.find(a => a.id === info.event.id);
-          if (aulaData) {
-            setSelectedAula(aulaData);
-            setIsAulaModalOpen(true);
-          }
-        },
-        eventDidMount: (info) => info.el.style.cursor = 'pointer'
-      });
-
-      calendar.render();
-      calendarInstance.current = calendar;
-      setTimeout(() => setIsLoading(false), 300);
-    };
-
-    loadFullCalendar();
+    loadCalendar();
 
     return () => {
       if (calendarInstance.current) {
@@ -243,15 +148,21 @@ headerToolbar: {
     };
   }, []);
 
+  useEffect(() => {
+    if (window.FullCalendar && !isLoading) {
+      initCalendar();
+    }
+  }, [agendamentos, isLoading]);
+
   return {
-    selectedAula,
-    setSelectedAula,
-    isAulaModalOpen,
-    setIsAulaModalOpen,
+    selectedAgendamento,
+    setSelectedAgendamento,
+    isAgendamentoModalOpen,
+    setIsAgendamentoModalOpen,
     isAusenciaModalOpen,
     setIsAusenciaModalOpen,
     isLoading,
     calendarRef,
-    calendarInstance 
+    calendarInstance
   };
 };
