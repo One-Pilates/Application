@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect} from "react";
 import { useAuth } from "../../../../hooks/useAuth";
 import api from "../../../../provider/api"
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 export const useProfileTeacherModel = () => {
+  const { user, setUser } = useAuth();
   const [dadosProfessor, setDadosProfessor] = useState({
-    nome: "",
+    nome:  "",
     cargo: "",
     email: "",
     dataNascimento: "",
@@ -16,55 +18,52 @@ export const useProfileTeacherModel = () => {
     "https://i.pravatar.cc/150?img=45"
   );
   const fileInputRef = useRef(null);
-  const { user } = useAuth();
   const [originalDados, setOriginalDados] = useState(dadosProfessor);
   const [hasChanged, setHasChanged] = useState(false);
   const [especialidadesMap, setEspecialidadesMap] = useState([]);
   const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState(new Set());
+  const navigate = useNavigate();
   const [especialidadesOriginais, setEspecialidadesOriginais] = useState(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
       try {
-        const response = await api.get(`api/professores/${user.id}`);
-        const data = response.data;
-        console.log('data', data);
-
         const especialidadesResponse = await api.get(`api/especialidades`);
-        const especialidadesData = await especialidadesResponse.data;
-        console.log('especialidadesData', especialidadesData);
-        console.log('professorEspecialidadedata', data.especialidades);
+        const especialidadesData = especialidadesResponse.data;
 
-        const dadosCarregados = {
-          nome: data.nome || "",
-          cargo: data.cargo || data.role || "",
-          email: data.email || "",
-          dataNascimento: data.idade || "",
-          telefone: data.telefone || "",
-          receberNotificacao: data.notificacaoAtiva || false,
-        };
-        
-        if (data.especialidades) {
+        console.log('especialidadesData', especialidadesData);
+        console.log('professorEspecialidadedata', user.especialidades);
+
+        if (user.especialidades && Array.isArray(user.especialidades)) {
           const idsEspecialidadesProfessor = new Set(
-            data.especialidades.map(esp => esp.id)
-          
+            user.especialidades.map(esp => esp.id)
           );
           setEspecialidadesSelecionadas(idsEspecialidadesProfessor);
           setEspecialidadesOriginais(new Set(idsEspecialidadesProfessor));
         }
 
-        setDadosProfessor(dadosCarregados);
-        setOriginalDados(dadosCarregados);
         setEspecialidadesMap(especialidadesData);
+
+        const dadosAtuais = {
+          nome: user?.nome || "",
+          cargo: user?.cargo || user?.role || "PROFESSOR",
+          email: user?.email || "",
+          dataNascimento: user?.idade || user?.dataNascimento || "",
+          telefone: user?.telefone || "",
+          receberNotificacao: user?.notificacaoAtiva ?? user?.receberNotificacao ?? false,
+        };
+
+        setDadosProfessor(dadosAtuais);
+        setOriginalDados(dadosAtuais);
 
         console.log('dadosProfessor carregados com sucesso');
       } catch (err) {
-        console.error(err);
+        console.error('Erro ao carregar especialidades:', err);
       }
     };
     fetchData();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     const verificarMudancas = () => {
@@ -107,32 +106,53 @@ export const useProfileTeacherModel = () => {
       return;
     }
 
+    // Verifica se o email foi alterado
+    const emailAlterado = dadosProfessor.email !== originalDados.email;
+
     try {
+      
       const professorDTO = {
         nome: dadosProfessor.nome,
         email: dadosProfessor.email,
         idade: dadosProfessor.dataNascimento,
+        telefone: dadosProfessor.telefone,
         notificacaoAtiva: dadosProfessor.receberNotificacao,
         especialidadeIds: Array.from(especialidadesSelecionadas),
       };
+      console.log("Enviando dados para atualização:", professorDTO);
 
       const response = await api.patch(`api/professores/${user.id}`, professorDTO);
       const data = response.data;
       
       console.log("✅ Dados atualizados com sucesso:", data);
-      console.log("Headers da resposta:", response.headers);
 
       setOriginalDados(dadosProfessor);
       setEspecialidadesOriginais(new Set(especialidadesSelecionadas));
+      
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+      
       setHasChanged(false);
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Perfil atualizado!',
-        text: 'Seus dados foram atualizados com sucesso.',
-        confirmButtonText: 'OK',
-
-      });
+      if (emailAlterado) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Perfil atualizado!',
+          text: 'Seu email foi alterado. Por segurança, você precisa fazer login novamente.',
+          confirmButtonText: 'OK',
+        });
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+        navigate("/login");
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Perfil atualizado!',
+          text: 'Seus dados foram atualizados com sucesso.',
+          confirmButtonText: 'OK',
+        });
+      }
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -154,13 +174,9 @@ export const useProfileTeacherModel = () => {
       
       if (novoSet.has(especialidadeId)) {
         novoSet.delete(especialidadeId);
-        console.log(`Especialidade ${especialidadeId} desmarcada`);
       } else {
         novoSet.add(especialidadeId);
-        console.log(`Especialidade ${especialidadeId} marcada`);
       }
-      
-      console.log('Especialidades atuais:', Array.from(novoSet));
       return novoSet;
     });
   };
