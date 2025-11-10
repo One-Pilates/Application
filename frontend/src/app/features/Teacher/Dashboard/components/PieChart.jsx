@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 
 const PieChart = ({ title, data }) => {
     const chartOptions = {
-        chart: { type: 'pie', height: 300 },
+        chart: { type: 'pie', height: 400},
         title: { text: null },
         plotOptions: {
             pie: {
