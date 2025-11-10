@@ -1,8 +1,10 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.EspecialidadeDTO;
+import com.onePilates.agendamento.dto.SalaDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.ProfessorPorEspecialidadeResponseDTO;
+import com.onePilates.agendamento.dto.response.SalasPorEspecialidadeResponseDTO;
 import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.repository.ProfessorRepository;
 import com.onePilates.agendamento.service.EspecialidadeService;
@@ -62,6 +64,12 @@ public class EspecialidadeController {
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
     public ResponseEntity<List<ProfessorPorEspecialidadeResponseDTO>> BuscarProfessorEspecialidade(@PathVariable Long id) {
         return ResponseEntity.ok(especialidadeService.BuscarProfessor(id));
+    }
+
+    @GetMapping("/salas/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    public ResponseEntity<List<SalasPorEspecialidadeResponseDTO>> buscarSalasPorEspecialidade(@PathVariable Long id) {
+        return  ResponseEntity.ok(especialidadeService.buscarSalasPorEspecialidade(id));
     }
 
 }

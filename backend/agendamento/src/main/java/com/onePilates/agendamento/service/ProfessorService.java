@@ -116,6 +116,7 @@ public class ProfessorService {
         if (dto.getObservacoes() != null) existente.setObservacoes(dto.getObservacoes());
         if (dto.getNotificacaoAtiva() != null) existente.setNotificacaoAtiva(dto.getNotificacaoAtiva());
         if (dto.getCargo() != null) existente.setCargo(dto.getCargo());
+        if(dto.getTelefone() != null) existente.setTelefone(dto.getTelefone());
 
         if (dto.getSenha() != null) {
             existente.setSenha(passwordEncoder.encode(dto.getSenha()));
