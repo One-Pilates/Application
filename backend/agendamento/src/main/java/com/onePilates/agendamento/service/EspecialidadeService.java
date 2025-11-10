@@ -2,10 +2,14 @@ package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.EspecialidadeDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
+import com.onePilates.agendamento.dto.response.ProfessorPorEspecialidadeResponseDTO;
 import com.onePilates.agendamento.model.Especialidade;
+import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.repository.EspecialidadeRepository;
+import com.onePilates.agendamento.repository.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +19,10 @@ public class EspecialidadeService {
 
     @Autowired
     private EspecialidadeRepository especialidadeRepository;
+
+    @Autowired
+    private ProfessorRepository professorRepository;
+
 
     public Especialidade criarEspecialidade(EspecialidadeDTO dto) {
         Especialidade especialidade = new Especialidade();
@@ -54,4 +62,15 @@ public class EspecialidadeService {
         dto.setNome(especialidade.getNome());
         return dto;
     }
+
+    public List<ProfessorPorEspecialidadeResponseDTO> BuscarProfessor(Long id) {
+        List<Professor> professores = professorRepository.findByEspecialidadesId(id);
+
+        return professores.stream()
+                .map(professor -> new ProfessorPorEspecialidadeResponseDTO(professor.getId(), professor
+                        .getNome()))
+                .collect(Collectors.toList());
+    }
+
+
 }

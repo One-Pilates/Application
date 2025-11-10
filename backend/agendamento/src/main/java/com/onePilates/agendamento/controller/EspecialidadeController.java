@@ -2,6 +2,9 @@ package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.EspecialidadeDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
+import com.onePilates.agendamento.dto.response.ProfessorPorEspecialidadeResponseDTO;
+import com.onePilates.agendamento.model.Professor;
+import com.onePilates.agendamento.repository.ProfessorRepository;
 import com.onePilates.agendamento.service.EspecialidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/especialidades")
@@ -17,6 +21,9 @@ public class EspecialidadeController {
 
     @Autowired
     private EspecialidadeService especialidadeService;
+
+    @Autowired
+    private ProfessorRepository professorRepository;
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
@@ -50,4 +57,11 @@ public class EspecialidadeController {
         especialidadeService.excluirEspecialidade(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/professores/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    public ResponseEntity<List<ProfessorPorEspecialidadeResponseDTO>> BuscarProfessorEspecialidade(@PathVariable Long id) {
+        return ResponseEntity.ok(especialidadeService.BuscarProfessor(id));
+    }
+
 }
