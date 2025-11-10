@@ -58,7 +58,7 @@ public class EspecialidadeController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/professores")
+    @GetMapping("/professores/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
     public ResponseEntity<List<ProfessorPorEspecialidadeResponseDTO>> BuscarProfessorEspecialidade(@PathVariable Long id) {
         return ResponseEntity.ok(especialidadeService.BuscarProfessor(id));
