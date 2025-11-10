@@ -48,4 +48,6 @@ public class SalaController {
         salaService.excluirSala(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }
