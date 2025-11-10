@@ -67,12 +67,14 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
                     {formatTime(agendamento.dataHora)}
                   </span>
                 </div>
-                {agendamento.observacoes && (
-                  <div className="info-item">
-                    <span className="info-label">Observações:</span>
-                    <span className="info-value">{agendamento.observacoes}</span>
-                  </div>
-                )}
+                <div className="info-item">
+                  <span className="info-label">Observações:</span>
+                  <span className="info-value">
+                    {agendamento.observacoes && agendamento.observacoes.trim() !== ''
+                      ? agendamento.observacoes
+                      : 'Esse aula não possui observações.'}
+                  </span>
+                </div>
               </div>
             </div>
           )}

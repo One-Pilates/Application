@@ -34,18 +34,8 @@ export const useCalendarModel = () => {
   async function fetchAgendamentos() {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      const response = await api.get('/api/agendamentos');
-      if (!Array.isArray(response.data)) {
-        setAgendamentos([]);
-        return;
-      }
-
-      const agendamentosFiltrados = response.data.filter(
-        (aula) =>
-          aula.professor === user.nome || aula.professor?.id === user.id
-      );
-
-      setAgendamentos(agendamentosFiltrados);
+      const response = await api.get(`/api/agendamentos/professorId/${user.id}`);
+      setAgendamentos(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Erro ao buscar agendamentos:', error);
       setAgendamentos([]);
