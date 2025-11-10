@@ -58,14 +58,10 @@ public class EspecialidadeController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/teste/{id}")
-    public List<ProfessorPorEspecialidadeResponseDTO> teste(@PathVariable Long id) {
-        List<Professor> professores = professorRepository.findByEspecialidadesId(id);
-
-        return professores.stream()
-                .map(professor -> new ProfessorPorEspecialidadeResponseDTO(professor.getId(), professor.getNome()))
-                .collect(Collectors.toList());
+    @GetMapping("/professores")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    public ResponseEntity<List<ProfessorPorEspecialidadeResponseDTO>> BuscarProfessorEspecialidade(@PathVariable Long id) {
+        return ResponseEntity.ok(especialidadeService.BuscarProfessor(id));
     }
-
 
 }
