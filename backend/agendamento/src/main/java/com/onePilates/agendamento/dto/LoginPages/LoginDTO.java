@@ -1,4 +1,4 @@
-package com.onePilates.agendamento.dto;
+package com.onePilates.agendamento.dto.LoginPages;
 
 public class LoginDTO {
     private String email;
