@@ -1,10 +1,13 @@
 import { useState, useRef } from "react";
 import "./CodigoVerificacao.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function CodigoVerificacao() {
   const [codigo, setCodigo] = useState(["", "", "", "", ""]);
   const inputsRef = useRef([]);
+  const navigate = useNavigate();
 
   const handleChange = (index, value) => {
     if (!/^[A-Za-z0-9]?$/.test(value)) return;
@@ -24,18 +27,61 @@ export default function CodigoVerificacao() {
     }
   };
 
-  const confirmarCodigo = () => {
+  const confirmarCodigo = async () => {
     const codigoFinal = codigo.join("");
-    console.log("Código digitado:", codigoFinal);
-    alert("Código digitado: " + codigoFinal);
+    const email = sessionStorage.getItem("email"); 
+
+    if (!codigoFinal || codigoFinal.length < 5) {
+      Swal.fire({
+        icon: "error",
+        title: "Código inválido",
+        text: "Por favor, insira o código completo.",
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: "Validando...",
+      text: "Estamos verificando seu código",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/auth/validarCodigo`,
+        { email, 
+          codigo: codigoFinal 
+        }
+      );
+
+      console.log("Resposta do servidor:", response.data);
+
+      Swal.fire({
+        icon: "success",
+        title: "Código válido!",
+        text: "Agora você pode redefinir sua senha.",
+      });
+
+      navigate("/login/nova-senha");
+    } catch (error) {
+      console.error("Erro ao validar código:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro na validação",
+        text: "Código incorreto ou expirado. Tente novamente.",
+      });
+    }
   };
 
   return (
     <div className="login">
       <div className="login__container">
-        
         <Link to="/Login" className="botao-voltar">
-         <i class="bi bi-arrow-left-circle-fill"></i>Voltar
+          <i className="bi bi-arrow-left-circle-fill"></i>Voltar
         </Link>
 
         <div className="login__header">
