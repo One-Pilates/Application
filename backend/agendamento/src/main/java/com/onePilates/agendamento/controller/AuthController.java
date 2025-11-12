@@ -1,16 +1,14 @@
 package com.onePilates.agendamento.controller;
 
-import com.onePilates.agendamento.dto.LoginDTO;
+import com.onePilates.agendamento.dto.LoginPages.CriarCodigoValidacaoDTO;
+import com.onePilates.agendamento.dto.LoginPages.NovaSenhaDTO;
+import com.onePilates.agendamento.dto.LoginPages.ValidarCodigoVerificacaoDTO;
+import com.onePilates.agendamento.dto.LoginPages.LoginDTO;
 import com.onePilates.agendamento.dto.response.LoginResponseDTO;
-import com.onePilates.agendamento.dto.ProfessorDTO;
-import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
-import com.onePilates.agendamento.model.Role;
+import com.onePilates.agendamento.dto.response.NovaSenhaResponseDTO;
 import com.onePilates.agendamento.service.AuthService;
-import com.onePilates.agendamento.service.ProfessorService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +26,21 @@ public class AuthController {
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginDTO request) {
         LoginResponseDTO response = authService.authenticate(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/criarCodigoVerificacao")
+    public ResponseEntity<String> validacaoECriacaoDoCodigoDeVerificacao(@Valid @RequestBody CriarCodigoValidacaoDTO dto) {
+        return ResponseEntity.ok(authService.criarCodigoVerificacao(dto.getEmail()));
+    }
+
+    @PostMapping("/validarCodigo")
+    public ResponseEntity<Boolean> validarCodigo(@Valid @RequestBody ValidarCodigoVerificacaoDTO dto) {
+        return ResponseEntity.ok(authService.validarCodigoVerificacao(dto.getEmail(), dto.getCodigo()));
+    }
+
+    @PostMapping("/alterarSenha")
+    public ResponseEntity<NovaSenhaResponseDTO> trocarSenha(@Valid @RequestBody NovaSenhaDTO dto){
+        return ResponseEntity.ok(authService.novaSenha(dto.getSenha(),dto.getEmail()));
     }
 
 

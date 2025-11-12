@@ -4,6 +4,7 @@ package com.onePilates.agendamento.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -37,6 +38,8 @@ public abstract class Funcionario {
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
     private String telefone;
+    private String codigoVerificacao;
+    private LocalDateTime dataUltimaCriacaoCodigo;
 
     public Funcionario() {
     }
@@ -56,6 +59,25 @@ public abstract class Funcionario {
         this.cargo = cargo;
         this.endereco = endereco;
         this.telefone = telefone;
+    }
+
+    public Funcionario(Long id, String nome, String email, String senha, Role role, String cpf, LocalDate dataNascimento, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco, String telefone, String codigoVerificacao, LocalDateTime dataUltimaCriacaoCodigo) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.role = role;
+        this.cpf = cpf;
+        this.dataNascimento = dataNascimento;
+        this.status = status;
+        this.foto = foto;
+        this.observacoes = observacoes;
+        this.notificacaoAtiva = notificacaoAtiva;
+        this.cargo = cargo;
+        this.endereco = endereco;
+        this.telefone = telefone;
+        this.codigoVerificacao = codigoVerificacao;
+        this.dataUltimaCriacaoCodigo = dataUltimaCriacaoCodigo;
     }
 
     public Long getId() {
@@ -124,6 +146,22 @@ public abstract class Funcionario {
 
     public void setFoto(String foto) {
         this.foto = foto;
+    }
+
+    public String getCodigoVerificacao() {
+        return codigoVerificacao;
+    }
+
+    public void setCodigoVerificacao(String codigoVerificacao) {
+        this.codigoVerificacao = codigoVerificacao;
+    }
+
+    public LocalDateTime getDataUltimaCriacaoCodigo() {
+        return dataUltimaCriacaoCodigo;
+    }
+
+    public void setDataUltimaCriacaoCodigo(LocalDateTime dataUltimaCriacaoCodigo) {
+        this.dataUltimaCriacaoCodigo = dataUltimaCriacaoCodigo;
     }
 
     public String getObservacoes() {

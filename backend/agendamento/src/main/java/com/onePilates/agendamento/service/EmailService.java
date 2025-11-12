@@ -137,7 +137,7 @@ public class EmailService {
                                 </table>
                             </body>
                             </html>
-                            """
+                    """
                     .formatted(nomeProfessor, dataHoraFormatada, listaAlunosHtml);
 
             helper.setText(corpoHtml, true);
@@ -151,4 +151,77 @@ public class EmailService {
         }
     }
 
+    public String enviarCodigoPorEmail(String nomeFuncionario, String codigo, String email) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(remetente);
+            helper.setTo(email);
+            helper.setSubject("Bem-vindo à OnePilates - Seu Código de Acesso");
+
+            String corpoHtml = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email OnePilates - Redefinição de Senha</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+    </head>
+    <body style="margin:0; padding:0; font-family:'Poppins', Arial, Helvetica, sans-serif;">
+        <table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="background-color:#e5e5e5;">
+            <tr>
+                <td align="center" style="padding:40px 20px;">
+                    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; border-radius:10px;">
+                        <tr>
+                            <td align="center" style="padding:40px;">
+                                <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block; max-width:160px; height:auto; border:0;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="height:4px; background-color:#FF6600;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:40px;">
+                                <h1 style="font-size:22px; font-weight:600; color:#1a1a1a;">Redefinição de senha</h1>
+                                <p style="font-size:15px; color:#333;">Olá <strong>%s</strong>,</p>
+                                <p style="font-size:15px; color:#333;">
+                                    Recebemos uma solicitação para redefinir sua senha de acesso à <strong>OnePilates</strong>. <br>
+                                    Utilize o código abaixo para prosseguir com a alteração:
+                                </p>
+                                <div style="margin:30px auto; display:inline-block; background-color:#FF6600; color:#ffffff; padding:16px 36px; border-radius:8px; font-size:24px; font-weight:600; letter-spacing:3px;">
+                                    %s
+                                </div>
+                                <p style="font-size:14px; color:#666; margin-top:20px;">
+                                    Este código é válido por 10 minutos. Caso você não tenha solicitado a redefinição, por favor ignore este e-mail.
+                                </p>
+                                <p style="margin-top:30px; font-size:14px; color:#666;">Atenciosamente,<br><strong style="color:#FF6600;">Equipe OnePilates</strong></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="background-color:#f9f9f9; text-align:center; padding:16px; font-size:12px; color:#999;">
+                                Este é um e-mail automático. © 2025 OnePilates. Todos os direitos reservados.
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """.formatted(nomeFuncionario, codigo);
+
+
+            helper.setText(corpoHtml, true);
+            mailSender.send(message);
+
+            System.out.println("Email de boas-vindas enviado com sucesso para " + email);
+            return "Email de boas-vindas enviado com sucesso!";
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return "Erro ao enviar e-mail de boas-vindas: " + e.getMessage();
+        }
+    }
 }
+
