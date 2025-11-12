@@ -29,6 +29,13 @@ export default function SidebarTeacher({ navAberta}) {
 
         <nav className="mt-6">
           <ItemSidebar
+            Icon={FaCalendarAlt}
+            texto="Agenda"
+            navAberta={navAberta}
+            ativo={isActive("/professora/agenda")}
+            onClick={() => navigate("/professora/agenda")}
+          />
+          <ItemSidebar
             Icon={FaChartBar}
             texto="Dashboard"
             navAberta={navAberta}
@@ -41,13 +48,6 @@ export default function SidebarTeacher({ navAberta}) {
             navAberta={navAberta}
             ativo={isActive("/professora/perfil")}
             onClick={() => navigate("/professora/perfil")}
-          />
-          <ItemSidebar
-            Icon={FaCalendarAlt}
-            texto="Agenda"
-            navAberta={navAberta}
-            ativo={isActive("/professora/agenda")}
-            onClick={() => navigate("/professora/agenda")}
           />
         </nav>
       </div>
@@ -65,13 +65,11 @@ export default function SidebarTeacher({ navAberta}) {
   );
 }
 
-
-
-
-
+// Secretary Sidebar
 
 export function SidebarSecretary({ navAberta }) {
   const navigate = useNavigate();
+  const {logout} = useAuth();
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -131,7 +129,7 @@ export function SidebarSecretary({ navAberta }) {
 
       <div className="mb-6">
         <div
-          onClick={() => navigate("/login")}
+          onClick={logout}
           className="flex items-center gap-4 px-4 py-3 cursor-pointer transition rounded-full mx-2 my-2 hover:bg-orange-600"
         >
           <FaSignOutAlt size={22} />

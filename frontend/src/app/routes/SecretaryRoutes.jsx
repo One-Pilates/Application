@@ -1,7 +1,7 @@
 import { Navigate, Routes, Route } from 'react-router-dom';
 import Secretary from '../features/Secretary/Secretary';
 import Dashboard from '../features/Secretary/Dashboard';
-import Profile from '../features/Secretary/Profile';
+import Profile from '../features/Teacher/Profile';
 import Calendar from '../features/Secretary/Calendar';
 import RegisterTeacher from '../features/Secretary/RegisterTeacher';
 import RegisterStudent from '../features/Secretary/RegisterStudent';

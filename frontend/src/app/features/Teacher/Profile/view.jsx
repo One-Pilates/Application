@@ -3,12 +3,12 @@ import { FaPen } from "react-icons/fa";
 import "./style.scss";
 
 const ProfileTeacherView = ({
-  dadosProfessor,
+  dadosUser,
   profileImage,
   fileInputRef,
   handleEditFotoClick,
   handleFileChange,
-  setDadosProfessor,
+  setDadosUser,
   hasChanged,
   cancelChanges,
   toggleEspecialidade,
@@ -17,23 +17,23 @@ const ProfileTeacherView = ({
   saveChanges,
 }) => {
   return (
-    <div className="profile-teacher">
+    <div className="profile-user">
       {/* HEADER */}
-      <div className="profile-teacher__header">
-        <div className="profile-teacher__foto-container">
+      <div className="profile-user__header">
+        <div className="profile-user__foto-container">
           {profileImage ? (
             <img
               src={profileImage}
-              alt={dadosProfessor.nome}
-              className="profile-teacher__foto"
+              alt={dadosUser.nome}
+              className="profile-user__foto"
             />
           ) : (
-            <div className="profile-teacher__foto placeholder" />
+            <div className="profile-user__foto placeholder" />
           )}
 
           <button
             type="button"
-            className="profile-teacher__foto-edit"
+            className="profile-user__foto-edit"
             onClick={handleEditFotoClick}
             aria-label="Editar foto"
           >
@@ -48,129 +48,130 @@ const ProfileTeacherView = ({
           />
         </div>
 
-        <div className="profile-teacher__info">
-          <h2 className="profile-teacher__nome">{dadosProfessor.nome}</h2>
-          <p className="profile-teacher__cargo">
-            {dadosProfessor.cargo || "Professor"}
+        <div className="profile-user__info">
+          <h2 className="profile-user__nome">{dadosUser.nome}</h2>
+          <p className="profile-user__cargo">
+            {dadosUser.cargo || "Professor"}
           </p>
         </div>
       </div>
       <hr className="mt-2 mb-2" />
       {/* FORM */}
-      <div className="profile-teacher__form">
+      <div className="profile-user__form">
         {/* NOME / EMAIL */}
-        <div className="profile-teacher__row">
-          <div className="profile-teacher__field">
-            <label className="profile-teacher__label">Nome Completo</label>
-            <div className="profile-teacher__input-group">
+        <div className="profile-user__row">
+          <div className="profile-user__field">
+            <label className="profile-user__label">Nome Completo</label>
+            <div className="profile-user__input-group">
               <input
                 type="text"
-                value={dadosProfessor.nome}
+                value={dadosUser.nome}
                 onChange={(e) =>
-                  setDadosProfessor({ ...dadosProfessor, nome: e.target.value })
+                  setDadosUser({ ...dadosUser, nome: e.target.value })
                 }
-                className="profile-teacher__input"
+                className="profile-user__input"
               />
             </div>
           </div>
 
-          <div className="profile-teacher__field">
-            <label className="profile-teacher__label">Email</label>
-            <div className="profile-teacher__input-group">
+          <div className="profile-user__field">
+            <label className="profile-user__label">Email</label>
+            <div className="profile-user__input-group">
               <input
                 type="email"
-                value={dadosProfessor.email}
+                value={dadosUser.email}
                 onChange={(e) =>
-                  setDadosProfessor({
-                    ...dadosProfessor,
+                  setDadosUser({
+                    ...dadosUser,
                     email: e.target.value,
                   })
                 }
-                className="profile-teacher__input"
+                className="profile-user__input"
               />
             </div>
           </div>
         </div>
 
         {/* DATA / TELEFONE */}
-        <div className="profile-teacher__row">
-          <div className="profile-teacher__field">
-            <label className="profile-teacher__label">Data de nascimento</label>
+        <div className="profile-user__row">
+          <div className="profile-user__field">
+            <label className="profile-user__label">Data de nascimento</label>
             <input
               type="date"
-              value={dadosProfessor.dataNascimento}
+              value={dadosUser.dataNascimento}
               onChange={(e) =>
-                setDadosProfessor({
-                  ...dadosProfessor,
+                setDadosUser({
+                  ...dadosUser,
                   dataNascimento: e.target.value,
                 })
               }
-              className="profile-teacher__input"
+              className="profile-user__input"
             />
           </div>
 
-          <div className="profile-teacher__field">
-            <label className="profile-teacher__label">Telefone</label>
+          <div className="profile-user__field">
+            <label className="profile-user__label">Telefone</label>
             <input
               type="tel"
-              value={dadosProfessor.telefone}
+              value={dadosUser.telefone}
               onChange={(e) =>
-                setDadosProfessor({
-                  ...dadosProfessor,
+                setDadosUser({
+                  ...dadosUser,
                   telefone: e.target.value,
                 })
               }
-              className="profile-teacher__input"
+              className="profile-user__input"
             />
           </div>
         </div>
 
         {/* SENHA / NOTIFICAÇÃO */}
-        <div className="profile-teacher__row profile-teacher__row--align-end">
-          {/* <div className="profile-teacher__field">
-            <label className="profile-teacher__label">Senha</label>
+        <div className="profile-user__row profile-user__row--align-end">
+          {/* <div className="profile-user__field">
+            <label className="profile-user__label">Senha</label>
             <input
               type="text"
-              value={dadosProfessor.senha}
+              value={dadosUser.senha}
               onChange={(e) =>
-                setDadosProfessor({
-                  ...dadosProfessor,
+                setDadosUser({
+                  ...dadosUser,
                   senha: e.target.value,
                 })
               }
-              className="profile-teacher__input"
+              className="profile-user__input"
             />
           </div> */}
 
-          <div className="profile-teacher__notification">
-              <span className="profile-teacher__notification-text">
+          <div className="profile-user__notification">
+              <span className="profile-user__notification-text">
                 Deseja receber notificação?
               </span>
-              <label className="profile-teacher__switch">
+              <label className="profile-user__switch">
                 <input
                   type="checkbox"
-                  checked={Boolean(dadosProfessor.receberNotificacao)}
+                  checked={Boolean(dadosUser.receberNotificacao)}
                   onChange={(e) =>
-                    setDadosProfessor({
-                      ...dadosProfessor,
+                    setDadosUser({
+                      ...dadosUser,
                       receberNotificacao: e.target.checked,
                     })
                   }
                   aria-label="Receber notificações"
                 />
-                <span className="profile-teacher__switch-slider" />
+                <span className="profile-user__switch-slider" />
               </label>
             </div>
         </div>
 
         {/* ESPECIALIDADES */}
-        <div className="profile-teacher__especialidades">
-          <label className="profile-teacher__label">Especialidades</label>
-          <div className="profile-teacher__checkbox-container">
+        {dadosUser.role === 'PROFESSOR' && (
+        <div className="profile-user__especialidades">
+          <label className="profile-user__label">Especialidades</label>
+          <div className="profile-user__checkbox-container">
             {especialidadesMap && especialidadesMap.map((especialidade) => (
               <label
                 key={especialidade.id}
-                className="profile-teacher__checkbox"
+                className="profile-user__checkbox"
               >
                 <input
                   type="checkbox"
@@ -182,20 +183,22 @@ const ProfileTeacherView = ({
             ))}
           </div>
         </div>
+        )}
+
 
         {/* BOTÕES */}
-        <div className="profile-teacher__buttons">
+        <div className="profile-user__buttons">
           <button
             onClick={cancelChanges}
             hidden={!hasChanged}
-            className="profile-teacher__btn profile-teacher__btn--cancel"
+            className="profile-user__btn profile-user__btn--cancel"
           >
             Cancelar
           </button>
           <button
             onClick={saveChanges}
             disabled={!hasChanged}
-            className="profile-teacher__btn profile-teacher__btn--save"
+            className="profile-user__btn profile-user__btn--save"
           >
             Salvar
           </button>
