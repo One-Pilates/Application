@@ -1,12 +1,14 @@
 import { useState } from "react";
 import "./Login.scss";
 import "./CodigoVerificacao.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 export default function NovaSenha() {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,12 +22,45 @@ export default function NovaSenha() {
       return;
     }
 
+    const email = sessionStorage.getItem("email");
+
     Swal.fire({
-      icon: "success",
-      title: "Senha cadastrada",
-      text: "Sua nova senha foi cadastrada com sucesso",
+      title: "Redefinindo...",
+      text: "Estamos atualizando sua senha",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
     });
 
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/auth/alterarSenha`,
+        {
+          senha: password1,
+          email: email,
+        }
+      );
+
+      console.log("Resposta do servidor:", response.data);
+
+      Swal.fire({
+        icon: "success",
+        title: "Senha cadastrada",
+        text: "Sua nova senha foi cadastrada com sucesso",
+      });
+
+      navigate("/login");
+    } catch (error) {
+      console.error("Erro ao redefinir senha:", error);
+      console.log("Detalhes do erro:", error.response?.data);
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao redefinir",
+        text: "Não foi possível atualizar sua senha. Tente novamente.",
+      });
+    }
   };
 
   return (
@@ -35,15 +70,17 @@ export default function NovaSenha() {
         role="region"
         aria-label="Formulário de redefinição de senha"
       >
-         <Link to="/Login" className="botao-voltar">
-         <i class="bi bi-arrow-left-circle-fill"></i>Voltar
+        <Link to="/Login" className="botao-voltar">
+          <i className="bi bi-arrow-left-circle-fill"></i>Voltar
         </Link>
-        
+
         <div className="login__header">
           <h1 id="login-title" className="login__title">
             Criar nova senha
           </h1>
-          <p className="login__subtitle">Defina uma nova senha para sua conta</p>
+          <p className="login__subtitle">
+            Defina uma nova senha para sua conta
+          </p>
         </div>
 
         <form
@@ -84,8 +121,6 @@ export default function NovaSenha() {
           <button type="submit" className="login__button">
             Redefinir Senha
           </button>
-
-        
         </form>
       </div>
 
