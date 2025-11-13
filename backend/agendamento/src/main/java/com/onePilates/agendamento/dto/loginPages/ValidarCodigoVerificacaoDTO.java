@@ -1,4 +1,4 @@
-package com.onePilates.agendamento.dto.LoginPages;
+package com.onePilates.agendamento.dto.loginPages;
 
 import jakarta.validation.constraints.NotBlank;
 

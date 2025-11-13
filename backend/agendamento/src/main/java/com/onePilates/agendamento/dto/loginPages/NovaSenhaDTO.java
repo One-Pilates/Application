@@ -1,4 +1,4 @@
-package com.onePilates.agendamento.dto.LoginPages;
+package com.onePilates.agendamento.dto.loginPages;
 
 public class NovaSenhaDTO {
     private String senha;

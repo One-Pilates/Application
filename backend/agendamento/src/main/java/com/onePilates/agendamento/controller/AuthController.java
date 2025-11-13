@@ -1,9 +1,9 @@
 package com.onePilates.agendamento.controller;
 
-import com.onePilates.agendamento.dto.LoginPages.CriarCodigoValidacaoDTO;
-import com.onePilates.agendamento.dto.LoginPages.NovaSenhaDTO;
-import com.onePilates.agendamento.dto.LoginPages.ValidarCodigoVerificacaoDTO;
-import com.onePilates.agendamento.dto.LoginPages.LoginDTO;
+import com.onePilates.agendamento.dto.loginPages.CriarCodigoValidacaoDTO;
+import com.onePilates.agendamento.dto.loginPages.NovaSenhaDTO;
+import com.onePilates.agendamento.dto.loginPages.ValidarCodigoVerificacaoDTO;
+import com.onePilates.agendamento.dto.loginPages.LoginDTO;
 import com.onePilates.agendamento.dto.response.LoginResponseDTO;
 import com.onePilates.agendamento.dto.response.NovaSenhaResponseDTO;
 import com.onePilates.agendamento.service.AuthService;

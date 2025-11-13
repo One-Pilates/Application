@@ -1,7 +1,7 @@
 package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.FuncionarioLoginDTO;
-import com.onePilates.agendamento.dto.LoginPages.LoginDTO;
+import com.onePilates.agendamento.dto.loginPages.LoginDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.LoginResponseDTO;
 import com.onePilates.agendamento.dto.response.NovaSenhaResponseDTO;
