@@ -59,6 +59,9 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getSenha(), funcionario.getSenha())) {
             throw new RuntimeException("Credenciais inválidas");
         }
+        if(funcionario.getStatus() == null|| funcionario.getStatus() == false){
+            throw new RuntimeException("Perfil inativo, contate o administrador do sistema para reativação");
+        }
 
         String token = jwtUtil.generateToken(funcionario);
 
