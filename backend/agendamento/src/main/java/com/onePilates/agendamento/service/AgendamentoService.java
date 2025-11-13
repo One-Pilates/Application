@@ -40,7 +40,13 @@ public class AgendamentoService {
         Agendamento agendamento = mapDtoToEntity(dto);
         agendamento = agendamentoRepository.save(agendamento);
 
-        notifier.notificarTodos(agendamento); // 🔔 Observer
+        Professor professor = professorRepository.findById(dto.getProfessorId()).get();
+
+        if(professor.getNotificacaoAtiva() == null|| professor.getNotificacaoAtiva() == false){
+            return agendamento;
+
+        }
+        notifier.notificarTodos(agendamento);
 
         return agendamento;
     }
