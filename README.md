@@ -3,10 +3,10 @@
 
 
 ## 📌 Introdução  
-O **One Pilates** é um projeto voltado para gerenciamento de estúdio de Pilates da empresa [One Pilates](https://onepilates.com.br/site/).  
+O **One Pilates** é um projeto voltado para gerenciamento de agendamento para um estúdio de Pilates da empresa [One Pilates](https://onepilates.com.br/site/).  
 A aplicação integra **backend em Java + Spring Boot** e **frontend em React + Vite**, com banco de dados **MySQL** e suporte a APIs construídas em **Node.js**.  
 
-O objetivo é proporcionar uma plataforma moderna e intuitiva para alunos e administradores.
+O objetivo é proporcionar uma plataforma interna, moderna e intuitiva para os e administradores, professores e secretárias.
 
 ## 🛠 Tecnologias  
 Este projeto utiliza as seguintes tecnologias:  
@@ -54,4 +54,6 @@ Após rodar o projeto:
 
 ## 📄 Licença  
 Este projeto é distribuído sob a licença **MIT**.  
+
+Sptech School.
 
