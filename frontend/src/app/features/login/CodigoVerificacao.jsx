@@ -1,13 +1,15 @@
 import { useState, useRef } from "react";
 import "./CodigoVerificacao.scss";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import api from "../../../provider/api";
 
 export default function CodigoVerificacao() {
   const [codigo, setCodigo] = useState(["", "", "", "", ""]);
   const inputsRef = useRef([]);
   const navigate = useNavigate();
+  const email = useLocation().state?.email;
+  const [isResending, setIsResending] = useState(false);
 
   const handleChange = (index, value) => {
     if (!/^[A-Za-z0-9]?$/.test(value)) return;
@@ -29,7 +31,6 @@ export default function CodigoVerificacao() {
 
   const confirmarCodigo = async () => {
     const codigoFinal = codigo.join("");
-    const email = sessionStorage.getItem("email"); 
 
     if (!codigoFinal || codigoFinal.length < 5) {
       Swal.fire({
@@ -50,12 +51,7 @@ export default function CodigoVerificacao() {
     });
 
     try {
-      const response = await axios.post(
-        `http://localhost:8080/auth/validarCodigo`,
-        { email, 
-          codigo: codigoFinal 
-        }
-      );
+      const response = await api.post("auth/validarCodigo", { email, codigo: codigoFinal });
 
       console.log("Resposta do servidor:", response.data);
 
@@ -63,9 +59,13 @@ export default function CodigoVerificacao() {
         icon: "success",
         title: "Código válido!",
         text: "Agora você pode redefinir sua senha.",
+        showConfirmButton: false,
+        timer: 2000,
       });
 
-      navigate("/login/nova-senha");
+      setTimeout(() => {
+        navigate("/login/nova-senha", { state: { email } });
+      }, 2000);
     } catch (error) {
       console.error("Erro ao validar código:", error);
 
@@ -77,12 +77,49 @@ export default function CodigoVerificacao() {
     }
   };
 
+  const reenviarCodigo = async () => {
+    if (!email) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Email não encontrado. Por favor, reinicie o processo.",
+      });
+      return;
+    }
+
+    setIsResending(true);
+
+    try {
+      await api.post("auth/criarCodigoVerificacao", { email });
+
+      setCodigo(["", "", "", "", ""]);
+      inputsRef.current[0]?.focus();
+
+      Swal.fire({
+        icon: "success",
+        title: "Código reenviado!",
+        text: "Verifique seu e-mail novamente.",
+        timer: 2000,
+      });
+    } catch (error) {
+      console.error("Erro ao reenviar código:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao reenviar",
+        text: "Não foi possível reenviar o código. Tente novamente.",
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   return (
     <div className="login">
       <div className="login__container">
-        <Link to="/Login" className="botao-voltar">
+        <button onClick={() => navigate(-1)} className="botao-voltar">
           <i className="bi bi-arrow-left-circle-fill"></i>Voltar
-        </Link>
+        </button>
 
         <div className="login__header">
           <h1 className="login__title">Código de verificação</h1>
@@ -111,6 +148,17 @@ export default function CodigoVerificacao() {
         <button onClick={confirmarCodigo} className="login__button">
           Confirmar código
         </button>
+
+        <div className="login__links">
+          <button
+            type="button"
+            onClick={reenviarCodigo}
+            className="login__forgot"
+            disabled={isResending}
+          >
+            {isResending ? "Reenviando..." : "Reenviar código"}
+          </button>
+        </div>
       </div>
 
       <div className="background-login">

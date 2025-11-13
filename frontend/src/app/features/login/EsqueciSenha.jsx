@@ -1,11 +1,10 @@
-import { useState, useRef } from "react";
+import { useState} from "react";
 import "./CodigoVerificacao.scss";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import Swal from "sweetalert2";
+import api from "../../../provider/api";
 
 export default function EsqueciSenha() {
-  const inputsRef = useRef([]);
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
@@ -29,21 +28,23 @@ export default function EsqueciSenha() {
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/auth/criarCodigoVerificacao",
-        { email }
-      );
+      const response = await api.post("auth/criarCodigoVerificacao",{ email });
+      console.log("Email enviado para:", email);
 
       console.log("Resposta do servidor:", response.data);
-      sessionStorage.setItem("email", email);
 
       Swal.fire({
         icon: "success",
         title: "Código enviado!",
         text: "Verifique seu e-mail",
+        showConfirmButton: false,
+        timer: 2000,
       });
 
-      navigate("/login/codigo-verificacao");
+      setTimeout(() => {
+        navigate("/login/codigo-verificacao", { state: { email } });
+      }, 2000);
+
     } catch (error) {
       console.error("Erro ao enviar requisição:", error);
 
@@ -58,9 +59,9 @@ export default function EsqueciSenha() {
   return (
     <div className="login">
       <div className="login__container">
-        <Link to="/Login" className="botao-voltar">
+        <button onClick={() => navigate(-1)} className="botao-voltar">
           <i className="bi bi-arrow-left-circle-fill"></i>Voltar
-        </Link>
+        </button>
 
         <div className="login__header">
           <h1 className="login__title">Esqueci minha senha</h1>
@@ -84,8 +85,6 @@ export default function EsqueciSenha() {
             className="login__input"
             required
           />
-          <br />
-          <br />
         </div>
         <button onClick={handleEnviar} className="login__button">
           Enviar

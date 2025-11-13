@@ -48,7 +48,8 @@ export function AuthProvider({ children }) {
         title: "Login bem-sucedido", 
         showConfirmButton: false,
         text: mensagem,
-        timer: 3000
+        timer: 3000,
+        timerProgressBar: true
       });
 
       setTimeout(() => {
