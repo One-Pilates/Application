@@ -37,13 +37,13 @@ export function AuthProvider({ children }) {
       if (data.funcionario.role === "PROFESSOR") {
         urlNavigation = "/professora/agenda";
         mensagem = `Bem-vindo a sua agenda, ${data.funcionario.nome}!`;
-      } else if (data.funcionario.role === "SECRETARIA") {
+      } else if (data.funcionario.role === "SECRETARIA" || data.funcionario.role === "ADMINISTRADOR") {
         urlNavigation = "/secretaria/dashboard";
         mensagem = `Bem-vindo ao painel da One Pilates, ${data.funcionario.nome}!`;
       } else {
-        urlNavigation = "/professora/agenda";
+        urlNavigation = "/login";
+        mensagem = "Função desconhecida. Contate o administrador.";
       }
-
       Swal.fire({ icon: "success", 
         title: "Login bem-sucedido", 
         showConfirmButton: false,
