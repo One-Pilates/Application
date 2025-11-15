@@ -2,12 +2,15 @@ package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.SalaDTO;
 import com.onePilates.agendamento.dto.response.SalaResponseDTO;
+import com.onePilates.agendamento.exception.EntidadeNaoEncontradaException;
 import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Sala;
 import com.onePilates.agendamento.repository.EspecialidadeRepository;
 import com.onePilates.agendamento.repository.SalaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,48 +18,86 @@ import java.util.stream.Collectors;
 @Service
 public class SalaService {
 
-    @Autowired
-    private SalaRepository salaRepository;
+    private static final Logger logger = LoggerFactory.getLogger(SalaService.class);
 
-    @Autowired
-    private EspecialidadeRepository especialidadeRepository;
+    private final SalaRepository salaRepository;
+    private final EspecialidadeRepository especialidadeRepository;
 
+    public SalaService(SalaRepository salaRepository, EspecialidadeRepository especialidadeRepository) {
+        this.salaRepository = salaRepository;
+        this.especialidadeRepository = especialidadeRepository;
+    }
+
+    @Transactional
     public Sala criarSala(SalaDTO dto) {
-        return mapDtoToEntity(dto);
+        logger.info("Tentativa de criar sala: {}", dto.getNome());
+        try {
+            Sala sala = mapDtoToEntity(dto);
+            logger.info("Sala criada com sucesso. ID: {}", sala.getId());
+            return sala;
+        } catch (Exception e) {
+            logger.error("Erro ao criar sala", e);
+            throw e;
+        }
     }
 
     public List<SalaResponseDTO> listarTodasDTO() {
-        return salaRepository.findAll()
+        logger.debug("Listando todas as salas");
+        List<SalaResponseDTO> salas = salaRepository.findAll()
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+        logger.debug("Encontradas {} salas", salas.size());
+        return salas;
     }
 
     public SalaResponseDTO buscarPorIdDTO(Long id) {
+        logger.debug("Buscando sala por ID: {}", id);
         return toResponseDTO(buscarPorId(id));
     }
 
+    @Transactional
     public SalaResponseDTO atualizarSala(Long id, SalaDTO dto) {
-        Sala sala = buscarPorId(id);
-        if (dto.getNome() != null) sala.setNome(dto.getNome());
-        if (dto.getQuantidadeMaximaAlunos() != null) sala.setQuantidadeMaximaAlunos(dto.getQuantidadeMaximaAlunos());
-        if (dto.getQuantidadeEquipamentosPCD() != null) sala.setQuantidadeEquipamentosPCD(dto.getQuantidadeEquipamentosPCD());
-        if (dto.getEspecialidadeIds() != null) {
-            Set<Especialidade> especialidades = dto.getEspecialidadeIds().stream()
-                    .map(idEsp -> especialidadeRepository.findById(idEsp).orElseThrow(() -> new RuntimeException("Especialidade não encontrada: " + idEsp)))
-                    .collect(Collectors.toSet());
-            sala.setEspecialidades(especialidades);
+        logger.info("Tentativa de atualizar sala ID: {}", id);
+        try {
+            Sala sala = buscarPorId(id);
+            if (dto.getNome() != null) sala.setNome(dto.getNome());
+            if (dto.getQuantidadeMaximaAlunos() != null) sala.setQuantidadeMaximaAlunos(dto.getQuantidadeMaximaAlunos());
+            if (dto.getQuantidadeEquipamentosPCD() != null) sala.setQuantidadeEquipamentosPCD(dto.getQuantidadeEquipamentosPCD());
+            if (dto.getEspecialidadeIds() != null) {
+                Set<Especialidade> especialidades = dto.getEspecialidadeIds().stream()
+                        .map(idEsp -> especialidadeRepository.findById(idEsp)
+                                .orElseThrow(() -> new EntidadeNaoEncontradaException("Especialidade não encontrada: " + idEsp)))
+                        .collect(Collectors.toSet());
+                sala.setEspecialidades(especialidades);
+            }
+            SalaResponseDTO response = toResponseDTO(salaRepository.save(sala));
+            logger.info("Sala atualizada com sucesso. ID: {}", id);
+            return response;
+        } catch (Exception e) {
+            logger.error("Erro ao atualizar sala ID: {}", id, e);
+            throw e;
         }
-        return toResponseDTO(salaRepository.save(sala));
     }
 
+    @Transactional
     public void excluirSala(Long id) {
-        salaRepository.deleteById(id);
+        logger.info("Tentativa de excluir sala ID: {}", id);
+        try {
+            if (!salaRepository.existsById(id)) {
+                throw new EntidadeNaoEncontradaException("Sala não encontrada");
+            }
+            salaRepository.deleteById(id);
+            logger.info("Sala excluída com sucesso. ID: {}", id);
+        } catch (Exception e) {
+            logger.error("Erro ao excluir sala ID: {}", id, e);
+            throw e;
+        }
     }
 
     private Sala buscarPorId(Long id) {
         return salaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sala não encontrada"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Sala não encontrada"));
     }
 
     private Sala mapDtoToEntity(SalaDTO dto) {
@@ -67,7 +108,7 @@ public class SalaService {
 
         Set<Especialidade> especialidades = dto.getEspecialidadeIds().stream()
                 .map(id -> especialidadeRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Especialidade não encontrada: " + id)))
+                        .orElseThrow(() -> new EntidadeNaoEncontradaException("Especialidade não encontrada: " + id)))
                 .collect(Collectors.toSet());
         sala.setEspecialidades(especialidades);
 

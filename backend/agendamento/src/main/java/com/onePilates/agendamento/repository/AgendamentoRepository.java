@@ -3,6 +3,7 @@ package com.onePilates.agendamento.repository;
 import com.onePilates.agendamento.dto.AgendamentoPorDiaDTO;
 import com.onePilates.agendamento.dto.AulaPorEspecialidadeDTO;
 import com.onePilates.agendamento.model.Agendamento;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,14 +46,23 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
             @Param("dias") Integer dias
     );
 
+    @EntityGraph(attributePaths = {"agendamentoAlunos", "agendamentoAlunos.aluno", "professor", "sala", "especialidade"})
     List<Agendamento> findByProfessorId(Long professorId);
+    
+    @EntityGraph(attributePaths = {"agendamentoAlunos", "agendamentoAlunos.aluno", "professor", "sala", "especialidade"})
+    @Override
+    java.util.Optional<Agendamento> findById(Long id);
+    
+    @EntityGraph(attributePaths = {"agendamentoAlunos", "agendamentoAlunos.aluno", "professor", "sala", "especialidade"})
+    @Override
+    List<Agendamento> findAll();
 
 //    Validação de agendamento
     boolean existsByProfessorIdAndDataHora(Long professorId, LocalDateTime dataHora);
 
     boolean existsBySalaIdAndDataHora(Long salaId, LocalDateTime dataHora);
 
-    @Query("SELECT a FROM Agendamento a JOIN a.alunos al WHERE al = :aluno AND a.dataHora = :dataHora")
+    @Query("SELECT DISTINCT a FROM Agendamento a JOIN FETCH a.agendamentoAlunos aa JOIN FETCH aa.aluno WHERE aa.aluno = :aluno AND a.dataHora = :dataHora")
     List<Agendamento> findAgendamentosByAlunoAndDataHora(@Param("aluno") com.onePilates.agendamento.model.Aluno aluno,
                                                          @Param("dataHora") LocalDateTime dataHora);
 

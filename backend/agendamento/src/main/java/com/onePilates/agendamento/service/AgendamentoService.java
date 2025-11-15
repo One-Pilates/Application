@@ -3,10 +3,13 @@ package com.onePilates.agendamento.service;
 import com.onePilates.agendamento.dto.AgendamentoDTO;
 import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.dto.response.AlunoAgendamentoResponseDTO;
+import com.onePilates.agendamento.exception.*;
 import com.onePilates.agendamento.model.*;
 import com.onePilates.agendamento.observer.AgendamentoNotifier;
 import com.onePilates.agendamento.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.onePilates.agendamento.validator.AgendamentoValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,175 +20,309 @@ import java.util.stream.Collectors;
 @Service
 public class AgendamentoService {
 
-    @Autowired
-    private AgendamentoRepository agendamentoRepository;
+    private static final Logger logger = LoggerFactory.getLogger(AgendamentoService.class);
 
-    @Autowired
-    private ProfessorRepository professorRepository;
+    private final AgendamentoRepository agendamentoRepository;
+    private final ProfessorRepository professorRepository;
+    private final SalaRepository salaRepository;
+    private final EspecialidadeRepository especialidadeRepository;
+    private final AlunoRepository alunoRepository;
+    private final AgendamentoNotifier notifier;
+    private final AgendamentoAlunoRepository agendamentoAlunoRepository;
+    private final AgendamentoValidator agendamentoValidator;
 
-    @Autowired
-    private SalaRepository salaRepository;
+    public AgendamentoService(
+            AgendamentoRepository agendamentoRepository,
+            ProfessorRepository professorRepository,
+            SalaRepository salaRepository,
+            EspecialidadeRepository especialidadeRepository,
+            AlunoRepository alunoRepository,
+            AgendamentoNotifier notifier,
+            AgendamentoAlunoRepository agendamentoAlunoRepository,
+            AgendamentoValidator agendamentoValidator
+    ) {
+        this.agendamentoRepository = agendamentoRepository;
+        this.professorRepository = professorRepository;
+        this.salaRepository = salaRepository;
+        this.especialidadeRepository = especialidadeRepository;
+        this.alunoRepository = alunoRepository;
+        this.notifier = notifier;
+        this.agendamentoAlunoRepository = agendamentoAlunoRepository;
+        this.agendamentoValidator = agendamentoValidator;
+    }
 
-    @Autowired
-    private EspecialidadeRepository especialidadeRepository;
-
-    @Autowired
-    private AlunoRepository alunoRepository;
-
-    @Autowired
-    private AgendamentoNotifier notifier;
-
+    /**
+     * Cria um novo agendamento após validar todas as regras de negócio.
+     *
+     * @param dto DTO contendo os dados do agendamento (data/hora, sala, professor, especialidade e alunos)
+     * @return Agendamento criado e salvo no banco de dados
+     * @throws BusinessException se alguma validação de regra de negócio falhar
+     */
     @Transactional
     public Agendamento criarAgendamento(AgendamentoDTO dto) {
-        Agendamento agendamento = mapDtoToEntity(dto);
-        agendamento = agendamentoRepository.save(agendamento);
+        logger.info("Tentativa de criar agendamento para data/hora: {}", dto.getDataHora());
+        
+        try {
+            // Validação é feita no validator
+            Agendamento agendamento = mapDtoToEntity(dto);
+            agendamento = agendamentoRepository.save(agendamento);
+            
+            logger.debug("Agendamento criado com ID: {}", agendamento.getId());
+            
+            // Recarregar o agendamento com todas as relações para o observer
+            agendamento = agendamentoRepository.findById(agendamento.getId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Erro ao recarregar agendamento"));
 
-        Professor professor = professorRepository.findById(dto.getProfessorId()).get();
+            Professor professor = agendamento.getProfessor();
 
-        if(professor.getNotificacaoAtiva() == null|| professor.getNotificacaoAtiva() == false){
-            return agendamento;
-
-        }
-        notifier.notificarTodos(agendamento);
-
-        return agendamento;
-    }
-
-    public List<AgendamentoResponseDTO> buscarAgendamentosPorIdProfessor(Long id) {
-        List<Agendamento> agendamentos = agendamentoRepository.findByProfessorId(id);
-
-        return agendamentos.stream().map(agendamento -> {
-            Set<AlunoAgendamentoResponseDTO> alunosDTO = agendamento.getAlunos().stream()
-                    .map(aluno -> new AlunoAgendamentoResponseDTO(
-                            aluno.getId(),
-                            aluno.getNome(),
-                            aluno.getObservacao(),
-                            aluno.getStatus()
-                    ))
-                    .collect(Collectors.toSet());
-
-            return new AgendamentoResponseDTO(
-                    agendamento.getId(),
-                    agendamento.getDataHora(),
-                    agendamento.getProfessor().getNome(),
-                    agendamento.getSala().getNome(),
-                    agendamento.getEspecialidade().getNome(),
-                    alunosDTO
-            );
-        }).collect(Collectors.toList());
-    }
-
-
-    private void validarAgendamento(AgendamentoDTO dto){
-        LocalDateTime dataHora = dto.getDataHora();
-
-        Sala sala = salaRepository.findById(dto.getSalaId())
-                .orElseThrow(() -> new RuntimeException("Sala não encontrada"));
-
-        Professor professor = professorRepository.findById(dto.getProfessorId())
-                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
-
-        if (agendamentoRepository.existsBySalaIdAndDataHora(dto.getSalaId(), dataHora)) {
-            throw new RuntimeException("Sala indisponível para o horário agendado.");
-        }
-
-        if (agendamentoRepository.existsByProfessorIdAndDataHora(dto.getProfessorId(), dataHora)) {
-            throw new RuntimeException("Professor indisponível para o horário agendado.");
-        }
-
-        List<String> nomesIndisponiveis = new ArrayList<>();
-
-        for (Long alunoId : dto.getAlunoIds()) {
-            Aluno aluno = alunoRepository.findById(alunoId)
-                    .orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + alunoId));
-
-            List<Agendamento> agendamentos = agendamentoRepository.findAgendamentosByAlunoAndDataHora(aluno, dataHora);
-            if (!agendamentos.isEmpty()) {
-                nomesIndisponiveis.add(aluno.getNome());
+            if (professor.getNotificacaoAtiva() != null && professor.getNotificacaoAtiva()) {
+                logger.debug("Enviando notificação para professor: {}", professor.getNome());
+                notifier.notificarTodos(agendamento);
             }
-        }
 
-        if (!nomesIndisponiveis.isEmpty()) {
-            throw new RuntimeException("Alunos indisponíveis para o horário: " + String.join(", ", nomesIndisponiveis));
+            logger.info("Agendamento criado com sucesso. ID: {}", agendamento.getId());
+            return agendamento;
+        } catch (BusinessException e) {
+            logger.warn("Falha ao criar agendamento: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao criar agendamento", e);
+            throw e;
         }
-
     }
 
-
-    private Agendamento mapDtoToEntity(AgendamentoDTO dto) {
-        if (dto.getAlunoIds().size() > 5) {
-            throw new RuntimeException("Máximo de 5 alunos por agendamento.");
-        }
-
-        validarAgendamento(dto);
-
-        Agendamento agendamento = new Agendamento();
-        agendamento.setDataHora(dto.getDataHora());
-
-        agendamento.setProfessor(professorRepository.findById(dto.getProfessorId())
-                .orElseThrow(() -> new RuntimeException("Professor não encontrado")));
-
-        agendamento.setSala(salaRepository.findById(dto.getSalaId())
-                .orElseThrow(() -> new RuntimeException("Sala não encontrada")));
-
-        agendamento.setEspecialidade(especialidadeRepository.findById(dto.getEspecialidadeId())
-                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada")));
-
-        Set<Aluno> alunos = dto.getAlunoIds().stream()
-                .map(id -> alunoRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + id)))
-                .collect(Collectors.toSet());
-
-        agendamento.setAlunos(alunos);
-
-        return agendamento;
-    }
-
-    public List<AgendamentoResponseDTO> listarTodosDTO() {
-        return agendamentoRepository.findAll()
-                .stream()
+    /**
+     * Busca todos os agendamentos de um professor específico.
+     *
+     * @param id ID do professor
+     * @return Lista de agendamentos do professor
+     */
+    public List<AgendamentoResponseDTO> buscarAgendamentosPorIdProfessor(Long id) {
+        logger.debug("Buscando agendamentos para professor ID: {}", id);
+        List<Agendamento> agendamentos = agendamentoRepository.findByProfessorId(id);
+        logger.debug("Encontrados {} agendamentos para professor ID: {}", agendamentos.size(), id);
+        return agendamentos.stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
+
+
+
+    private Agendamento mapDtoToEntity(AgendamentoDTO dto) {
+        // Validar antes de criar a entidade usando o validator dedicado
+        agendamentoValidator.validar(dto);
+
+        Agendamento agendamento = new Agendamento();
+        agendamento.setDataHora(dto.getDataHora());
+
+        Professor professor = professorRepository.findById(dto.getProfessorId())
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
+        agendamento.setProfessor(professor);
+
+        Sala sala = salaRepository.findById(dto.getSalaId())
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Sala não encontrada"));
+        agendamento.setSala(sala);
+
+        Especialidade especialidade = especialidadeRepository.findById(dto.getEspecialidadeId())
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Especialidade não encontrada"));
+        agendamento.setEspecialidade(especialidade);
+
+        // Buscar alunos e criar AgendamentoAluno
+        List<Aluno> alunos = alunoRepository.findAllById(dto.getAlunoIds());
+        if (alunos.size() != dto.getAlunoIds().size()) {
+            throw new EntidadeNaoEncontradaException("Um ou mais alunos não foram encontrados");
+        }
+
+        Set<AgendamentoAluno> agendamentoAlunos = alunos.stream()
+                .map(aluno -> new AgendamentoAluno(agendamento, aluno))
+                .collect(Collectors.toSet());
+
+        agendamento.setAgendamentoAlunos(agendamentoAlunos);
+
+        return agendamento;
+    }
+
+    /**
+     * Lista todos os agendamentos cadastrados no sistema.
+     *
+     * @return Lista de todos os agendamentos
+     */
+    public List<AgendamentoResponseDTO> listarTodosDTO() {
+        logger.debug("Listando todos os agendamentos");
+        List<Agendamento> agendamentos = agendamentoRepository.findAll();
+        logger.debug("Encontrados {} agendamentos", agendamentos.size());
+        return agendamentos.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Busca um agendamento específico pelo ID.
+     *
+     * @param id ID do agendamento
+     * @return DTO com os dados do agendamento
+     * @throws EntidadeNaoEncontradaException se o agendamento não for encontrado
+     */
     public AgendamentoResponseDTO buscarPorIdDTO(Long id) {
+        logger.debug("Buscando agendamento por ID: {}", id);
         return toResponseDTO(buscarPorId(id));
     }
 
+    /**
+     * Atualiza um agendamento existente. Apenas os campos fornecidos no DTO serão atualizados.
+     *
+     * @param agendamentoId ID do agendamento a ser atualizado
+     * @param dto DTO contendo os campos a serem atualizados
+     * @return DTO com os dados atualizados do agendamento
+     * @throws EntidadeNaoEncontradaException se o agendamento não for encontrado
+     * @throws BusinessException se alguma validação de regra de negócio falhar
+     */
+    @Transactional
     public AgendamentoResponseDTO atualizarAgendamento(Long agendamentoId, AgendamentoDTO dto) {
-        Agendamento agendamento = buscarPorId(agendamentoId);
-        if (dto.getDataHora() != null) agendamento.setDataHora(dto.getDataHora());
-        if (dto.getProfessorId() != null) {
-            Professor professor = professorRepository.findById(dto.getProfessorId())
-                    .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
-            agendamento.setProfessor(professor);
+        logger.info("Tentativa de atualizar agendamento ID: {}", agendamentoId);
+        
+        try {
+            Agendamento agendamento = buscarPorId(agendamentoId);
+            
+            // Criar DTO temporário com dados do agendamento existente para validação
+            AgendamentoDTO dtoValidacao = new AgendamentoDTO();
+            dtoValidacao.setDataHora(dto.getDataHora() != null ? dto.getDataHora() : agendamento.getDataHora());
+            dtoValidacao.setProfessorId(dto.getProfessorId() != null ? dto.getProfessorId() : agendamento.getProfessor().getId());
+            dtoValidacao.setSalaId(dto.getSalaId() != null ? dto.getSalaId() : agendamento.getSala().getId());
+            dtoValidacao.setEspecialidadeId(dto.getEspecialidadeId() != null ? dto.getEspecialidadeId() : agendamento.getEspecialidade().getId());
+            dtoValidacao.setAlunoIds(dto.getAlunoIds() != null ? dto.getAlunoIds() : 
+                agendamento.getAgendamentoAlunos().stream()
+                    .map(aa -> aa.getAluno().getId())
+                    .collect(Collectors.toSet()));
+            
+            // Validar com os novos dados usando o validator
+            agendamentoValidator.validar(dtoValidacao);
+            
+            if (dto.getDataHora() != null) agendamento.setDataHora(dto.getDataHora());
+            if (dto.getProfessorId() != null) {
+                Professor professor = professorRepository.findById(dto.getProfessorId())
+                        .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
+                agendamento.setProfessor(professor);
+            }
+            if (dto.getSalaId() != null) {
+                Sala sala = salaRepository.findById(dto.getSalaId())
+                        .orElseThrow(() -> new EntidadeNaoEncontradaException("Sala não encontrada"));
+                agendamento.setSala(sala);
+            }
+            if (dto.getEspecialidadeId() != null) {
+                Especialidade especialidade = especialidadeRepository.findById(dto.getEspecialidadeId())
+                        .orElseThrow(() -> new EntidadeNaoEncontradaException("Especialidade não encontrada"));
+                agendamento.setEspecialidade(especialidade);
+            }
+            if (dto.getAlunoIds() != null) {
+                // Remover alunos antigos e adicionar novos
+                agendamento.getAgendamentoAlunos().clear();
+                List<Aluno> alunos = alunoRepository.findAllById(dto.getAlunoIds());
+                Set<AgendamentoAluno> agendamentoAlunos = alunos.stream()
+                        .map(aluno -> new AgendamentoAluno(agendamento, aluno))
+                        .collect(Collectors.toSet());
+                agendamento.setAgendamentoAlunos(agendamentoAlunos);
+            }
+            
+            AgendamentoResponseDTO response = toResponseDTO(agendamentoRepository.save(agendamento));
+            logger.info("Agendamento atualizado com sucesso. ID: {}", agendamentoId);
+            return response;
+        } catch (BusinessException e) {
+            logger.warn("Falha ao atualizar agendamento ID {}: {}", agendamentoId, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao atualizar agendamento ID: {}", agendamentoId, e);
+            throw e;
         }
-        if (dto.getSalaId() != null) {
-            Sala sala = salaRepository.findById(dto.getSalaId())
-                    .orElseThrow(() -> new RuntimeException("Sala não encontrada"));
-            agendamento.setSala(sala);
-        }
-        if (dto.getEspecialidadeId() != null) {
-            Especialidade especialidade = especialidadeRepository.findById(dto.getEspecialidadeId())
-                    .orElseThrow(() -> new RuntimeException("Especialidade não encontrada"));
-            agendamento.setEspecialidade(especialidade);
-        }
-        if (dto.getAlunoIds() != null) {
-            Set<Aluno> alunos = dto.getAlunoIds().stream()
-                    .map(id -> alunoRepository.findById(id).orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + id)))
-                    .collect(Collectors.toSet());
-            agendamento.setAlunos(alunos);
-        }
-        return toResponseDTO(agendamentoRepository.save(agendamento));
     }
 
+    /**
+     * Exclui um agendamento do sistema.
+     *
+     * @param id ID do agendamento a ser excluído
+     * @throws EntidadeNaoEncontradaException se o agendamento não for encontrado
+     */
+    @Transactional
     public void excluirAgendamento(Long id) {
-        agendamentoRepository.deleteById(id);
+        logger.info("Tentativa de excluir agendamento ID: {}", id);
+        
+        try {
+            if (!agendamentoRepository.existsById(id)) {
+                throw new EntidadeNaoEncontradaException("Agendamento não encontrado");
+            }
+            agendamentoRepository.deleteById(id);
+            logger.info("Agendamento excluído com sucesso. ID: {}", id);
+        } catch (BusinessException e) {
+            logger.warn("Falha ao excluir agendamento ID {}: {}", id, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao excluir agendamento ID: {}", id, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Registra a presença dos alunos em um agendamento.
+     * Apenas pode ser executado após a data/hora do agendamento.
+     *
+     * @param agendamentoId ID do agendamento
+     * @param presencas Mapa com o ID do aluno como chave e o status de presença como valor
+     * @throws EntidadeNaoEncontradaException se o agendamento ou aluno não for encontrado
+     * @throws OperacaoInvalidaException se tentar registrar presença antes da data/hora do agendamento
+     */
+    @Transactional
+    public void registrarPresencas(Long agendamentoId, Map<Long, StatusPresenca> presencas) {
+        logger.info("Tentativa de registrar presenças para agendamento ID: {}", agendamentoId);
+        
+        try {
+            Agendamento agendamento = buscarPorId(agendamentoId);
+            
+            // Validar se a aula já aconteceu
+            LocalDateTime agora = LocalDateTime.now();
+            if (agendamento.getDataHora().isAfter(agora)) {
+                throw new OperacaoInvalidaException("Não é possível registrar presença antes da data/hora da aula.");
+            }
+            
+            // Validar se todos os alunos pertencem ao agendamento usando agendamentoAlunos diretamente
+            Set<Long> alunoIdsAgendamento = agendamento.getAgendamentoAlunos().stream()
+                    .map(aa -> aa.getAluno().getId())
+                    .collect(Collectors.toSet());
+            
+            for (Long alunoId : presencas.keySet()) {
+                if (!alunoIdsAgendamento.contains(alunoId)) {
+                    throw new OperacaoInvalidaException("Aluno com ID " + alunoId + " não pertence a este agendamento.");
+                }
+            }
+            
+            // Atualizar presenças
+            for (Map.Entry<Long, StatusPresenca> entry : presencas.entrySet()) {
+                Long alunoId = entry.getKey();
+                StatusPresenca status = entry.getValue();
+                
+                AgendamentoAluno agendamentoAluno = agendamento.getAgendamentoAlunos().stream()
+                        .filter(aa -> aa.getAluno().getId().equals(alunoId))
+                        .findFirst()
+                        .orElseThrow(() -> new EntidadeNaoEncontradaException("Aluno não encontrado no agendamento"));
+                
+                agendamentoAluno.setStatusPresenca(status);
+                agendamentoAlunoRepository.save(agendamentoAluno);
+                logger.debug("Presença registrada: Aluno ID {} - Status {}", alunoId, status);
+            }
+            
+            logger.info("Presenças registradas com sucesso para agendamento ID: {}", agendamentoId);
+        } catch (BusinessException e) {
+            logger.warn("Falha ao registrar presenças para agendamento ID {}: {}", agendamentoId, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao registrar presenças para agendamento ID: {}", agendamentoId, e);
+            throw e;
+        }
     }
 
     private Agendamento buscarPorId(Long id) {
         return agendamentoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Agendamento não encontrado"));
     }
 
     public AgendamentoResponseDTO toResponseDTO(Agendamento agendamento) {
@@ -196,12 +333,16 @@ public class AgendamentoService {
         dto.setSala(agendamento.getSala().getNome());
         dto.setEspecialidade(agendamento.getEspecialidade().getNome());
 
-        Set<AlunoAgendamentoResponseDTO> alunosDTO = agendamento.getAlunos()
+        // Usar agendamentoAlunos diretamente para incluir informações de presença
+        Set<AlunoAgendamentoResponseDTO> alunosDTO = agendamento.getAgendamentoAlunos()
                 .stream()
-                .map(aluno -> {
+                .map(aa -> {
                     AlunoAgendamentoResponseDTO alunoDTO = new AlunoAgendamentoResponseDTO();
-                    alunoDTO.setId(aluno.getId());
-                    alunoDTO.setNome(aluno.getNome());
+                    alunoDTO.setId(aa.getAluno().getId());
+                    alunoDTO.setNome(aa.getAluno().getNome());
+                    alunoDTO.setObservacao(aa.getAluno().getObservacao());
+                    alunoDTO.setStatus(aa.getAluno().getStatus());
+                    // Status de presença pode ser adicionado ao DTO se necessário
                     return alunoDTO;
                 })
                 .collect(Collectors.toSet());

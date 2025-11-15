@@ -1,5 +1,6 @@
 package com.onePilates.agendamento.handler;
 
+import com.onePilates.agendamento.exception.BusinessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,14 @@ public class GlobalExceptionHandler {
         }
 
         return new ResponseEntity<>(erro, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Map<String, String>> handleBusinessException(BusinessException ex) {
+        Map<String, String> erro = new HashMap<>();
+        erro.put("erro", ex.getMessage());
+        erro.put("codigoErro", ex.getCodigoErro());
+        return new ResponseEntity<>(erro, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RuntimeException.class)

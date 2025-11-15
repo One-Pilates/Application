@@ -2,6 +2,7 @@ package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.AgendamentoDTO;
 import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
+import com.onePilates.agendamento.model.StatusPresenca;
 import com.onePilates.agendamento.service.AgendamentoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/agendamentos")
@@ -19,39 +21,92 @@ public class AgendamentoController {
     @Autowired
     private AgendamentoService agendamentoService;
 
+    /**
+     * Cria um novo agendamento.
+     * 
+     * @param dto DTO contendo os dados do agendamento
+     * @return ResponseEntity com o agendamento criado e status 201 (Created)
+     */
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
     public ResponseEntity<AgendamentoResponseDTO> criarAgendamento( @Valid @RequestBody AgendamentoDTO dto) {
         return ResponseEntity.ok(agendamentoService.toResponseDTO(agendamentoService.criarAgendamento(dto)));
     }
 
+    /**
+     * Lista todos os agendamentos cadastrados.
+     * 
+     * @return ResponseEntity com a lista de agendamentos e status 200 (OK)
+     */
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<List<AgendamentoResponseDTO>> listarAgendamentos() {
         return ResponseEntity.ok(agendamentoService.listarTodosDTO());
     }
 
+    /**
+     * Busca um agendamento específico pelo ID.
+     * 
+     * @param id ID do agendamento
+     * @return ResponseEntity com o agendamento encontrado e status 200 (OK)
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<AgendamentoResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(agendamentoService.buscarPorIdDTO(id));
     }
 
+    /**
+     * Atualiza parcialmente um agendamento existente.
+     * 
+     * @param id ID do agendamento a ser atualizado
+     * @param dto DTO contendo os campos a serem atualizados
+     * @return ResponseEntity com o agendamento atualizado e status 200 (OK)
+     */
     @PatchMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
     public ResponseEntity<AgendamentoResponseDTO> atualizarAgendamentoParcial(@PathVariable Long id, @RequestBody AgendamentoDTO dto) {
         return ResponseEntity.ok(agendamentoService.atualizarAgendamento(id, dto));
     }
 
+    /**
+     * Exclui um agendamento do sistema.
+     * 
+     * @param id ID do agendamento a ser excluído
+     * @return ResponseEntity com status 204 (No Content) se bem-sucedido
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
     public ResponseEntity<Void> excluirAgendamento(@PathVariable Long id) {
         agendamentoService.excluirAgendamento(id);
         return ResponseEntity.noContent().build();
     }
+    /**
+     * Lista todos os agendamentos de um professor específico.
+     * 
+     * @param id ID do professor
+     * @return ResponseEntity com a lista de agendamentos do professor e status 200 (OK)
+     */
     @GetMapping("/professorId/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<List<AgendamentoResponseDTO>> listarPorProfessorId(@PathVariable Long id) {
        return  ResponseEntity.ok(agendamentoService.buscarAgendamentosPorIdProfessor(id));
+    }
+
+    /**
+     * Registra a presença dos alunos em um agendamento.
+     * 
+     * @param agendamentoId ID do agendamento
+     * @param presencas Mapa com o ID do aluno como chave e o status de presença como valor
+     * @return ResponseEntity com status 200 (OK) se bem-sucedido
+     */
+    @PatchMapping("/{agendamentoId}/presenca")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
+    public ResponseEntity<Void> registrarPresenca(
+            @PathVariable Long agendamentoId,
+            @RequestBody Map<Long, StatusPresenca> presencas
+    ) {
+        agendamentoService.registrarPresencas(agendamentoId, presencas);
+        return ResponseEntity.ok().build();
     }
 }

@@ -4,15 +4,17 @@ import com.onePilates.agendamento.dto.EspecialidadeDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.ProfessorPorEspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.SalasPorEspecialidadeResponseDTO;
+import com.onePilates.agendamento.exception.EntidadeNaoEncontradaException;
 import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.model.Sala;
 import com.onePilates.agendamento.repository.EspecialidadeRepository;
 import com.onePilates.agendamento.repository.ProfessorRepository;
 import com.onePilates.agendamento.repository.SalaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,46 +22,86 @@ import java.util.stream.Collectors;
 @Service
 public class EspecialidadeService {
 
-    @Autowired
-    private EspecialidadeRepository especialidadeRepository;
+    private static final Logger logger = LoggerFactory.getLogger(EspecialidadeService.class);
 
-    @Autowired
-    private ProfessorRepository professorRepository;
+    private final EspecialidadeRepository especialidadeRepository;
+    private final ProfessorRepository professorRepository;
+    private final SalaRepository salaRepository;
 
-    @Autowired
-    private SalaRepository salaRepository;
+    public EspecialidadeService(
+            EspecialidadeRepository especialidadeRepository,
+            ProfessorRepository professorRepository,
+            SalaRepository salaRepository
+    ) {
+        this.especialidadeRepository = especialidadeRepository;
+        this.professorRepository = professorRepository;
+        this.salaRepository = salaRepository;
+    }
 
 
+    @Transactional
     public Especialidade criarEspecialidade(EspecialidadeDTO dto) {
-        Especialidade especialidade = new Especialidade();
-        especialidade.setNome(dto.getNome());
-        return especialidadeRepository.save(especialidade);
+        logger.info("Tentativa de criar especialidade: {}", dto.getNome());
+        try {
+            Especialidade especialidade = new Especialidade();
+            especialidade.setNome(dto.getNome());
+            Especialidade saved = especialidadeRepository.save(especialidade);
+            logger.info("Especialidade criada com sucesso. ID: {}", saved.getId());
+            return saved;
+        } catch (Exception e) {
+            logger.error("Erro ao criar especialidade", e);
+            throw e;
+        }
     }
 
     public List<EspecialidadeResponseDTO> listarTodasDTO() {
-        return especialidadeRepository.findAll()
+        logger.debug("Listando todas as especialidades");
+        List<EspecialidadeResponseDTO> especialidades = especialidadeRepository.findAll()
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+        logger.debug("Encontradas {} especialidades", especialidades.size());
+        return especialidades;
     }
 
     public EspecialidadeResponseDTO buscarPorIdDTO(Long id) {
+        logger.debug("Buscando especialidade por ID: {}", id);
         return toResponseDTO(buscarPorId(id));
     }
 
+    @Transactional
     public EspecialidadeResponseDTO atualizarEspecialidade(Long id, EspecialidadeDTO dto) {
-        Especialidade especialidade = buscarPorId(id);
-        if (dto.getNome() != null) especialidade.setNome(dto.getNome());
-        return toResponseDTO(especialidadeRepository.save(especialidade));
+        logger.info("Tentativa de atualizar especialidade ID: {}", id);
+        try {
+            Especialidade especialidade = buscarPorId(id);
+            if (dto.getNome() != null) especialidade.setNome(dto.getNome());
+            EspecialidadeResponseDTO response = toResponseDTO(especialidadeRepository.save(especialidade));
+            logger.info("Especialidade atualizada com sucesso. ID: {}", id);
+            return response;
+        } catch (Exception e) {
+            logger.error("Erro ao atualizar especialidade ID: {}", id, e);
+            throw e;
+        }
     }
 
+    @Transactional
     public void excluirEspecialidade(Long id) {
-        especialidadeRepository.deleteById(id);
+        logger.info("Tentativa de excluir especialidade ID: {}", id);
+        try {
+            if (!especialidadeRepository.existsById(id)) {
+                throw new EntidadeNaoEncontradaException("Especialidade não encontrada");
+            }
+            especialidadeRepository.deleteById(id);
+            logger.info("Especialidade excluída com sucesso. ID: {}", id);
+        } catch (Exception e) {
+            logger.error("Erro ao excluir especialidade ID: {}", id, e);
+            throw e;
+        }
     }
 
     private Especialidade buscarPorId(Long id) {
         return especialidadeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Especialidade não encontrada"));
     }
 
     public EspecialidadeResponseDTO toResponseDTO(Especialidade especialidade) {

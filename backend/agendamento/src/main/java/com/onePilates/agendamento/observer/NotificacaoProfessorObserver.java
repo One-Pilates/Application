@@ -16,8 +16,9 @@ public class NotificacaoProfessorObserver implements AgendamentoObserver {
 
     @Override
     public void notificar(Agendamento agendamento) {
-        List<String> nomesAlunos = agendamento.getAlunos().stream()
-                .map(Aluno::getNome)
+        // Usar agendamentoAlunos diretamente para evitar problemas de lazy loading
+        List<String> nomesAlunos = agendamento.getAgendamentoAlunos().stream()
+                .map(aa -> aa.getAluno().getNome())
                 .toList();
 
         System.out.println("🔔 Notificando professor " + agendamento.getProfessor().getNome() +
