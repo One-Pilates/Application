@@ -60,8 +60,19 @@ public class ProfessorController {
 
     @GetMapping("/{id}/{qtdUltimosDias}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'PROFESSOR')")
-    public ResponseEntity<RespostaDashProfessoraDTO> buscarPorIdDados(@PathVariable Long id , @PathVariable Integer qtdUltimosDias) {
-        return ResponseEntity.ok(professorService.respostaDashProfessora(id,qtdUltimosDias));
+    public ResponseEntity<RespostaDashProfessoraDTO> buscarPorIdDados(
+            @PathVariable Long id,
+            @PathVariable Integer qtdUltimosDias) {
+        
+        // Validação de parâmetros
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID do professor deve ser um valor positivo");
+        }
+        if (qtdUltimosDias == null || qtdUltimosDias < 1 || qtdUltimosDias > 365) {
+            throw new IllegalArgumentException("Período deve estar entre 1 e 365 dias");
+        }
+        
+        return ResponseEntity.ok(professorService.respostaDashProfessora(id, qtdUltimosDias));
     }
 
 

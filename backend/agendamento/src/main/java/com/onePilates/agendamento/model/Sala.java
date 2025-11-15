@@ -1,6 +1,5 @@
 package com.onePilates.agendamento.model;
 
-import com.onePilates.agendamento.model.Especialidade;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,10 +13,10 @@ public class Sala {
 
     private String nome;
 
-    @Column(nullable = false)
+    @Column(name = "quantidade_maxima_alunos", nullable = false)
     private Integer quantidadeMaximaAlunos;
 
-    @Column(nullable = false)
+    @Column(name = "quantidade_equipamentos_pcd", nullable = false)
     private Integer quantidadeEquipamentosPCD;
 
     @ManyToMany
