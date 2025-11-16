@@ -75,7 +75,7 @@ export const useRegisterTeacherModel = () => {
   const etapas = [
     { label: "Dados Pessoais" },
     { label: "Endereço" },
-    { label: "Profissionais" },
+    { label: "Informações" },
     { label: "Confirmação" },
   ];
 
