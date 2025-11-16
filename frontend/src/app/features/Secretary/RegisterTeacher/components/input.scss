@@ -1,4 +1,4 @@
-input-container {
+.input-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -27,6 +27,10 @@ input-container {
   transition: all 0.2s ease;
   outline: none;
 
+  &::placeholder {
+    color: #9ca3af;
+  }
+
   &:focus {
     background-color: #ffffff;
     border-color: #3b82f6;
@@ -37,4 +41,15 @@ input-container {
     cursor: not-allowed;
     opacity: 0.6;
   }
+
+  &.input-error {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+  }
+}
+
+.input-error-message {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: -0.25rem;
 }

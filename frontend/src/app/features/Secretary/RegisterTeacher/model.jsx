@@ -1,14 +1,47 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+// Função para validar CPF
+const validarCPF = (cpf) => {
+  cpf = cpf.replace(/\D/g, "");
+  
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+
+  let soma = 0;
+  let resto;
+
+  for (let i = 1; i <= 9; i++) {
+    soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  }
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.substring(9, 10))) return false;
+
+  soma = 0;
+  for (let i = 1; i <= 10; i++) {
+    soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  }
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.substring(10, 11))) return false;
+
+  return true;
+};
+
+// Função para validar email
+const validarEmail = (email) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
+
 export const useRegisterTeacherModel = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Recupera dados se o usuário voltou da tela anterior
   const dadosIniciais = location.state || {};
 
   const [etapaAtual, setEtapaAtual] = useState(1);
+  const [erros, setErros] = useState({});
 
   const [dadosPessoais, setDadosPessoais] = useState(
     dadosIniciais.dadosPessoais || {
@@ -39,7 +72,6 @@ export const useRegisterTeacherModel = () => {
     }
   );
 
-  // Etapas do cadastro (4 etapas incluindo CONFIRMAÇÃO)
   const etapas = [
     { label: "Dados Pessoais" },
     { label: "Endereço" },
@@ -47,26 +79,29 @@ export const useRegisterTeacherModel = () => {
     { label: "Confirmação" },
   ];
 
-  // -----------------------------
-  // Atualizações dos estados
-  // -----------------------------
-
   const atualizarDadosPessoais = (novos) => {
     setDadosPessoais((prev) => ({ ...prev, ...novos }));
+    // Limpa erros ao digitar
+    if (erros.dadosPessoais) {
+      setErros((prev) => ({ ...prev, dadosPessoais: {} }));
+    }
   };
 
   const atualizarEndereco = (novos) => {
     setEndereco((prev) => ({ ...prev, ...novos }));
+    if (erros.endereco) {
+      setErros((prev) => ({ ...prev, endereco: {} }));
+    }
   };
 
   const atualizarInformacoesProfissionais = (novos) => {
     setInformacoesProfissionais((prev) => ({ ...prev, ...novos }));
+    if (erros.informacoesProfissionais) {
+      setErros((prev) => ({ ...prev, informacoesProfissionais: {} }));
+    }
   };
 
-  // -----------------------------
   // Buscar CEP usando ViaCEP API
-  // -----------------------------
-
   const buscarCep = async (cep) => {
     const cepLimpo = cep.replace(/\D/g, "");
 
@@ -82,20 +117,85 @@ export const useRegisterTeacherModel = () => {
             cidade: data.localidade || "",
             estado: data.uf || "",
           });
+        } else {
+          alert("CEP não encontrado!");
         }
       } catch (err) {
         console.error("Erro ao buscar CEP:", err);
+        alert("Erro ao buscar CEP. Tente novamente.");
       }
     }
   };
 
-  // -----------------------------
-  // Navegação entre etapas
-  // -----------------------------
+  // Validação de cada etapa
+  const validarEtapa = () => {
+    const novosErros = {};
+
+    if (etapaAtual === 1) {
+      if (!dadosPessoais.nomeCompleto.trim()) {
+        novosErros.nomeCompleto = "Nome completo é obrigatório";
+      }
+      if (!dadosPessoais.email.trim()) {
+        novosErros.email = "Email é obrigatório";
+      } else if (!validarEmail(dadosPessoais.email)) {
+        novosErros.email = "Email inválido";
+      }
+      if (!dadosPessoais.cpf.trim()) {
+        novosErros.cpf = "CPF é obrigatório";
+      } else if (!validarCPF(dadosPessoais.cpf)) {
+        novosErros.cpf = "CPF inválido";
+      }
+      if (!dadosPessoais.dataNascimento) {
+        novosErros.dataNascimento = "Data de nascimento é obrigatória";
+      }
+      if (!dadosPessoais.telefone.trim()) {
+        novosErros.telefone = "Telefone é obrigatório";
+      }
+    }
+
+    if (etapaAtual === 2) {
+      if (!endereco.cep.trim()) {
+        novosErros.cep = "CEP é obrigatório";
+      }
+      if (!endereco.logradouro.trim()) {
+        novosErros.logradouro = "Logradouro é obrigatório";
+      }
+      if (!endereco.numero.trim()) {
+        novosErros.numero = "Número é obrigatório";
+      }
+      if (!endereco.bairro.trim()) {
+        novosErros.bairro = "Bairro é obrigatório";
+      }
+      if (!endereco.cidade.trim()) {
+        novosErros.cidade = "Cidade é obrigatória";
+      }
+      if (!endereco.estado) {
+        novosErros.estado = "Estado é obrigatório";
+      }
+    }
+
+    if (etapaAtual === 3) {
+      if (!informacoesProfissionais.cargo.trim()) {
+        novosErros.cargo = "Cargo é obrigatório";
+      }
+      if (!informacoesProfissionais.especialidades?.length) {
+        novosErros.especialidades = "Selecione ao menos uma especialidade";
+      }
+    }
+
+    setErros(novosErros);
+    return Object.keys(novosErros).length === 0;
+  };
 
   const proximaEtapa = () => {
-    if (etapaAtual < 4) {
-      setEtapaAtual(etapaAtual + 1);
+    if (validarEtapa()) {
+      if (etapaAtual === 3) {
+        finalizar();
+      } else if (etapaAtual < 4) {
+        setEtapaAtual(etapaAtual + 1);
+      }
+    } else {
+      alert("Por favor, preencha todos os campos obrigatórios corretamente.");
     }
   };
 
@@ -105,7 +205,14 @@ export const useRegisterTeacherModel = () => {
     }
   };
 
-  // Voltar para tela anterior mantendo os dados
+  // NOVA FUNÇÃO: permite clicar nos steps para navegar
+  const irParaEtapa = (numeroEtapa) => {
+    // Permite ir para qualquer etapa anterior ou a atual
+    if (numeroEtapa <= etapaAtual && numeroEtapa >= 1) {
+      setEtapaAtual(numeroEtapa);
+    }
+  };
+
   const voltar = () => {
     navigate("/secretary", {
       state: {
@@ -116,7 +223,6 @@ export const useRegisterTeacherModel = () => {
     });
   };
 
-  // Após finalizar as 3 primeiras etapas → vai para CONFIRMAÇÃO
   const finalizar = () => {
     console.log("📋 Dados do professor (pré-visualização):", {
       dadosPessoais,
@@ -127,7 +233,6 @@ export const useRegisterTeacherModel = () => {
     setEtapaAtual(4);
   };
 
-  // CONFIRMAR → “salvar” e retornar
   const concluir = () => {
     console.log("✅ Cadastro concluído com sucesso!");
     navigate("/secretary");
@@ -136,6 +241,7 @@ export const useRegisterTeacherModel = () => {
   return {
     etapaAtual,
     etapas,
+    erros,
 
     dadosPessoais,
     endereco,
@@ -148,6 +254,7 @@ export const useRegisterTeacherModel = () => {
 
     proximaEtapa,
     etapaAnterior,
+    irParaEtapa, // NOVA FUNÇÃO
     finalizar,
     concluir,
     voltar,

@@ -5,26 +5,19 @@ export default function EnderecoScreen({
   dados,
   atualizar,
   buscarCep,
+  erros = {},
 }) {
   const manipularCep = (valor) => {
-    // Formata o CEP: 00000-000
-    let cepFormatado = valor.replace(/\D/g, "");
-    if (cepFormatado.length > 5) {
-      cepFormatado = cepFormatado.slice(0, 5) + "-" + cepFormatado.slice(5, 8);
-    }
-
-    atualizar({ cep: cepFormatado });
+    atualizar({ cep: valor });
 
     // Busca o CEP quando tiver 8 dígitos
-    if (cepFormatado.replace(/\D/g, "").length === 8) {
-      buscarCep(cepFormatado);
+    if (valor.replace(/\D/g, "").length === 8) {
+      buscarCep(valor);
     }
   };
 
   return (
     <div className="endereco-screen">
-      <h2 className="screen-title">Endereço</h2>
-
       <div className="address-grid">
         <Input
           label="CEP"
@@ -32,7 +25,9 @@ export default function EnderecoScreen({
           value={dados.cep}
           onChange={(e) => manipularCep(e.target.value)}
           maxLength={9}
+          mask="cep"
           required
+          erro={erros.cep}
         />
 
         <Input
@@ -41,6 +36,7 @@ export default function EnderecoScreen({
           value={dados.logradouro}
           onChange={(e) => atualizar({ logradouro: e.target.value })}
           required
+          erro={erros.logradouro}
         />
 
         <Input
@@ -49,6 +45,7 @@ export default function EnderecoScreen({
           value={dados.numero}
           onChange={(e) => atualizar({ numero: e.target.value })}
           required
+          erro={erros.numero}
         />
 
         <Input
@@ -57,6 +54,7 @@ export default function EnderecoScreen({
           value={dados.bairro}
           onChange={(e) => atualizar({ bairro: e.target.value })}
           required
+          erro={erros.bairro}
         />
 
         <Input
@@ -65,6 +63,7 @@ export default function EnderecoScreen({
           value={dados.cidade}
           onChange={(e) => atualizar({ cidade: e.target.value })}
           required
+          erro={erros.cidade}
         />
 
         <div className="select-wrapper">
@@ -72,7 +71,7 @@ export default function EnderecoScreen({
             Estado<span className="select-required">*</span>
           </label>
           <select
-            className="select-field"
+            className={`select-field ${erros.estado ? "select-error" : ""}`}
             value={dados.estado}
             onChange={(e) => atualizar({ estado: e.target.value })}
             required
@@ -106,6 +105,7 @@ export default function EnderecoScreen({
             <option value="SE">SE</option>
             <option value="TO">TO</option>
           </select>
+          {erros.estado && <span className="select-error-message">{erros.estado}</span>}
         </div>
       </div>
     </div>

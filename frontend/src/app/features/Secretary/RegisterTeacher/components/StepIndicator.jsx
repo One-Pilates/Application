@@ -1,11 +1,10 @@
 import { FaCheck } from "react-icons/fa";
-// @ts-nocheck
 import "./stepIndicator.scss";
 
 export default function StepIndicator({
   steps,
   currentStep,
-  onStepClick,
+  onStepClick, // Agora vai receber corretamente
 }) {
   return (
     <div className="step-indicator">
@@ -13,7 +12,7 @@ export default function StepIndicator({
         const stepNumber = index + 1;
         const isActive = stepNumber === currentStep;
         const isCompleted = stepNumber < currentStep;
-        const isClickable = isCompleted || isActive;
+        const isClickable = stepNumber <= currentStep; // Pode clicar se for anterior ou atual
 
         return (
           <div key={stepNumber} className="step-wrapper">

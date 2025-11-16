@@ -1,4 +1,3 @@
-
 import { FaArrowLeft } from "react-icons/fa";
 import StepIndicator from "./components/StepIndicator";
 import Button from "./components/Button";
@@ -8,19 +7,20 @@ import InformacoesProfissionaisScreen from "./screens/InformacoesProfissionais";
 import ConfirmacaoScreen from "./screens/Confirmacao";
 import './style.scss';
 
-
 const RegisterTeacherView = ({
   etapaAtual,
   etapas,
   dadosPessoais,
   endereco,
   informacoesProfissionais,
+  erros,
   atualizarDadosPessoais,
   atualizarEndereco,
   atualizarInformacoesProfissionais,
   buscarCep,
   proximaEtapa,
   etapaAnterior,
+  irParaEtapa, // RECEBE A NOVA FUNÇÃO
   finalizar,
   concluir,
   voltar,
@@ -32,6 +32,7 @@ const RegisterTeacherView = ({
           <DadosPessoaisScreen
             dados={dadosPessoais}
             atualizar={atualizarDadosPessoais}
+            erros={erros}
           />
         );
       case 2:
@@ -40,6 +41,7 @@ const RegisterTeacherView = ({
             dados={endereco}
             atualizar={atualizarEndereco}
             buscarCep={buscarCep}
+            erros={erros}
           />
         );
       case 3:
@@ -47,6 +49,7 @@ const RegisterTeacherView = ({
           <InformacoesProfissionaisScreen
             dados={informacoesProfissionais}
             atualizar={atualizarInformacoesProfissionais}
+            erros={erros}
           />
         );
       case 4:
@@ -69,42 +72,43 @@ const RegisterTeacherView = ({
           <FaArrowLeft />
           <span>Voltar</span>
         </button>
-        <h1 className="main-title">Cadastrar Professor</h1>
+        <h1 className="main-title"> Preencha os dados para criar a conta</h1>
+        
       </div>
 
       <div className="register-content">
         <div className="register-card">
+        
           <StepIndicator
             steps={etapas}
             currentStep={etapaAtual}
+            onStepClick={irParaEtapa} // PASSA A FUNÇÃO AQUI
           />
-
-          <p className="subtitle">
-            Preencha os dados abaixo para cadastrar um novo professor
-          </p>
 
           <form className="register-form" onSubmit={(e) => e.preventDefault()}>
             {renderEtapa()}
 
-            <div className="button-group">
-              {etapaAtual > 1 && etapaAtual < 4 && (
-                <Button variant="secondary" onClick={etapaAnterior}>
+            {etapaAtual < 4 && (
+              <div className="button-group">
+                {etapaAtual > 1 && (
+                  <Button variant="secondary" onClick={etapaAnterior}>
+                    Cancelar
+                  </Button>
+                )}
+
+                <Button variant="primary" onClick={proximaEtapa}>
+                  {etapaAtual === 3 ? "Cadastrar" : "Continuar"}
+                </Button>
+              </div>
+            )}
+
+            {etapaAtual === 4 && (
+              <div className="button-group">
+                <Button variant="primary" onClick={concluir}>
                   Voltar
                 </Button>
-              )}
-
-              {etapaAtual < 4 && (
-                <Button variant="primary" onClick={proximaEtapa}>
-                  {etapaAtual === 3 ? "Confirmar" : "Próximo"}
-                </Button>
-              )}
-
-              {etapaAtual === 4 && (
-                <Button variant="primary" onClick={concluir}>
-                  Finalizar
-                </Button>
-              )}
-            </div>
+              </div>
+            )}
           </form>
         </div>
       </div>
