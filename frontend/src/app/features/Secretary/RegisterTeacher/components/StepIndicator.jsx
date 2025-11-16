@@ -4,7 +4,7 @@ import "./stepIndicator.scss";
 export default function StepIndicator({
   steps,
   currentStep,
-  onStepClick, // Agora vai receber corretamente
+  onStepClick, 
 }) {
   return (
     <div className="step-indicator">
@@ -12,7 +12,7 @@ export default function StepIndicator({
         const stepNumber = index + 1;
         const isActive = stepNumber === currentStep;
         const isCompleted = stepNumber < currentStep;
-        const isClickable = stepNumber <= currentStep; // Pode clicar se for anterior ou atual
+        const isClickable = stepNumber <= currentStep; 
 
         return (
           <div key={stepNumber} className="step-wrapper">

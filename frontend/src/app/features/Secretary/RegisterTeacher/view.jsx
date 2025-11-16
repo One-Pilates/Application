@@ -6,6 +6,7 @@ import EnderecoScreen from "./screens/Endereco";
 import InformacoesProfissionaisScreen from "./screens/InformacoesProfissionais";
 import ConfirmacaoScreen from "./screens/Confirmacao";
 import './style.scss';
+import { useNavigate } from "react-router-dom";
 
 const RegisterTeacherView = ({
   etapaAtual,
@@ -20,11 +21,14 @@ const RegisterTeacherView = ({
   buscarCep,
   proximaEtapa,
   etapaAnterior,
-  irParaEtapa, // RECEBE A NOVA FUNÇÃO
+  irParaEtapa,
   finalizar,
   concluir,
   voltar,
 }) => {
+
+  const navigate = useNavigate();
+
   const renderEtapa = () => {
     switch (etapaAtual) {
       case 1:
@@ -68,21 +72,23 @@ const RegisterTeacherView = ({
   return (
     <div className="register-container">
       <div className="register-header">
-        <button className="back-button" onClick={voltar}>
+        <button
+          className="back-button"
+          onClick={() => navigate("/secretaria/professor")} 
+        >
           <FaArrowLeft />
           <span>Voltar</span>
         </button>
-        <h1 className="main-title"> Preencha os dados para criar a conta</h1>
-        
+        <h1 className="main-title">Preencha os dados para criar a conta</h1>
       </div>
 
       <div className="register-content">
         <div className="register-card">
-        
+
           <StepIndicator
             steps={etapas}
             currentStep={etapaAtual}
-            onStepClick={irParaEtapa} // PASSA A FUNÇÃO AQUI
+            onStepClick={irParaEtapa}
           />
 
           <form className="register-form" onSubmit={(e) => e.preventDefault()}>
@@ -104,12 +110,16 @@ const RegisterTeacherView = ({
 
             {etapaAtual === 4 && (
               <div className="button-group">
-                <Button variant="primary" onClick={concluir}>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate("/secretaria/professor")}
+                >
                   Voltar
                 </Button>
               </div>
             )}
           </form>
+
         </div>
       </div>
     </div>

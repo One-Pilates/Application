@@ -2,7 +2,6 @@
 .register-container {
   width: 100%;
   min-height: 100vh;
-  background-color: #f9fafb;
   padding: 2rem;
 }
 
@@ -48,13 +47,6 @@
   margin: 0 auto;
 }
 
-.register-card {
-  background: white;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  padding: 2.5rem 3rem;
-}
 
 .subtitle {
   text-align: center;
@@ -75,9 +67,7 @@
   justify-content: flex-end;
   gap: 1rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #e5e7eb;
   margin-top: 1rem;
-
   > button:only-child {
     margin-left: 0;
   }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-// Função para validar CPF
+
 const validarCPF = (cpf) => {
   cpf = cpf.replace(/\D/g, "");
   
@@ -28,7 +28,7 @@ const validarCPF = (cpf) => {
   return true;
 };
 
-// Função para validar email
+
 const validarEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
@@ -75,13 +75,13 @@ export const useRegisterTeacherModel = () => {
   const etapas = [
     { label: "Dados Pessoais" },
     { label: "Endereço" },
-    { label: "Informações Profissionais" },
+    { label: "Profissionais" },
     { label: "Confirmação" },
   ];
 
   const atualizarDadosPessoais = (novos) => {
     setDadosPessoais((prev) => ({ ...prev, ...novos }));
-    // Limpa erros ao digitar
+   
     if (erros.dadosPessoais) {
       setErros((prev) => ({ ...prev, dadosPessoais: {} }));
     }
@@ -127,7 +127,7 @@ export const useRegisterTeacherModel = () => {
     }
   };
 
-  // Validação de cada etapa
+
   const validarEtapa = () => {
     const novosErros = {};
 
@@ -205,9 +205,8 @@ export const useRegisterTeacherModel = () => {
     }
   };
 
-  // NOVA FUNÇÃO: permite clicar nos steps para navegar
   const irParaEtapa = (numeroEtapa) => {
-    // Permite ir para qualquer etapa anterior ou a atual
+   
     if (numeroEtapa <= etapaAtual && numeroEtapa >= 1) {
       setEtapaAtual(numeroEtapa);
     }
@@ -254,7 +253,7 @@ export const useRegisterTeacherModel = () => {
 
     proximaEtapa,
     etapaAnterior,
-    irParaEtapa, // NOVA FUNÇÃO
+    irParaEtapa, 
     finalizar,
     concluir,
     voltar,
