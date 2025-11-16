@@ -1,12 +1,16 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { FaCamera } from "react-icons/fa";
 import Input from "../components/Input";
-import '../style.scss';
-export default function DadosPessoaisScreen({ dados, atualizar }) {
+import "./dadosPessoais.scss";
+
+export default function DadosPessoaisScreen({
+  dados,
+  atualizar,
+}) {
   const fileInputRef = useRef(null);
 
   const manipularArquivo = (e) => {
-    const arquivo = e.target.files[0];
+    const arquivo = e.target.files?.[0];
     if (arquivo) {
       const leitor = new FileReader();
       leitor.onloadend = () => {
@@ -17,23 +21,23 @@ export default function DadosPessoaisScreen({ dados, atualizar }) {
   };
 
   return (
-    <div className={styles.screen}>
-      <h2 className={styles.screenTitle}>Dados Pessoais</h2>
+    <div className="dados-pessoais-screen">
+      <h2 className="screen-title">Dados Pessoais</h2>
 
-      <div className={styles.photoSection}>
-        <div className={styles.photoContainer}>
+      <div className="photo-section">
+        <div className="photo-container">
           {dados.fotoPerfil ? (
-            <img src={dados.fotoPerfil} alt="Foto de perfil" className={styles.photo} />
+            <img src={dados.fotoPerfil} alt="Foto de perfil" className="photo" />
           ) : (
-            <div className={styles.photoPlaceholder}>
+            <div className="photo-placeholder">
               <FaCamera size={32} color="#9CA3AF" />
             </div>
           )}
         </div>
         <button
           type="button"
-          className={styles.uploadButton}
-          onClick={() => fileInputRef.current.click()}
+          className="upload-button"
+          onClick={() => fileInputRef.current?.click()}
         >
           Selecione a foto de perfil
         </button>
@@ -46,8 +50,8 @@ export default function DadosPessoaisScreen({ dados, atualizar }) {
         />
       </div>
 
-      <div className={styles.formGrid}>
-        <div className={styles.fullWidth}>
+      <div className="form-grid">
+        <div className="full-width">
           <Input
             label="Nome completo"
             placeholder="Digite o nome completo"
@@ -68,7 +72,7 @@ export default function DadosPessoaisScreen({ dados, atualizar }) {
 
         <Input
           label="CPF"
-          placeholder="535.929.0910.02-1"
+          placeholder="535.929.091-02"
           value={dados.cpf}
           onChange={(e) => atualizar({ cpf: e.target.value })}
           maxLength={14}

@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export const useRegisterTeacherModel = () => {
-  const navegar = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
-  const [etapaAtual, setEtapaAtual] = useState(1);
 
-  // Pega dados do location.state se existir (para manter ao voltar)
+  // Recupera dados se o usuário voltou da tela anterior
   const dadosIniciais = location.state || {};
+
+  const [etapaAtual, setEtapaAtual] = useState(1);
 
   const [dadosPessoais, setDadosPessoais] = useState(
     dadosIniciais.dadosPessoais || {
@@ -38,32 +39,41 @@ export const useRegisterTeacherModel = () => {
     }
   );
 
+  // Etapas do cadastro (4 etapas incluindo CONFIRMAÇÃO)
   const etapas = [
     { label: "Dados Pessoais" },
     { label: "Endereço" },
     { label: "Informações Profissionais" },
+    { label: "Confirmação" },
   ];
 
-  const atualizarDadosPessoais = (novosDados) => {
-    setDadosPessoais((prev) => ({ ...prev, ...novosDados }));
+  // -----------------------------
+  // Atualizações dos estados
+  // -----------------------------
+
+  const atualizarDadosPessoais = (novos) => {
+    setDadosPessoais((prev) => ({ ...prev, ...novos }));
   };
 
-  const atualizarEndereco = (novosDados) => {
-    setEndereco((prev) => ({ ...prev, ...novosDados }));
+  const atualizarEndereco = (novos) => {
+    setEndereco((prev) => ({ ...prev, ...novos }));
   };
 
-  const atualizarInformacoesProfissionais = (novosDados) => {
-    setInformacoesProfissionais((prev) => ({ ...prev, ...novosDados }));
+  const atualizarInformacoesProfissionais = (novos) => {
+    setInformacoesProfissionais((prev) => ({ ...prev, ...novos }));
   };
 
-  // Buscar CEP na API ViaCEP
+  // -----------------------------
+  // Buscar CEP usando ViaCEP API
+  // -----------------------------
+
   const buscarCep = async (cep) => {
     const cepLimpo = cep.replace(/\D/g, "");
-    
+
     if (cepLimpo.length === 8) {
       try {
-        const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-        const data = await response.json();
+        const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+        const data = await res.json();
 
         if (!data.erro) {
           atualizarEndereco({
@@ -73,11 +83,15 @@ export const useRegisterTeacherModel = () => {
             estado: data.uf || "",
           });
         }
-      } catch (erro) {
-        console.error("Erro ao buscar CEP:", erro);
+      } catch (err) {
+        console.error("Erro ao buscar CEP:", err);
       }
     }
   };
+
+  // -----------------------------
+  // Navegação entre etapas
+  // -----------------------------
 
   const proximaEtapa = () => {
     if (etapaAtual < 4) {
@@ -91,9 +105,9 @@ export const useRegisterTeacherModel = () => {
     }
   };
 
+  // Voltar para tela anterior mantendo os dados
   const voltar = () => {
-    // Salva os dados no location.state ao voltar
-    navegar("/secretary", {
+    navigate("/secretary", {
       state: {
         dadosPessoais,
         endereco,
@@ -102,42 +116,40 @@ export const useRegisterTeacherModel = () => {
     });
   };
 
+  // Após finalizar as 3 primeiras etapas → vai para CONFIRMAÇÃO
   const finalizar = () => {
-    // MOCKADO - só imprime no console
-    const dadosCompletos = {
+    console.log("📋 Dados do professor (pré-visualização):", {
       dadosPessoais,
       endereco,
       informacoesProfissionais,
-    };
+    });
 
-    console.log("📋 Dados do professor cadastrado (MOCKADO):", dadosCompletos);
-    
-    // Vai para a tela de confirmação
-    proximaEtapa();
+    setEtapaAtual(4);
   };
 
+  // CONFIRMAR → “salvar” e retornar
   const concluir = () => {
-    // MOCKADO - só mostra mensagem de sucesso
     console.log("✅ Cadastro concluído com sucesso!");
-    
-    // Volta para a página principal
-    navegar("/secretary");
+    navigate("/secretary");
   };
 
   return {
     etapaAtual,
     etapas,
+
     dadosPessoais,
     endereco,
     informacoesProfissionais,
+
     atualizarDadosPessoais,
     atualizarEndereco,
     atualizarInformacoesProfissionais,
     buscarCep,
+
     proximaEtapa,
     etapaAnterior,
-    voltar,
     finalizar,
     concluir,
+    voltar,
   };
 };
