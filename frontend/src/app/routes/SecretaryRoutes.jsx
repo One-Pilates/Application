@@ -17,6 +17,7 @@ export default function SecretaryRoutes() {
         <Route path="perfil" element={<Profile/>} />
         <Route path="agenda" element={<Calendar/>} />
         <Route path="professor" element={<GerenciamentoProfessor/>} />
+        <Route path="professor/cadastrar" element={<RegisterTeacher/>} />
         <Route path="alunos" element={<RegisterStudent/>} />
       </Route>
 
