@@ -45,8 +45,9 @@ const CalendarView = ({
   }, [isLoading]);
 
   return (
-    <div className="calendar-container">
-      <h1>Agenda</h1>
+    <>
+    <div className="calendar-container"> 
+    <h1>Agenda</h1>
       <main className="calendar-main">
         <div className="calendar-header-info">
           <div className="calendar-view-buttons">
@@ -106,6 +107,7 @@ const CalendarView = ({
         onClose={() => setIsAusenciaModalOpen(false)}
       />
     </div>
+    </>
   );
 };
 

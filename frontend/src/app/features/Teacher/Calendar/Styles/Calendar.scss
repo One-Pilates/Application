@@ -1,11 +1,5 @@
 @use '../../../../shared/styles/variables.scss' as *;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 .calendar-container {
   min-height: 100vh;
   display: flex;
@@ -20,9 +14,8 @@
 }
 
 .calendar-main {
-  max-width: 1200px;
+  max-width: 100%;
   width: 100%;
-  margin: 0 auto;
 }
 
 .calendar-header-info {
@@ -200,6 +193,14 @@
     transform: scale(1.02);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
+}
+
+/* Ausência: cor cinza mais forte e texto em negrito */
+.fc-event.ausencia-event {
+  background-color: #F3F4F6 !important;
+  border-color: #D1D5DB !important;
+  color: #111827 !important;
+  font-weight: 700 !important;
 }
 
 .fc-daygrid-day-number {

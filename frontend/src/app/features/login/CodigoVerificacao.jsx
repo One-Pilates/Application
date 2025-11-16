@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import "./CodigoVerificacao.scss";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../../../provider/api";
 

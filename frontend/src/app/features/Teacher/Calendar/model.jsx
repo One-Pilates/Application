@@ -7,6 +7,7 @@ export const useCalendarModel = () => {
   const [isAusenciaModalOpen, setIsAusenciaModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [agendamentos, setAgendamentos] = useState([]);
+  const [ausencias, setAusencias] = useState([]);
 
   const calendarRef = useRef(null);
   const calendarInstance = useRef(null);
@@ -36,6 +37,15 @@ export const useCalendarModel = () => {
       const user = JSON.parse(localStorage.getItem('user'));
       const response = await api.get(`/api/agendamentos/professorId/${user.id}`);
       setAgendamentos(Array.isArray(response.data) ? response.data : []);
+
+      // buscar ausências do backend para este professor
+      try {
+        const respAus = await api.get(`/api/ausencias/professor/${user.id}`);
+        setAusencias(Array.isArray(respAus.data) ? respAus.data : []);
+      } catch (err) {
+        console.warn('Não foi possível carregar ausências:', err);
+        setAusencias([]);
+      }
     } catch (error) {
       console.error('Erro ao buscar agendamentos:', error);
       setAgendamentos([]);
@@ -54,7 +64,7 @@ export const useCalendarModel = () => {
     if (!calendarRef.current) return;
     if (calendarInstance.current) calendarInstance.current.destroy();
 
-    const eventos = agendamentos.map((aula) => {
+    const eventosAulas = agendamentos.map((aula) => {
       const { backgroundColor, textColor } = getColorForEspecialidade(aula.especialidade);
       return {
         id: String(aula.id),
@@ -71,6 +81,21 @@ export const useCalendarModel = () => {
       };
     });
 
+    const eventosAusencias = (ausencias || []).map((a) => {
+      return {
+        id: `aus-${a.id}`,
+        title: 'Ausência',
+        start: a.dataInicio,
+        end: a.dataFim,
+        backgroundColor: '#9d9d9e',
+        borderColor: '#000000',
+        textColor: '#111827',
+        classNames: ['ausencia-event'],
+        extendedProps: { isAusencia: true, motivo: a.motivo }
+      };
+    });
+
+    const eventos = [...eventosAulas, ...eventosAusencias];
     const calendar = new window.FullCalendar.Calendar(calendarRef.current, {
       initialView: 'timeGridWeek',
       locale: 'pt-br',
@@ -86,17 +111,41 @@ export const useCalendarModel = () => {
         right: 'prev,next'
       },
       events: eventos,
-
+      selectable: true,
+      selectAllow: (selectInfo) => {
+        const start = selectInfo.start;
+        const end = selectInfo.end;
+        const hasOverlap = calendar.getEvents().some((ev) => {
+          if (!ev.start || !ev.end) return false;
+          const isBlocked = ev.display === 'background' || (ev.extendedProps && ev.extendedProps.isAusencia);
+          if (!isBlocked) return false;
+          return !(end <= ev.start || start >= ev.end);
+        });
+        return !hasOverlap;
+      },
+      dateClick: (info) => {
+        const clickDate = info.date;
+        const tinyEnd = new Date(clickDate.getTime() + 1000);
+        const blocked = calendar.getEvents().some((ev) => {
+          if (!ev.start || !ev.end) return false;
+          const isBlocked = ev.display === 'background' || (ev.extendedProps && ev.extendedProps.isAusencia);
+          if (!isBlocked) return false;
+          return !(tinyEnd <= ev.start || clickDate >= ev.end);
+        });
+        if (blocked) return;
+      },
       eventClick: (info) => {
+        const isBlocked = info.event.display === 'background' || (info.event.extendedProps && info.event.extendedProps.isAusencia);
+        if (isBlocked) return;
         const agendamentoData = info.event.extendedProps;
         if (agendamentoData) {
           setSelectedAgendamento(agendamentoData);
           setIsAgendamentoModalOpen(true);
         }
       },
-
       eventDidMount: (info) => {
-        info.el.style.cursor = 'pointer';
+        const isBlocked = info.event.display === 'background' || (info.event.extendedProps && info.event.extendedProps.isAusencia);
+        info.el.style.cursor = isBlocked ? 'not-allowed' : 'pointer';
       }
     });
 
@@ -142,7 +191,23 @@ export const useCalendarModel = () => {
     if (window.FullCalendar && !isLoading) {
       initCalendar();
     }
-  }, [agendamentos, isLoading]);
+  }, [agendamentos, ausencias, isLoading]);
+
+  useEffect(() => {
+    const handleAusenciaCreate = (e) => {
+      const ev = e.detail;
+      if (calendarInstance.current && ev) {
+        try {
+          calendarInstance.current.addEvent(ev);
+        } catch (err) {
+          console.error('Erro ao adicionar evento de ausência no calendário:', err);
+        }
+      }
+    };
+
+    window.addEventListener('ausencia:create', handleAusenciaCreate);
+    return () => window.removeEventListener('ausencia:create', handleAusenciaCreate);
+  }, []);
 
   return {
     selectedAgendamento,
