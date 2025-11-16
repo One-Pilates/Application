@@ -10,16 +10,15 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Verificando usuário autenticado...");
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
-      console.log("Usuário autenticado encontrado.", JSON.parse(savedUser));
       setUser(JSON.parse(savedUser));
     }
   }, []);
 
   async function login(email, senha) {
     setIsLoading(true);
+
     try {
       const response = await api.post("/auth/login", { email, senha });
       const data = response.data;
@@ -28,42 +27,61 @@ export function AuthProvider({ children }) {
       localStorage.setItem("user", JSON.stringify(data.funcionario));
 
       setUser(data.funcionario);
-      console.log("data:", data);
-      console.log("Funcionario:", data.funcionario);
-      console.log("Token:", data.token);
 
-      let urlNavigation = "";
-      let mensagem = "";
-      if (data.funcionario.role === "PROFESSOR") {
-        urlNavigation = "/professora/agenda";
-        mensagem = `Bem-vindo a sua agenda, ${data.funcionario.nome}!`;
-      } else if (data.funcionario.role === "SECRETARIA" || data.funcionario.role === "ADMINISTRADOR") {
-        urlNavigation = "/secretaria/dashboard";
-        mensagem = `Bem-vindo ao painel da One Pilates, ${data.funcionario.nome}!`;
-      } else {
-        urlNavigation = "/login";
-        mensagem = "Função desconhecida. Contate o administrador.";
+      const role = data.funcionario.role;
+      const nome = data.funcionario.nome;
+
+      const rotas = {
+        PROFESSOR: {
+          path: "/professora/agenda",
+          msg: `Bem-vindo à sua agenda, ${nome}!`,
+        },
+        SECRETARIA: {
+          path: "/secretaria/dashboard",
+          msg: `Bem-vindo ao painel da One Pilates, ${nome}!`,
+        },
+        ADMINISTRADOR: {
+          path: "/secretaria/dashboard",
+          msg: `Bem-vindo ao painel da One Pilates, ${nome}!`,
+        },
+      };
+
+      const destino = rotas[role];
+
+      if (!destino) {
+        Swal.fire({
+          icon: "error",
+          title: "Função desconhecida",
+          text: "Contate o administrador.",
+        });
+        return false;
       }
-      Swal.fire({ icon: "success", 
-        title: "Login bem-sucedido", 
+
+      Swal.fire({
+        icon: "success",
+        title: "Login bem-sucedido",
+        text: destino.msg,
         showConfirmButton: false,
-        text: mensagem,
         timer: 3000,
-        timerProgressBar: true
+        timerProgressBar: true,
       });
 
-      setTimeout(() => {
-        navigate(urlNavigation);
-      }, 3000);
+      setTimeout(() => navigate(destino.path), 3000);
+
       return true;
     } catch (error) {
       const status = error.response?.status;
-      const message =
+      const msg =
         status === 401
           ? "Email ou senha incorretos."
           : "Ocorreu um erro inesperado. Tente novamente mais tarde.";
 
-      Swal.fire({ icon: "error", title: "Erro ao fazer login", text: message });
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao fazer login",
+        text: msg,
+        confirmButtonColor: "#d33",
+      });
       return false;
     } finally {
       setIsLoading(false);
@@ -72,13 +90,13 @@ export function AuthProvider({ children }) {
 
   function logout() {
     Swal.fire({
-      title: 'Tem certeza que deseja sair?',
-      icon: 'warning',
+      title: "Tem certeza que deseja sair?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sim, sair',
-      cancelButtonText: 'Cancelar'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, sair",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
         localStorage.removeItem("token");
@@ -90,7 +108,15 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        login,
+        logout,
+        isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
