@@ -1,15 +1,18 @@
-import React from "react";
 import Input from "../components/Input";
-import '../style.scss';
+import "./endereco.scss";
 
-export default function EnderecoScreen({ dados, atualizar, buscarCep }) {
+export default function EnderecoScreen({
+  dados,
+  atualizar,
+  buscarCep,
+}) {
   const manipularCep = (valor) => {
     // Formata o CEP: 00000-000
     let cepFormatado = valor.replace(/\D/g, "");
     if (cepFormatado.length > 5) {
       cepFormatado = cepFormatado.slice(0, 5) + "-" + cepFormatado.slice(5, 8);
     }
-    
+
     atualizar({ cep: cepFormatado });
 
     // Busca o CEP quando tiver 8 dígitos
@@ -19,10 +22,10 @@ export default function EnderecoScreen({ dados, atualizar, buscarCep }) {
   };
 
   return (
-    <div className={styles.screen}>
-      <h2 className={styles.screenTitle}>Endereço</h2>
+    <div className="endereco-screen">
+      <h2 className="screen-title">Endereço</h2>
 
-      <div className={styles.addressGrid}>
+      <div className="address-grid">
         <Input
           label="CEP"
           placeholder="00000-000"
@@ -64,12 +67,12 @@ export default function EnderecoScreen({ dados, atualizar, buscarCep }) {
           required
         />
 
-        <div className={styles.selectWrapper}>
-          <label className={styles.selectLabel}>
-            Estado<span style={{ color: '#ef4444', marginLeft: '0.25rem' }}>*</span>
+        <div className="select-wrapper">
+          <label className="select-label">
+            Estado<span className="select-required">*</span>
           </label>
           <select
-            className={styles.select}
+            className="select-field"
             value={dados.estado}
             onChange={(e) => atualizar({ estado: e.target.value })}
             required

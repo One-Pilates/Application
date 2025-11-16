@@ -1,14 +1,15 @@
-import React from "react";
-import { IoChevronBack } from "react-icons/io5";
+
+import { FaArrowLeft } from "react-icons/fa";
 import StepIndicator from "./components/StepIndicator";
-import DadosPessoaisScreen from "./screens/DadosPessoaisScreen";
-import EnderecoScreen from "./screens/EnderecoScreen";
-import InformacoesProfissionaisScreen from "./screens/InformacoesProfissionaisScreen";
-import ConfirmacaoScreen from "./screens/ConfirmacaoScreen";
 import Button from "./components/Button";
+import DadosPessoaisScreen from "./screens/DadosPessoais";
+import EnderecoScreen from "./screens/Endereco";
+import InformacoesProfissionaisScreen from "./screens/InformacoesProfissionais";
+import ConfirmacaoScreen from "./screens/Confirmacao";
+import './style.scss';
 
 
-export default function RegisterTeacherView({
+const RegisterTeacherView = ({
   etapaAtual,
   etapas,
   dadosPessoais,
@@ -20,11 +21,11 @@ export default function RegisterTeacherView({
   buscarCep,
   proximaEtapa,
   etapaAnterior,
-  voltar,
   finalizar,
   concluir,
-}) {
-  const renderizarTela = () => {
+  voltar,
+}) => {
+  const renderEtapa = () => {
     switch (etapaAtual) {
       case 1:
         return (
@@ -35,7 +36,11 @@ export default function RegisterTeacherView({
         );
       case 2:
         return (
-          <EnderecoScreen dados={endereco} atualizar={atualizarEndereco} />
+          <EnderecoScreen
+            dados={endereco}
+            atualizar={atualizarEndereco}
+            buscarCep={buscarCep}
+          />
         );
       case 3:
         return (
@@ -57,65 +62,54 @@ export default function RegisterTeacherView({
     }
   };
 
-  const manipularSubmit = (e) => {
-    e.preventDefault();
-
-    if (etapaAtual < 3) {
-      proximaEtapa();
-    } else if (etapaAtual === 3) {
-      finalizar();
-    } else {
-      concluir();
-    }
-  };
-
-  const obterTextoBotao = () => {
-    if (etapaAtual === 3) return "Cadastrar";
-    if (etapaAtual === 4) return "Concluir";
-    return "Continuar";
-  };
-
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <button onClick={voltar} className={styles.backButton}>
-          <IoChevronBack size={20} />
-          Voltar
+    <div className="register-container">
+      <div className="register-header">
+        <button className="back-button" onClick={voltar}>
+          <FaArrowLeft />
+          <span>Voltar</span>
         </button>
-        <h1 className={styles.mainTitle}>Cadastro Professor</h1>
+        <h1 className="main-title">Cadastrar Professor</h1>
       </div>
 
-      <div className={styles.content}>
-        <div className={styles.card}>
-          {etapaAtual < 4 && (
-            <>
-              <p className={styles.subtitle}>
-                Preencha os dados para criar a conta
-              </p>
-              <StepIndicator steps={etapas} currentStep={etapaAtual} />
-            </>
-          )}
+      <div className="register-content">
+        <div className="register-card">
+          <StepIndicator
+            steps={etapas}
+            currentStep={etapaAtual}
+          />
 
-          <form onSubmit={manipularSubmit} className={styles.form}>
-            {renderizarTela()}
+          <p className="subtitle">
+            Preencha os dados abaixo para cadastrar um novo professor
+          </p>
 
-            <div className={styles.buttonGroup}>
+          <form className="register-form" onSubmit={(e) => e.preventDefault()}>
+            {renderEtapa()}
+
+            <div className="button-group">
               {etapaAtual > 1 && etapaAtual < 4 && (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={etapaAnterior}
-                >
+                <Button variant="secondary" onClick={etapaAnterior}>
                   Voltar
                 </Button>
               )}
-              <Button type="submit" variant="primary">
-                {obterTextoBotao()}
-              </Button>
+
+              {etapaAtual < 4 && (
+                <Button variant="primary" onClick={proximaEtapa}>
+                  {etapaAtual === 3 ? "Confirmar" : "Próximo"}
+                </Button>
+              )}
+
+              {etapaAtual === 4 && (
+                <Button variant="primary" onClick={concluir}>
+                  Finalizar
+                </Button>
+              )}
             </div>
           </form>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default RegisterTeacherView;
