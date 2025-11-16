@@ -1,4 +1,4 @@
-btn {
+.btn {
   padding: 0.625rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
@@ -10,6 +10,7 @@ btn {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  min-width: 120px;
 
   &:disabled {
     cursor: not-allowed;
@@ -22,6 +23,12 @@ btn {
 
     &:hover:not(:disabled) {
       background-color: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
   }
 
@@ -31,6 +38,12 @@ btn {
 
     &:hover:not(:disabled) {
       background-color: #dc2626;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
   }
 }

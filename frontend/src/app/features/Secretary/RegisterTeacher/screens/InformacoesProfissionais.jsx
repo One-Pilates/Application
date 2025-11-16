@@ -4,6 +4,7 @@ import "./informacoesProfissionais.scss";
 export default function InformacoesProfissionaisScreen({
   dados,
   atualizar,
+  erros = {},
 }) {
   const especialidades = [
     "Fisioterapia",
@@ -27,8 +28,6 @@ export default function InformacoesProfissionaisScreen({
 
   return (
     <div className="informacoes-profissionais-screen">
-      <h2 className="screen-title">Informações Profissionais</h2>
-
       <div className="professional-content">
         <Input
           label="Cargo"
@@ -36,10 +35,14 @@ export default function InformacoesProfissionaisScreen({
           value={dados.cargo}
           onChange={(e) => atualizar({ cargo: e.target.value })}
           required
+          erro={erros.cargo}
         />
 
         <div className="especialidades-section">
-          <label className="section-label">Especialidades</label>
+          <label className="section-label">
+            Especialidades
+            <span className="section-required">*</span>
+          </label>
           <div className="checkbox-grid">
             {especialidades.map((especialidade) => (
               <label key={especialidade} className="checkbox-label">
@@ -53,6 +56,9 @@ export default function InformacoesProfissionaisScreen({
               </label>
             ))}
           </div>
+          {erros.especialidades && (
+            <span className="error-message">{erros.especialidades}</span>
+          )}
         </div>
       </div>
     </div>
