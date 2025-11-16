@@ -1,22 +1,23 @@
 import React from "react";
+import "./input.scss";
 
-export default function Input({ 
-  label, 
-  type = "text", 
-  placeholder, 
-  value, 
-  onChange, 
+export default function Input({
+  label,
+  type = "text",
+  placeholder = "",
+  value = "",
+  onChange = () => {},
   required = false,
   disabled = false,
   maxLength,
-  ...props 
+  ...props
 }) {
   return (
-    <div style={styles.container}>
+    <div className="input-container">
       {label && (
-        <label style={styles.label}>
+        <label className="input-label">
           {label}
-          {required && <span style={styles.required}>*</span>}
+          {required && <span className="input-required">*</span>}
         </label>
       )}
       <input
@@ -27,38 +28,9 @@ export default function Input({
         required={required}
         disabled={disabled}
         maxLength={maxLength}
-        style={styles.input}
+        className="input-field"
         {...props}
       />
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    width: '100%',
-  },
-  label: {
-    fontSize: '0.875rem',
-    fontWeight: '500',
-    color: '#4b5563',
-  },
-  required: {
-    color: '#ef4444',
-    marginLeft: '0.25rem',
-  },
-  input: {
-    width: '100%',
-    padding: '0.625rem 0.875rem',
-    fontSize: '0.875rem',
-    color: '#1f2937',
-    backgroundColor: '#f3f4f6',
-    border: '1px solid #e5e7eb',
-    borderRadius: '0.5rem',
-    transition: 'all 0.2s ease',
-    outline: 'none',
-  },
-};

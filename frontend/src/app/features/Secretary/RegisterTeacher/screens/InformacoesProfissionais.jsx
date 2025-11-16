@@ -1,8 +1,10 @@
-import React from "react";
 import Input from "../components/Input";
-import '../style.scss';
+import "./informacoesProfissionais.scss";
 
-export default function InformacoesProfissionaisScreen({ dados, atualizar }) {
+export default function InformacoesProfissionaisScreen({
+  dados,
+  atualizar,
+}) {
   const especialidades = [
     "Fisioterapia",
     "Pilates",
@@ -24,10 +26,10 @@ export default function InformacoesProfissionaisScreen({ dados, atualizar }) {
   };
 
   return (
-    <div className={styles.screen}>
-      <h2 className={styles.screenTitle}>Informações Profissionais</h2>
+    <div className="informacoes-profissionais-screen">
+      <h2 className="screen-title">Informações Profissionais</h2>
 
-      <div className={styles.professionalContent}>
+      <div className="professional-content">
         <Input
           label="Cargo"
           placeholder="Fisioterapeuta"
@@ -36,18 +38,18 @@ export default function InformacoesProfissionaisScreen({ dados, atualizar }) {
           required
         />
 
-        <div className={styles.especialidadesSection}>
-          <label className={styles.sectionLabel}>Especialidades</label>
-          <div className={styles.checkboxGrid}>
+        <div className="especialidades-section">
+          <label className="section-label">Especialidades</label>
+          <div className="checkbox-grid">
             {especialidades.map((especialidade) => (
-              <label key={especialidade} className={styles.checkboxLabel}>
+              <label key={especialidade} className="checkbox-label">
                 <input
                   type="checkbox"
                   checked={dados.especialidades?.includes(especialidade) || false}
                   onChange={() => manipularEspecialidade(especialidade)}
-                  className={styles.checkbox}
+                  className="checkbox-input"
                 />
-                <span className={styles.checkboxText}>{especialidade}</span>
+                <span className="checkbox-text">{especialidade}</span>
               </label>
             ))}
           </div>

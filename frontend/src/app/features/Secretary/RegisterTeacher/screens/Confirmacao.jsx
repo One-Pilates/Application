@@ -1,33 +1,32 @@
-import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import '../style.scss';
+import "./confirmacao.scss";
+
+const CardInfo = ({ label, valor }) => (
+  <div className="card-info">
+    <span className="card-label">{label}</span>
+    <span className="card-value">{valor || "---"}</span>
+  </div>
+);
 
 export default function ConfirmacaoScreen({
   dadosPessoais,
   endereco,
   informacoesProfissionais,
 }) {
-  const CardInfo = ({ label, valor }) => (
-    <div className={styles.cardInfo}>
-      <span className={styles.cardLabel}>{label}</span>
-      <span className={styles.cardValue}>{valor || "---"}</span>
-    </div>
-  );
-
   return (
-    <div className={styles.confirmacao}>
-      <div className={styles.successIcon}>
+    <div className="confirmacao-screen">
+      <div className="success-icon">
         <FaCheckCircle size={48} color="#22C55E" />
       </div>
 
-      <h2 className={styles.confirmTitle}>Cadastro feito com sucesso!</h2>
-      <p className={styles.confirmMessage}>
+      <h2 className="confirm-title">Cadastro feito com sucesso!</h2>
+      <p className="confirm-message">
         A senha foi gerada e enviada ao email do usuário
       </p>
 
-      <div className={styles.dataSection}>
-        <h3 className={styles.sectionTitle}>Dados Pessoais</h3>
-        <div className={styles.cardGrid}>
+      <div className="data-section">
+        <h3 className="section-title">Dados Pessoais</h3>
+        <div className="card-grid">
           <CardInfo label="Nome" valor={dadosPessoais.nomeCompleto} />
           <CardInfo label="Email" valor={dadosPessoais.email} />
           <CardInfo label="CPF" valor={dadosPessoais.cpf} />
@@ -36,9 +35,9 @@ export default function ConfirmacaoScreen({
         </div>
       </div>
 
-      <div className={styles.dataSection}>
-        <h3 className={styles.sectionTitle}>Endereço</h3>
-        <div className={styles.cardGrid}>
+      <div className="data-section">
+        <h3 className="section-title">Endereço</h3>
+        <div className="card-grid">
           <CardInfo label="CEP" valor={endereco.cep} />
           <CardInfo label="Logradouro" valor={endereco.logradouro} />
           <CardInfo label="Número" valor={endereco.numero} />
@@ -48,21 +47,21 @@ export default function ConfirmacaoScreen({
         </div>
       </div>
 
-      <div className={styles.dataSection}>
-        <h3 className={styles.sectionTitle}>Informações Profissionais</h3>
-        <div className={styles.cardGrid}>
+      <div className="data-section">
+        <h3 className="section-title">Informações Profissionais</h3>
+        <div className="card-grid">
           <CardInfo label="Cargo" valor={informacoesProfissionais.cargo} />
-          <div className={styles.cardInfo}>
-            <span className={styles.cardLabel}>Especialidades</span>
-            <div className={styles.tagContainer}>
+          <div className="card-info">
+            <span className="card-label">Especialidades</span>
+            <div className="tag-container">
               {informacoesProfissionais.especialidades?.length > 0 ? (
                 informacoesProfissionais.especialidades.map((esp, index) => (
-                  <span key={index} className={styles.tag}>
+                  <span key={index} className="tag">
                     {esp}
                   </span>
                 ))
               ) : (
-                <span className={styles.cardValue}>---</span>
+                <span className="card-value">---</span>
               )}
             </div>
           </div>
