@@ -4,7 +4,7 @@ import api from "../../../../provider/api"
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
-export const useProfileTeacherModel = () => {
+export const useProfileUserModel = () => {
   const { user, setUser } = useAuth();
   const [dadosUser, setDadosUser] = useState({
     nome:  "",

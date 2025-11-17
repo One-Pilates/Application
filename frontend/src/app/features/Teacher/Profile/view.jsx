@@ -2,7 +2,7 @@ import React from "react";
 import { FaPen } from "react-icons/fa";
 import "./style.scss";
 
-const ProfileTeacherView = ({
+const ProfileUserView = ({
   dadosUser,
   profileImage,
   fileInputRef,
@@ -208,4 +208,4 @@ const ProfileTeacherView = ({
   );
 };
 
-export default ProfileTeacherView;
+export default ProfileUserView;
