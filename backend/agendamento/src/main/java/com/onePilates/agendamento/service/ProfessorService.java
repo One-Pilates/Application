@@ -21,10 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,7 +28,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProfessorService {
-    private static final String UPLOAD_DIR = "imagens/";
     private static final Logger logger = LoggerFactory.getLogger(ProfessorService.class);
 
     private final ProfessorRepository professorRepository;
@@ -40,54 +35,34 @@ public class ProfessorService {
     private final AgendamentoRepository agendamentoRepository;
     private final AgendamentoService agendamentoService;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
     public ProfessorService(ProfessorRepository professorRepository,
                             EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository,
                             AgendamentoService agendamentoService,
-                            PasswordEncoder passwordEncoder) {
+                            PasswordEncoder passwordEncoder,
+                            ImageService imageService) {
         this.professorRepository = professorRepository;
         this.especialidadeRepository = especialidadeRepository;
         this.agendamentoRepository = agendamentoRepository;
         this.agendamentoService = agendamentoService;
         this.passwordEncoder = passwordEncoder;
+        this.imageService = imageService;
     }
 
 
 
-    public String salvarFoto(Long id, MultipartFile file) throws Exception {
+    public String salvarFoto(Long id, MultipartFile file) {
         Professor professor = professorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
 
-        // cria pasta se não existir
-        File dir = new File(UPLOAD_DIR);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        // apaga foto anterior se existir
         String fotoAntiga = professor.getFoto();
-        if (fotoAntiga != null && !fotoAntiga.isBlank()) {
-            File arquivoAntigo = new File(fotoAntiga);
-            if (arquivoAntigo.exists()) {
-                boolean deletado = arquivoAntigo.delete();
-                if (!deletado) {
-                    System.out.println("Não foi possível apagar a foto antiga: " + fotoAntiga);
-                }
-            }
-        }
+        String caminhoNovaFoto = imageService.atualizarImagem(id, file, fotoAntiga, "professor");
 
-        // nome único para o novo arquivo
-        String fileName = id + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(UPLOAD_DIR, fileName);
-
-        // salva novo arquivo no disco
-        Files.write(filePath, file.getBytes());
-
-        // atualiza caminho no banco
-        professor.setFoto(filePath.toString());
+        professor.setFoto(caminhoNovaFoto);
         professorRepository.save(professor);
 
-        return filePath.toString();
+        return caminhoNovaFoto;
     }
 
 
@@ -120,7 +95,6 @@ public class ProfessorService {
         professor.setCpf(dto.getCpf());
         professor.setDataNascimento(dto.getIdade());
         professor.setStatus(true);
-        professor.setFoto(dto.getFoto());
         professor.setObservacoes(dto.getObservacoes());
         professor.setNotificacaoAtiva(dto.getNotificacaoAtiva() != null ? dto.getNotificacaoAtiva() : Boolean.FALSE);
         professor.setCargo(dto.getCargo());
@@ -154,7 +128,25 @@ public class ProfessorService {
                 .collect(Collectors.toSet());
         professor.setEspecialidades(especialidades);
 
+        // Salva o professor primeiro para obter o ID
         Professor salvo = professorRepository.save(professor);
+
+        // Processa imagem se fornecida (após salvar para ter o ID)
+        if (dto.getImagem() != null && !dto.getImagem().isEmpty()) {
+            try {
+                String caminhoFoto = imageService.salvarImagem(salvo.getId(), dto.getImagem(), "professor");
+                salvo.setFoto(caminhoFoto);
+                salvo = professorRepository.save(salvo);
+            } catch (Exception e) {
+                logger.error("Erro ao salvar imagem do professor: {}", e.getMessage(), e);
+                // Se falhar ao salvar imagem, continua sem foto
+            }
+        } else if (dto.getFoto() != null && !dto.getFoto().isBlank()) {
+            // Mantém compatibilidade com o campo foto (String) se imagem não for fornecida
+            salvo.setFoto(dto.getFoto());
+            salvo = professorRepository.save(salvo);
+        }
+
         return toResponseDTO(salvo);
     }
 
@@ -235,9 +227,14 @@ public class ProfessorService {
     public void excluirProfessor(Long id) {
         logger.info("Tentativa de excluir professor ID: {}", id);
         try {
-            if (!professorRepository.existsById(id)) {
-                throw new EntidadeNaoEncontradaException("Professor não encontrado");
+            Professor professor = professorRepository.findById(id)
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
+            
+            // Remove a imagem se existir
+            if (professor.getFoto() != null) {
+                imageService.removerImagem(professor.getFoto());
             }
+            
             professorRepository.deleteById(id);
             logger.info("Professor excluído com sucesso. ID: {}", id);
         } catch (BusinessException e) {

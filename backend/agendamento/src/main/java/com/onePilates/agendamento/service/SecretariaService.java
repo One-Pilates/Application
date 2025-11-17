@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,15 +27,18 @@ public class SecretariaService {
     private final SecretariaRepository secretariaRepository;
     private final EnderecoRepository enderecoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
     public SecretariaService(
             SecretariaRepository secretariaRepository,
             EnderecoRepository enderecoRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            ImageService imageService
     ) {
         this.secretariaRepository = secretariaRepository;
         this.enderecoRepository = enderecoRepository;
         this.passwordEncoder = passwordEncoder;
+        this.imageService = imageService;
     }
 
     @Transactional
@@ -54,7 +58,6 @@ public class SecretariaService {
             secretaria.setCpf(dto.getCpf());
             secretaria.setDataNascimento(dto.getIdade());
             secretaria.setStatus(dto.getStatus());
-            secretaria.setFoto(dto.getFoto());
             secretaria.setObservacoes(dto.getObservacoes());
             secretaria.setNotificacaoAtiva(dto.getNotificacaoAtiva());
             secretaria.setSenha(passwordEncoder.encode(dto.getSenha()));
@@ -74,7 +77,25 @@ public class SecretariaService {
             secretaria.setEndereco(endereco);
         }
 
+            // Salva a secretária primeiro para obter o ID
             Secretaria saved = secretariaRepository.save(secretaria);
+
+            // Processa imagem se fornecida (após salvar para ter o ID)
+            if (dto.getImagem() != null && !dto.getImagem().isEmpty()) {
+                try {
+                    String caminhoFoto = imageService.salvarImagem(saved.getId(), dto.getImagem(), "secretaria");
+                    saved.setFoto(caminhoFoto);
+                    saved = secretariaRepository.save(saved);
+                } catch (Exception e) {
+                    logger.error("Erro ao salvar imagem da secretária: {}", e.getMessage(), e);
+                    // Se falhar ao salvar imagem, continua sem foto
+                }
+            } else if (dto.getFoto() != null && !dto.getFoto().isBlank()) {
+                // Mantém compatibilidade com o campo foto (String) se imagem não for fornecida
+                saved.setFoto(dto.getFoto());
+                saved = secretariaRepository.save(saved);
+            }
+
             logger.info("Secretária criada com sucesso. ID: {}", saved.getId());
             return saved;
         } catch (BusinessException e) {
@@ -188,13 +209,31 @@ public class SecretariaService {
         }
     }
 
+    public String salvarFoto(Long id, MultipartFile file) {
+        Secretaria secretaria = secretariaRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Secretária não encontrada"));
+
+        String fotoAntiga = secretaria.getFoto();
+        String caminhoNovaFoto = imageService.atualizarImagem(id, file, fotoAntiga, "secretaria");
+
+        secretaria.setFoto(caminhoNovaFoto);
+        secretariaRepository.save(secretaria);
+
+        return caminhoNovaFoto;
+    }
+
     @Transactional
     public void excluirSecretaria(Long id) {
         logger.info("Tentativa de excluir secretária ID: {}", id);
         try {
-            if (!secretariaRepository.existsById(id)) {
-                throw new EntidadeNaoEncontradaException("Secretária não encontrada");
+            Secretaria secretaria = secretariaRepository.findById(id)
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Secretária não encontrada"));
+            
+            // Remove a imagem se existir
+            if (secretaria.getFoto() != null) {
+                imageService.removerImagem(secretaria.getFoto());
             }
+            
             secretariaRepository.deleteById(id);
             logger.info("Secretária excluída com sucesso. ID: {}", id);
         } catch (BusinessException e) {

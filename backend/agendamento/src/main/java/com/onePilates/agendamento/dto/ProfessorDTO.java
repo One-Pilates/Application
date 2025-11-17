@@ -29,7 +29,6 @@ public class ProfessorDTO {
     @NotNull(message = "O campo status é obrigatório")
     private Boolean status;
 
-    @NotBlank(message = "O campo foto é obrigatório")
     private String foto;
 
     @Size(max = 500, message = "O campo observações deve ter no máximo 500 caracteres")

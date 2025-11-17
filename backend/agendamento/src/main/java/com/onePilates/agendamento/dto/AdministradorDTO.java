@@ -1,5 +1,7 @@
 package com.onePilates.agendamento.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 
 public class AdministradorDTO {
@@ -14,6 +16,7 @@ public class AdministradorDTO {
     private String senha;
     private String cargo;
     private EnderecoDTO endereco;
+    private MultipartFile imagem;
 
     public AdministradorDTO() {
     }
@@ -104,5 +107,13 @@ public class AdministradorDTO {
 
     public void setEndereco(EnderecoDTO endereco) {
         this.endereco = endereco;
+    }
+
+    public MultipartFile getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(MultipartFile imagem) {
+        this.imagem = imagem;
     }
 }

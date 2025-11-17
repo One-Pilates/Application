@@ -78,10 +78,13 @@ public class ProfessorController {
 
     @PostMapping("/{id}/uploadFoto")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'PROFESSOR')")
-    public ResponseEntity<String> uploadFoto(
+    public ResponseEntity<?> uploadFoto(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) {
         try {
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest().body("Arquivo não pode ser vazio");
+            }
             String caminho = professorService.salvarFoto(id, file);
             return ResponseEntity.ok("Foto salva com sucesso: " + caminho);
         } catch (Exception e) {

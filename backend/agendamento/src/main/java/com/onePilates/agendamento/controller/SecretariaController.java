@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -48,5 +49,18 @@ public class SecretariaController {
     public ResponseEntity<Void> excluirSecretaria(@PathVariable Long id) {
         secretariaService.excluirSecretaria(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/uploadFoto")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    public ResponseEntity<String> uploadFoto(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String caminho = secretariaService.salvarFoto(id, file);
+            return ResponseEntity.ok("Foto salva com sucesso: " + caminho);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao salvar foto: " + e.getMessage());
+        }
     }
 }

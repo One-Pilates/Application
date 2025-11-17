@@ -1,0 +1,16 @@
+# Ignorar todas as imagens
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.bmp
+*.svg
+
+# Ignorar todos os arquivos, exceto este .gitignore e .gitkeep
+*
+
+# Mas manter este arquivo e o .gitkeep (se existir)
+!.gitignore
+!.gitkeep
+
