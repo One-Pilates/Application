@@ -1,4 +1,4 @@
-.profile-teacher {
+.profile-user {
   padding: 0 4rem;
   max-width: 75rem;
   margin: 0 auto;
@@ -161,7 +161,7 @@
       top: 0;
     }
 
-    .profile-teacher__switch-slider {
+    .profile-user__switch-slider {
       position: absolute;
       inset: 0;
       background: #e5e7eb; 
@@ -169,7 +169,7 @@
       transition: background 0.2s ease;
     }
 
-    .profile-teacher__switch-slider::before {
+    .profile-user__switch-slider::before {
       content: "";
       position: absolute;
       top: 3px;
@@ -182,22 +182,22 @@
       transition: transform 0.2s ease;
     }
 
-    input:checked + .profile-teacher__switch-slider {
+    input:checked + .profile-user__switch-slider {
       background: #0040ff; 
     }
 
-    input:checked + .profile-teacher__switch-slider::before {
+    input:checked + .profile-user__switch-slider::before {
       transform: translateX(24px);
     }
 
     /* Disabled state */
-    input:disabled + .profile-teacher__switch-slider {
+    input:disabled + .profile-user__switch-slider {
       filter: grayscale(100%);
       opacity: 0.75;
       cursor: default;
     }
 
-    input:disabled + .profile-teacher__switch-slider::before {
+    input:disabled + .profile-user__switch-slider::before {
       box-shadow: none;
     }
   }

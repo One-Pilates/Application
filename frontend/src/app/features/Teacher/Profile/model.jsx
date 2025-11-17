@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 export const useProfileTeacherModel = () => {
   const { user, setUser } = useAuth();
-  const [dadosProfessor, setDadosProfessor] = useState({
+  const [dadosUser, setDadosUser] = useState({
     nome:  "",
     cargo: "",
+    role: "",
     email: "",
     dataNascimento: "",
     telefone: "",
@@ -18,7 +19,7 @@ export const useProfileTeacherModel = () => {
     "https://i.pravatar.cc/150?img=45"
   );
   const fileInputRef = useRef(null);
-  const [originalDados, setOriginalDados] = useState(dadosProfessor);
+  const [originalDados, setOriginalDados] = useState(dadosUser);
   const [hasChanged, setHasChanged] = useState(false);
   const [especialidadesMap, setEspecialidadesMap] = useState([]);
   const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState(new Set());
@@ -27,7 +28,7 @@ export const useProfileTeacherModel = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
+      if (!user || user.role !== 'PROFESSOR') return;
       try {
         const especialidadesResponse = await api.get(`api/especialidades`);
         const especialidadesData = especialidadesResponse.data;
@@ -45,19 +46,6 @@ export const useProfileTeacherModel = () => {
 
         setEspecialidadesMap(especialidadesData);
 
-        const dadosAtuais = {
-          nome: user?.nome || "",
-          cargo: user?.cargo || user?.role || "PROFESSOR",
-          email: user?.email || "",
-          dataNascimento: user?.idade || user?.dataNascimento || "",
-          telefone: user?.telefone || "",
-          receberNotificacao: user?.notificacaoAtiva ?? user?.receberNotificacao ?? false,
-        };
-
-        setDadosProfessor(dadosAtuais);
-        setOriginalDados(dadosAtuais);
-
-        console.log('dadosProfessor carregados com sucesso');
       } catch (err) {
         console.error('Erro ao carregar especialidades:', err);
       }
@@ -66,12 +54,31 @@ export const useProfileTeacherModel = () => {
   }, [user]);
 
   useEffect(() => {
+    const dadosAtuais = {
+          nome: user?.nome || "",
+          cargo: user?.cargo || "",
+          role: user?.role || "",
+          email: user?.email || "",
+          dataNascimento: user?.idade || user?.dataNascimento || "",
+          telefone: user?.telefone || "",
+          receberNotificacao: user?.notificacaoAtiva ?? user?.receberNotificacao ?? false,
+        };
+
+        setDadosUser(dadosAtuais);
+        setOriginalDados(dadosAtuais);
+
+        console.log('dadosUser carregados com sucesso');
+  }, [user]);
+
+  useEffect(() => {
     const verificarMudancas = () => {
-      const dadosMudaram = JSON.stringify(dadosProfessor) !== JSON.stringify(originalDados);
-      
+      const dadosMudaram = JSON.stringify(dadosUser) !== JSON.stringify(originalDados);
+
       const especialidadesMudaram = 
-        especialidadesSelecionadas.size !== especialidadesOriginais.size ||
-        ![...especialidadesSelecionadas].every(id => especialidadesOriginais.has(id));
+        dadosUser.role === 'PROFESSOR' && (
+          especialidadesSelecionadas.size !== especialidadesOriginais.size ||
+          ![...especialidadesSelecionadas].every(id => especialidadesOriginais.has(id))
+        );
       
       if (dadosMudaram || especialidadesMudaram) {
         setHasChanged(true);
@@ -80,7 +87,7 @@ export const useProfileTeacherModel = () => {
       }
     };
     verificarMudancas();
-  }, [dadosProfessor, originalDados, especialidadesSelecionadas, especialidadesOriginais]);
+  }, [dadosUser, originalDados, especialidadesSelecionadas, especialidadesOriginais]);
 
   const handleEditFotoClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -95,8 +102,10 @@ export const useProfileTeacherModel = () => {
   };
 
   const cancelChanges = () => {
-    setDadosProfessor(originalDados);
-    setEspecialidadesSelecionadas(new Set(especialidadesOriginais));
+    setDadosUser(originalDados);
+    if (user.role === 'PROFESSOR') {
+      setEspecialidadesSelecionadas(new Set(especialidadesOriginais));
+    }
     setHasChanged(false);
   }
 
@@ -106,27 +115,45 @@ export const useProfileTeacherModel = () => {
       return;
     }
 
-    // Verifica se o email foi alterado
-    const emailAlterado = dadosProfessor.email !== originalDados.email;
+    const emailAlterado = dadosUser.email !== originalDados.email;
 
     try {
-      
-      const professorDTO = {
-        nome: dadosProfessor.nome.trim(),
-        email: dadosProfessor.email,
-        idade: dadosProfessor.dataNascimento,
-        telefone: dadosProfessor.telefone,
-        notificacaoAtiva: dadosProfessor.receberNotificacao,
-        especialidadeIds: Array.from(especialidadesSelecionadas),
+      const userDTO = {
+        nome: dadosUser.nome.trim(),
+        email: dadosUser.email,
+        idade: dadosUser.dataNascimento,
+        telefone: dadosUser.telefone,
+        notificacaoAtiva: dadosUser.receberNotificacao,
       };
-      console.log("Enviando dados para atualização:", professorDTO);
 
-      const response = await api.patch(`api/professores/${user.id}`, professorDTO);
+      if (user.role === 'PROFESSOR') {
+        userDTO.especialidadeIds = Array.from(especialidadesSelecionadas);
+      }
+
+      let endpoint = '';
+      switch (user.role) {
+        case 'PROFESSOR':
+          endpoint = `api/professores/${user.id}`;
+          break;
+        case 'ADMINISTRADOR':
+          endpoint = `api/administradores/${user.id}`;
+          break;
+        case 'SECRETARIA':
+          endpoint = `api/secretarias/${user.id}`;
+          break;
+        default:
+          throw new Error('Role não reconhecida');
+      }
+
+      console.log("Enviando dados para atualização:", userDTO);
+      console.log("Endpoint:", endpoint);
+
+      const response = await api.patch(endpoint, userDTO);
       const data = response.data;
       
       console.log("✅ Dados atualizados com sucesso:", data);
 
-      setOriginalDados(dadosProfessor);
+      setOriginalDados(dadosUser);
       setEspecialidadesOriginais(new Set(especialidadesSelecionadas));
       
       setUser(data);
@@ -186,8 +213,8 @@ export const useProfileTeacherModel = () => {
   };
 
   return {
-    dadosProfessor,
-    setDadosProfessor,
+    dadosUser,
+    setDadosUser,
     profileImage,
     fileInputRef,
     handleEditFotoClick,
