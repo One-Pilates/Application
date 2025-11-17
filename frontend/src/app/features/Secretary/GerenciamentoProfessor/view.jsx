@@ -14,7 +14,7 @@ const GerenciamentoProfessorView = ({
         {/* Titulo mais botão criar professor */}
         <div className="flex flex-row w-full justify-between items-center">
           <h1 className="text-3xl font-bold">Gerenciamento de Professor</h1>
-          {user && user.role === 'ADMINISTRADOR' && 
+          {user && user.role === 'SECRETARIA' && 
             <Botao cor="bg-blue-500" texto={"Adicionar Professor"}></Botao>
           }
         </div>
