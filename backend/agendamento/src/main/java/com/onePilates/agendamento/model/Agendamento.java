@@ -2,7 +2,9 @@ package com.onePilates.agendamento.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Agendamento {
@@ -22,13 +24,8 @@ public class Agendamento {
     @ManyToOne
     private Especialidade especialidade;
 
-    @ManyToMany
-    @JoinTable(
-            name = "agendamento_aluno",
-            joinColumns = @JoinColumn(name = "agendamento_id"),
-            inverseJoinColumns = @JoinColumn(name = "aluno_id")
-    )
-    private Set<Aluno> alunos;
+    @OneToMany(mappedBy = "agendamento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<AgendamentoAluno> agendamentoAlunos = new HashSet<>();
 
 
     public Agendamento() {
@@ -74,11 +71,21 @@ public class Agendamento {
         this.especialidade = especialidade;
     }
 
-    public Set<Aluno> getAlunos() {
-        return alunos;
+    public Set<AgendamentoAluno> getAgendamentoAlunos() {
+        return agendamentoAlunos;
     }
 
-    public void setAlunos(Set<Aluno> alunos) {
-        this.alunos = alunos;
+    public void setAgendamentoAlunos(Set<AgendamentoAluno> agendamentoAlunos) {
+        this.agendamentoAlunos = agendamentoAlunos;
+    }
+
+    // Método auxiliar para obter alunos diretamente (para compatibilidade)
+    public Set<Aluno> getAlunos() {
+        if (agendamentoAlunos == null) {
+            return Set.of();
+        }
+        return agendamentoAlunos.stream()
+                .map(AgendamentoAluno::getAluno)
+                .collect(Collectors.toSet());
     }
 }

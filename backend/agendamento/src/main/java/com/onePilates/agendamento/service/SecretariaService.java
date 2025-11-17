@@ -3,12 +3,14 @@ package com.onePilates.agendamento.service;
 import com.onePilates.agendamento.dto.SecretariaDTO;
 import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
 import com.onePilates.agendamento.dto.response.SecretariaResponseDTO;
+import com.onePilates.agendamento.exception.*;
 import com.onePilates.agendamento.model.Endereco;
 import com.onePilates.agendamento.model.Role;
 import com.onePilates.agendamento.model.Secretaria;
 import com.onePilates.agendamento.repository.EnderecoRepository;
 import com.onePilates.agendamento.repository.SecretariaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,38 +21,47 @@ import java.util.stream.Collectors;
 @Service
 public class SecretariaService {
 
-    @Autowired
-    private SecretariaRepository secretariaRepository;
+    private static final Logger logger = LoggerFactory.getLogger(SecretariaService.class);
 
-    @Autowired
-    private EnderecoRepository enderecoRepository;
+    private final SecretariaRepository secretariaRepository;
+    private final EnderecoRepository enderecoRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public SecretariaService(
+            SecretariaRepository secretariaRepository,
+            EnderecoRepository enderecoRepository,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.secretariaRepository = secretariaRepository;
+        this.enderecoRepository = enderecoRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Transactional
     public Secretaria criarSecretaria(SecretariaDTO dto) {
-        if (secretariaRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email já cadastrado");
-        }
-        if (secretariaRepository.existsByCpf(dto.getCpf())) {
-            throw new RuntimeException("CPF já cadastrado");
-        }
+        logger.info("Tentativa de criar secretária: {}", dto.getNome());
+        try {
+            if (secretariaRepository.existsByEmail(dto.getEmail())) {
+                throw new EmailJaCadastradoException("Email já cadastrado");
+            }
+            if (secretariaRepository.existsByCpf(dto.getCpf())) {
+                throw new CpfJaCadastradoException("CPF já cadastrado");
+            }
 
-        Secretaria secretaria = new Secretaria();
-        secretaria.setNome(dto.getNome());
-        secretaria.setEmail(dto.getEmail());
-        secretaria.setCpf(dto.getCpf());
-        secretaria.setDataNascimento(dto.getIdade());
-        secretaria.setStatus(dto.getStatus());
-        secretaria.setFoto(dto.getFoto());
-        secretaria.setObservacoes(dto.getObservacoes());
-        secretaria.setNotificacaoAtiva(dto.getNotificacaoAtiva());
-        secretaria.setSenha(passwordEncoder.encode(dto.getSenha()));
-        secretaria.setCargo(dto.getCargo());
-        secretaria.setRole(Role.SECRETARIA);
+            Secretaria secretaria = new Secretaria();
+            secretaria.setNome(dto.getNome());
+            secretaria.setEmail(dto.getEmail());
+            secretaria.setCpf(dto.getCpf());
+            secretaria.setDataNascimento(dto.getIdade());
+            secretaria.setStatus(dto.getStatus());
+            secretaria.setFoto(dto.getFoto());
+            secretaria.setObservacoes(dto.getObservacoes());
+            secretaria.setNotificacaoAtiva(dto.getNotificacaoAtiva());
+            secretaria.setSenha(passwordEncoder.encode(dto.getSenha()));
+            secretaria.setCargo(dto.getCargo());
+            secretaria.setRole(Role.SECRETARIA);
 
-        if (dto.getEndereco() != null) {
+            if (dto.getEndereco() != null) {
             Endereco endereco = new Endereco();
             endereco.setRua(dto.getEndereco().getRua());
             endereco.setNumero(dto.getEndereco().getNumero());
@@ -63,68 +74,83 @@ public class SecretariaService {
             secretaria.setEndereco(endereco);
         }
 
-        return secretariaRepository.save(secretaria);
+            Secretaria saved = secretariaRepository.save(secretaria);
+            logger.info("Secretária criada com sucesso. ID: {}", saved.getId());
+            return saved;
+        } catch (BusinessException e) {
+            logger.warn("Falha ao criar secretária: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao criar secretária", e);
+            throw e;
+        }
     }
 
     public List<SecretariaResponseDTO> listarTodosDTO() {
-        return secretariaRepository.findAll().stream()
+        logger.debug("Listando todas as secretárias");
+        List<SecretariaResponseDTO> secretarias = secretariaRepository.findAll().stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+        logger.debug("Encontradas {} secretárias", secretarias.size());
+        return secretarias;
     }
 
     public SecretariaResponseDTO buscarPorIdDTO(Long id) {
+        logger.debug("Buscando secretária por ID: {}", id);
         Secretaria secretaria = secretariaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Secretária não encontrada"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Secretária não encontrada"));
         return toResponseDTO(secretaria);
     }
 
     @Transactional
     public SecretariaResponseDTO atualizarSecretaria(Long id, SecretariaDTO dto) {
-        Secretaria secretaria = secretariaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Secretária não encontrada"));
+        logger.info("Tentativa de atualizar secretária ID: {}", id);
+        try {
+            Secretaria secretaria = secretariaRepository.findById(id)
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Secretária não encontrada"));
 
-        if (dto.getNome() != null) {
-            secretaria.setNome(dto.getNome());
-        }
-        if (dto.getEmail() != null && !dto.getEmail().equals(secretaria.getEmail())) {
-            if (secretariaRepository.existsByEmail(dto.getEmail())) {
-                throw new RuntimeException("Email já cadastrado");
+            if (dto.getNome() != null) {
+                secretaria.setNome(dto.getNome());
             }
-            secretaria.setEmail(dto.getEmail());
-        }
-        if (dto.getCpf() != null && !dto.getCpf().equals(secretaria.getCpf())) {
-            if (secretariaRepository.existsByCpf(dto.getCpf())) {
-                throw new RuntimeException("CPF já cadastrado");
+            if (dto.getEmail() != null && !dto.getEmail().equals(secretaria.getEmail())) {
+                if (secretariaRepository.existsByEmail(dto.getEmail())) {
+                    throw new EmailJaCadastradoException("Email já cadastrado");
+                }
+                secretaria.setEmail(dto.getEmail());
             }
-            secretaria.setCpf(dto.getCpf());
-        }
-        if (dto.getIdade() != null) {
-            secretaria.setDataNascimento(dto.getIdade());
-        }
-        if (dto.getStatus() != null) {
-            secretaria.setStatus(dto.getStatus());
-        }
-        if (dto.getFoto() != null) {
-            secretaria.setFoto(dto.getFoto());
-        }
-        if (dto.getObservacoes() != null) {
-            secretaria.setObservacoes(dto.getObservacoes());
-        }
-        if (dto.getNotificacaoAtiva() != null) {
-            secretaria.setNotificacaoAtiva(dto.getNotificacaoAtiva());
-        }
-        if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
-            secretaria.setSenha(passwordEncoder.encode(dto.getSenha()));
-        }
-        if (dto.getCargo() != null) {
-            secretaria.setCargo(dto.getCargo());
-        }
+            if (dto.getCpf() != null && !dto.getCpf().equals(secretaria.getCpf())) {
+                if (secretariaRepository.existsByCpf(dto.getCpf())) {
+                    throw new CpfJaCadastradoException("CPF já cadastrado");
+                }
+                secretaria.setCpf(dto.getCpf());
+            }
+            if (dto.getIdade() != null) {
+                secretaria.setDataNascimento(dto.getIdade());
+            }
+            if (dto.getStatus() != null) {
+                secretaria.setStatus(dto.getStatus());
+            }
+            if (dto.getFoto() != null) {
+                secretaria.setFoto(dto.getFoto());
+            }
+            if (dto.getObservacoes() != null) {
+                secretaria.setObservacoes(dto.getObservacoes());
+            }
+            if (dto.getNotificacaoAtiva() != null) {
+                secretaria.setNotificacaoAtiva(dto.getNotificacaoAtiva());
+            }
+            if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
+                secretaria.setSenha(passwordEncoder.encode(dto.getSenha()));
+            }
+            if (dto.getCargo() != null) {
+                secretaria.setCargo(dto.getCargo());
+            }
 
-        if (dto.getEndereco() != null) {
-            Endereco endereco = secretaria.getEndereco();
-            if (endereco == null) {
-                endereco = new Endereco();
-            }
+            if (dto.getEndereco() != null) {
+                Endereco endereco = secretaria.getEndereco();
+                if (endereco == null) {
+                    endereco = new Endereco();
+                }
             if (dto.getEndereco().getRua() != null) {
                 endereco.setRua(dto.getEndereco().getRua());
             }
@@ -146,19 +172,38 @@ public class SecretariaService {
             if (dto.getEndereco().getUf() != null) {
                 endereco.setUf(dto.getEndereco().getUf());
             }
-            endereco = enderecoRepository.save(endereco);
-            secretaria.setEndereco(endereco);
-        }
+                endereco = enderecoRepository.save(endereco);
+                secretaria.setEndereco(endereco);
+            }
 
-        return toResponseDTO(secretariaRepository.save(secretaria));
+            SecretariaResponseDTO response = toResponseDTO(secretariaRepository.save(secretaria));
+            logger.info("Secretária atualizada com sucesso. ID: {}", id);
+            return response;
+        } catch (BusinessException e) {
+            logger.warn("Falha ao atualizar secretária ID {}: {}", id, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao atualizar secretária ID: {}", id, e);
+            throw e;
+        }
     }
 
     @Transactional
     public void excluirSecretaria(Long id) {
-        if (!secretariaRepository.existsById(id)) {
-            throw new RuntimeException("Secretária não encontrada");
+        logger.info("Tentativa de excluir secretária ID: {}", id);
+        try {
+            if (!secretariaRepository.existsById(id)) {
+                throw new EntidadeNaoEncontradaException("Secretária não encontrada");
+            }
+            secretariaRepository.deleteById(id);
+            logger.info("Secretária excluída com sucesso. ID: {}", id);
+        } catch (BusinessException e) {
+            logger.warn("Falha ao excluir secretária ID {}: {}", id, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao excluir secretária ID: {}", id, e);
+            throw e;
         }
-        secretariaRepository.deleteById(id);
     }
 
     public SecretariaResponseDTO toResponseDTO(Secretaria secretaria) {

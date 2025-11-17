@@ -5,6 +5,7 @@ import com.onePilates.agendamento.dto.loginPages.LoginDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.LoginResponseDTO;
 import com.onePilates.agendamento.dto.response.NovaSenhaResponseDTO;
+import com.onePilates.agendamento.exception.*;
 import com.onePilates.agendamento.model.Funcionario;
 import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.model.Role;
@@ -13,8 +14,11 @@ import com.onePilates.agendamento.repository.FuncionarioRepository;
 import com.onePilates.agendamento.repository.ProfessorRepository;
 import com.onePilates.agendamento.repository.SecretariaRepository;
 import com.onePilates.agendamento.security.JwtUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,6 +28,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     private final AdministradorRepository administradorRepository;
     private final ProfessorRepository professorRepository;
@@ -50,18 +56,20 @@ public class AuthService {
     }
 
     public LoginResponseDTO authenticate(LoginDTO request) {
-        Funcionario funcionario = buscarFuncionarioPorEmail(request.getEmail());
+        logger.info("Tentativa de autenticação para email: {}", request.getEmail());
+        try {
+            Funcionario funcionario = buscarFuncionarioPorEmail(request.getEmail());
 
-        if (funcionario == null) {
-            throw new RuntimeException("Funcionário não encontrado");
-        }
+            if (funcionario == null) {
+                throw new EntidadeNaoEncontradaException("Funcionário não encontrado");
+            }
 
-        if (!passwordEncoder.matches(request.getSenha(), funcionario.getSenha())) {
-            throw new RuntimeException("Credenciais inválidas");
-        }
-        if(funcionario.getStatus() == null|| funcionario.getStatus() == false){
-            throw new RuntimeException("Perfil inativo, contate o administrador do sistema para reativação");
-        }
+            if (!passwordEncoder.matches(request.getSenha(), funcionario.getSenha())) {
+                throw new CredenciaisInvalidasException("Credenciais inválidas");
+            }
+            if (funcionario.getStatus() == null || funcionario.getStatus() == false) {
+                throw new PerfilInativoException("Perfil inativo, contate o administrador do sistema para reativação");
+            }
 
         String token = jwtUtil.generateToken(funcionario);
 
@@ -108,9 +116,18 @@ public class AuthService {
                     funcionario.getEndereco(),
                     funcionario.getTelefone()
             );
-        }
+            }
 
-        return new LoginResponseDTO(token, funcionario.getRole().name(), funcionarioDTO);
+            LoginResponseDTO response = new LoginResponseDTO(token, funcionario.getRole().name(), funcionarioDTO);
+            logger.info("Autenticação bem-sucedida para email: {}", request.getEmail());
+            return response;
+        } catch (BusinessException e) {
+            logger.warn("Falha na autenticação para email {}: {}", request.getEmail(), e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado na autenticação para email: {}", request.getEmail(), e);
+            throw e;
+        }
     }
 
 
@@ -120,58 +137,87 @@ public class AuthService {
                 .map(f -> (Funcionario) f)
                 .or(() -> professorRepository.findByEmail(email).map(f -> (Funcionario) f))
                 .or(() -> secretariaRepository.findByEmail(email).map(f -> (Funcionario) f))
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Usuário não encontrado"));
     }
 
+    @Transactional
     public String criarCodigoVerificacao(String email) {
-        Funcionario funcionario = buscarFuncionarioPorEmail(email);
-
-        String codigoVerificacao = String.format("%05d", new Random().nextInt(100000));
-        funcionario.setCodigoVerificacao(codigoVerificacao);
-        funcionario.setDataUltimaCriacaoCodigo(LocalDateTime.now());
-
-        funcionarioRepository.save(funcionario);
-
+        logger.info("Tentativa de criar código de verificação para email: {}", email);
         try {
-            emailService.enviarCodigoPorEmail(funcionario.getNome(), codigoVerificacao, email);
-        } catch (Exception e) {
-            System.err.println("Erro ao enviar o e-mail de verificação: " + e.getMessage());
-            return "Erro ao enviar o e-mail de verificação.";
-        }
+            Funcionario funcionario = buscarFuncionarioPorEmail(email);
 
-        return "Código enviado para o e-mail do funcionário.";
+            String codigoVerificacao = String.format("%05d", new Random().nextInt(100000));
+            funcionario.setCodigoVerificacao(codigoVerificacao);
+            funcionario.setDataUltimaCriacaoCodigo(LocalDateTime.now());
+
+            funcionarioRepository.save(funcionario);
+
+            try {
+                emailService.enviarCodigoPorEmail(funcionario.getNome(), codigoVerificacao, email);
+                logger.info("Código de verificação criado e enviado por email para: {}", email);
+            } catch (Exception e) {
+                logger.error("Erro ao enviar o e-mail de verificação para: {}", email, e);
+                throw new OperacaoInvalidaException("Erro ao enviar o e-mail de verificação.");
+            }
+
+            return "Código enviado para o e-mail do funcionário.";
+        } catch (BusinessException e) {
+            logger.warn("Falha ao criar código de verificação para email {}: {}", email, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao criar código de verificação para email: {}", email, e);
+            throw e;
+        }
     }
 
 
     public Boolean validarCodigoVerificacao(String email, String codigoVerificacao) {
-        Funcionario funcionario = buscarFuncionarioPorEmail(email);
+        logger.info("Tentativa de validar código de verificação para email: {}", email);
+        try {
+            Funcionario funcionario = buscarFuncionarioPorEmail(email);
 
+            if (!funcionario.getCodigoVerificacao().equals(codigoVerificacao)) {
+                throw new CodigoInvalidoException("Código inválido");
+            }
 
+            LocalDateTime agora = LocalDateTime.now();
+            Duration diferenca = Duration.between(funcionario.getDataUltimaCriacaoCodigo(), agora);
 
-        if (!funcionario.getCodigoVerificacao().equals(codigoVerificacao)) {
-            throw  new RuntimeException("Código inválido");
+            if (diferenca.toMinutes() > 5) {
+                throw new CodigoExpiradoException("Código expirado");
+            }
+
+            logger.info("Código de verificação validado com sucesso para email: {}", email);
+            return true;
+        } catch (BusinessException e) {
+            logger.warn("Falha ao validar código de verificação para email {}: {}", email, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao validar código de verificação para email: {}", email, e);
+            throw e;
         }
-
-
-        LocalDateTime agora = LocalDateTime.now();
-        Duration diferenca = Duration.between(funcionario.getDataUltimaCriacaoCodigo(), agora);
-
-        if (diferenca.toMinutes() > 5) {
-            throw  new RuntimeException ("Código expirado");
-        }
-
-        return true;
     }
 
-    public NovaSenhaResponseDTO novaSenha(String senha,String email) {
-        Funcionario funcionario = buscarFuncionarioPorEmail(email);
-        if(funcionario==null){
-            throw new RuntimeException("Funcionário não encontrado");
+    @Transactional
+    public NovaSenhaResponseDTO novaSenha(String senha, String email) {
+        logger.info("Tentativa de alterar senha para email: {}", email);
+        try {
+            Funcionario funcionario = buscarFuncionarioPorEmail(email);
+            if (funcionario == null) {
+                throw new EntidadeNaoEncontradaException("Funcionário não encontrado");
+            }
+            funcionario.setSenha(passwordEncoder.encode(senha));
+            funcionarioRepository.save(funcionario);
+            NovaSenhaResponseDTO dtoResponse = new NovaSenhaResponseDTO();
+            dtoResponse.setMensagem("Senha alterada com sucesso");
+            logger.info("Senha alterada com sucesso para email: {}", email);
+            return dtoResponse;
+        } catch (BusinessException e) {
+            logger.warn("Falha ao alterar senha para email {}: {}", email, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao alterar senha para email: {}", email, e);
+            throw e;
         }
-        funcionario.setSenha(passwordEncoder.encode(senha));
-        funcionarioRepository.save(funcionario);
-        NovaSenhaResponseDTO dtoResponse =  new NovaSenhaResponseDTO();
-        dtoResponse.setMensagem("Senha alterada com sucesso");
-        return dtoResponse;
     }
 }

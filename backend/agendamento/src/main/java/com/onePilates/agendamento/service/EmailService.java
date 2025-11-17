@@ -2,7 +2,8 @@ package com.onePilates.agendamento.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,11 +16,15 @@ import java.util.List;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
-    @Value("${spring.mail.username}")
-    private String remetente;
+    private final JavaMailSender mailSender;
+    private final String remetente;
+
+    public EmailService(JavaMailSender mailSender, @Value("${spring.mail.username}") String remetente) {
+        this.mailSender = mailSender;
+        this.remetente = remetente;
+    }
 
 
     public String enviarEmailAvisoDeAulaMarcada(String nomeProfessor, List<String> listaNomesAlunos, String email,
@@ -143,10 +148,10 @@ public class EmailService {
             helper.setText(corpoHtml, true);
             mailSender.send(message);
 
-            System.out.println("Email profissional enviado com sucesso!");
+            logger.info("Email de aviso de aula marcada enviado com sucesso para: {}", email);
             return "Email profissional enviado com sucesso!";
         } catch (MessagingException e) {
-            e.printStackTrace();
+            logger.error("Erro ao enviar email de aviso de aula marcada para: {}", email, e);
             return "Erro ao enviar email HTML: " + e.getMessage();
         }
     }
@@ -216,10 +221,10 @@ public class EmailService {
             helper.setText(corpoHtml, true);
             mailSender.send(message);
 
-            System.out.println("Email de boas-vindas enviado com sucesso para " + email);
+            logger.info("Email de código de verificação enviado com sucesso para: {}", email);
             return "Email de boas-vindas enviado com sucesso!";
         } catch (MessagingException e) {
-            e.printStackTrace();
+            logger.error("Erro ao enviar email de código de verificação para: {}", email, e);
             return "Erro ao enviar e-mail de boas-vindas: " + e.getMessage();
         }
     }

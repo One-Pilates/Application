@@ -1,8 +1,7 @@
 package com.onePilates.agendamento.dto.response;
 
-import com.onePilates.agendamento.model.Role;
-
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 public class ProfessorResponseDTO {
@@ -20,6 +19,7 @@ public class ProfessorResponseDTO {
     private EnderecoResponseDTO endereco;
     private String telefone;
     private Set<EspecialidadeResponseDTO> especialidades;
+    private List<AgendamentoResponseDTO> agendamentos;
 
     public ProfessorResponseDTO() {
     }
@@ -134,5 +134,13 @@ public class ProfessorResponseDTO {
 
     public void setEspecialidades(Set<EspecialidadeResponseDTO> especialidades) {
         this.especialidades = especialidades;
+    }
+
+    public List<AgendamentoResponseDTO> getAgendamentos() {
+        return agendamentos;
+    }
+
+    public void setAgendamentos(List<AgendamentoResponseDTO> agendamentos) {
+        this.agendamentos = agendamentos;
     }
 }
