@@ -2,11 +2,13 @@ import {useEffect, useState } from "react";
 import { useAuth } from "../../../../hooks/useAuth";
 import api from "../../../../provider/api";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 export const useGerenciamentoProfessorModel = () => {
   const {user} = useAuth();
   const [professores, setProfessores] = useState([]);
   const [professoresOriginais, setProfessoresOriginais] = useState([]);
+  const navigate = useNavigate();
 
   useEffect( () => {
     fetchProfessores();
@@ -77,5 +79,6 @@ export const useGerenciamentoProfessorModel = () => {
     user,
     deletarProfessor,
     filterByNome,
+    navigate,
   };
 };

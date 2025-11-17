@@ -7,6 +7,7 @@ const GerenciamentoProfessorView = ({
   user,
   deletarProfessor,
   filterByNome,
+  navigate,
 }) => {
   return (
     <>
@@ -46,7 +47,9 @@ const GerenciamentoProfessorView = ({
                   {/* ===== SEÇÃO ESQUERDA: Informações do Professor ===== */}
                   <div className="flex items-center gap-4">
                 
-                    <button className="group relative flex-shrink-0">
+                    <button 
+                    onClick={() => navigate('/perfil', { state: { professorId: professor.id } })}
+                    className="group relative flex-shrink-0">
                       <img
                         src="https://cdn-icons-png.flaticon.com/512/147/147142.png"
                         alt={professor.nome}

@@ -1,8 +1,8 @@
 import React from "react";
-import { useProfileSecretaryModel } from "./model";
-import ProfileSecretaryView from "./view";
+import { useViewProfileModel } from "./model";
+import ViewProfile from "./view";
 
-export default function ProfileSecretary() {
-  const model = useProfileSecretaryModel();
-  return <ProfileSecretaryView {...model} />;
+export default function ProfileView() {
+  const model = useViewProfileModel();
+  return <ViewProfile {...model} />;
 }
