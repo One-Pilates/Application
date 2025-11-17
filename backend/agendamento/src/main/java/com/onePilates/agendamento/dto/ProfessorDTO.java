@@ -3,6 +3,7 @@ package com.onePilates.agendamento.dto;
 import com.onePilates.agendamento.model.Role;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -50,6 +51,8 @@ public class ProfessorDTO {
     private EnderecoDTO endereco;
 
     private String telefone;
+
+    private MultipartFile imagem;
 
     @NotEmpty(message = "É necessário informar ao menos uma especialidade")
     private Set<@NotNull(message = "ID de especialidade não pode ser nulo") Long> especialidadeIds;
@@ -169,5 +172,13 @@ public class ProfessorDTO {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public MultipartFile getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(MultipartFile imagem) {
+        this.imagem = imagem;
     }
 }

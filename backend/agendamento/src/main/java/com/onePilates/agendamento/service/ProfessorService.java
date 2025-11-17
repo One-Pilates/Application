@@ -19,7 +19,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProfessorService {
-
+    private static final String UPLOAD_DIR = "imagens/";
     private static final Logger logger = LoggerFactory.getLogger(ProfessorService.class);
 
     private final ProfessorRepository professorRepository;
@@ -46,6 +51,46 @@ public class ProfessorService {
         this.agendamentoService = agendamentoService;
         this.passwordEncoder = passwordEncoder;
     }
+
+
+
+    public String salvarFoto(Long id, MultipartFile file) throws Exception {
+        Professor professor = professorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+
+        // cria pasta se não existir
+        File dir = new File(UPLOAD_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        // apaga foto anterior se existir
+        String fotoAntiga = professor.getFoto();
+        if (fotoAntiga != null && !fotoAntiga.isBlank()) {
+            File arquivoAntigo = new File(fotoAntiga);
+            if (arquivoAntigo.exists()) {
+                boolean deletado = arquivoAntigo.delete();
+                if (!deletado) {
+                    System.out.println("Não foi possível apagar a foto antiga: " + fotoAntiga);
+                }
+            }
+        }
+
+        // nome único para o novo arquivo
+        String fileName = id + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(UPLOAD_DIR, fileName);
+
+        // salva novo arquivo no disco
+        Files.write(filePath, file.getBytes());
+
+        // atualiza caminho no banco
+        professor.setFoto(filePath.toString());
+        professorRepository.save(professor);
+
+        return filePath.toString();
+    }
+
+
 
     @Transactional
     public ProfessorResponseDTO criarProfessor(ProfessorDTO dto) {
