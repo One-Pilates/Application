@@ -32,3 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
+### Imagens ###
+# Imagens são gerenciadas pelo .gitignore dentro do diretório imagens/
+# O diretório imagens/ é mantido vazio no git (exceto .gitignore e .gitkeep)
+
+### Configurações Sensíveis ###
+# Ignorar arquivos de propriedades que contêm informações sensíveis
+src/main/resources/application.properties
+src/test/resources/application-test.properties
+

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -47,5 +48,18 @@ public class AdministradorController {
     public ResponseEntity<Void> excluirAdministrador(@PathVariable Long id) {
         administradorService.excluirAdministrador(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/uploadFoto")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
+    public ResponseEntity<String> uploadFoto(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String caminho = administradorService.salvarFoto(id, file);
+            return ResponseEntity.ok("Foto salva com sucesso: " + caminho);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao salvar foto: " + e.getMessage());
+        }
     }
 }

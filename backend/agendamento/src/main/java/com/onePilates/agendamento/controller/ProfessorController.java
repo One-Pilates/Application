@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.util.List;
@@ -73,6 +74,22 @@ public class ProfessorController {
         }
         
         return ResponseEntity.ok(professorService.respostaDashProfessora(id, qtdUltimosDias));
+    }
+
+    @PostMapping("/{id}/uploadFoto")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'PROFESSOR')")
+    public ResponseEntity<?> uploadFoto(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest().body("Arquivo não pode ser vazio");
+            }
+            String caminho = professorService.salvarFoto(id, file);
+            return ResponseEntity.ok( caminho);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao salvar foto: " + e.getMessage());
+        }
     }
 
 

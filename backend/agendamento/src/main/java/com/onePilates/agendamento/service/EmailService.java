@@ -228,5 +228,8 @@ public class EmailService {
             return "Erro ao enviar e-mail de boas-vindas: " + e.getMessage();
         }
     }
+
+
 }
+
 

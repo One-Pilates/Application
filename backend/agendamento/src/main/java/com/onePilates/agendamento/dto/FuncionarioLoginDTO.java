@@ -4,6 +4,8 @@ import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.model.Endereco;
 import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Role;
+import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,12 +26,13 @@ public class FuncionarioLoginDTO {
     private Endereco endereco;
     private String telefone;
     private List<EspecialidadeResponseDTO> especialidades;
+    private MultipartFile Imagem;
 
 
     public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf,
                                LocalDate dataNascimento, Boolean status, String foto,
                                String observacoes, Boolean notificacaoAtiva, String cargo,
-                               Endereco endereco ,  String telefone) {
+                               Endereco endereco, String telefone) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -89,7 +92,6 @@ public class FuncionarioLoginDTO {
     public String getEmail() {
         return email;
     }
-
 
 
     public void setEmail(String email) {
@@ -174,5 +176,13 @@ public class FuncionarioLoginDTO {
 
     public void setEspecialidades(List<EspecialidadeResponseDTO> especialidades) {
         this.especialidades = especialidades;
+    }
+
+    public MultipartFile getImagem() {
+        return Imagem;
+    }
+
+    public void setImagem(MultipartFile imagem) {
+        Imagem = imagem;
     }
 }
