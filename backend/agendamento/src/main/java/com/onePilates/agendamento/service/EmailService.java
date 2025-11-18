@@ -199,7 +199,7 @@ public class EmailService {
                                     %s
                                 </div>
                                 <p style="font-size:14px; color:#666; margin-top:20px;">
-                                    Este código é válido por 10 minutos. Caso você não tenha solicitado a redefinição, por favor ignore este e-mail.
+                                    Este código é válido por 5 minutos. Caso você não tenha solicitado a redefinição, por favor ignore este e-mail.
                                 </p>
                                 <p style="margin-top:30px; font-size:14px; color:#666;">Atenciosamente,<br><strong style="color:#FF6600;">Equipe OnePilates</strong></p>
                             </td>
@@ -226,6 +226,107 @@ public class EmailService {
         } catch (MessagingException e) {
             logger.error("Erro ao enviar email de código de verificação para: {}", email, e);
             return "Erro ao enviar e-mail de boas-vindas: " + e.getMessage();
+        }
+    }
+
+    public String envioEmailCancelamentoAula(String nomeProfessor, String email, LocalDateTime dataHoraAgendamento) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(remetente);
+            helper.setTo(email);
+            helper.setSubject("Cancelamento de Aula - OnePilates");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy 'às' HH:mm");
+            String dataHoraFormatada = dataHoraAgendamento.format(formatter);
+
+            String corpoHtml = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Email OnePilates - Cancelamento de Aula</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+                </head>
+                <body style="margin:0; padding:0; font-family:'Poppins', Arial, Helvetica, sans-serif;">
+                    <table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" style="background-color:#e5e5e5;">
+                        <tr>
+                            <td align="center" style="padding:40px 20px;">
+                                <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;">
+                                    <tr>
+                                        <td align="center" style="padding:40px;">
+                                            <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block;">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="height:4px; background-color:#FF0000;"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="padding:40px;">
+                                            <h1 style="font-size:22px; font-weight:600; color:#1a1a1a;">
+                                                Aula Cancelada
+                                            </h1>
+
+                                            <p style="font-size:15px; color:#333;">
+                                                Olá <strong>%s</strong>,
+                                            </p>
+
+                                            <p style="font-size:15px; color:#333;">
+                                                Informamos que a aula abaixo foi <strong>cancelada</strong>:
+                                            </p>
+
+                                            <table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0" 
+                                                   style="background-color:#f9f9f9; border:1px solid #e0e0e0; border-radius:6px; margin:24px 0;">
+                                                <tr>
+                                                    <td style="padding:24px;">
+                                                        <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666; text-transform:uppercase;">
+                                                            Data e horário original
+                                                        </p>
+                                                        <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                            %s
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <p style="font-size:15px; color:#333;">
+                                                Em caso de dúvidas, estamos à disposição.
+                                            </p>
+
+                                            <p style="font-size:15px; color:#666;">
+                                                Atenciosamente,<br>
+                                                <strong style="color:#FF6600;">Equipe OnePilates</strong>
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="background-color:#f9f9f9; text-align:center; padding:16px; font-size:12px; color:#999;">
+                                            Este é um e-mail automático. © 2025 OnePilates. Todos os direitos reservados.
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+                """
+                    .formatted(nomeProfessor, dataHoraFormatada);
+
+            helper.setText(corpoHtml, true);
+            mailSender.send(message);
+
+            logger.info("Email de cancelamento enviado com sucesso para: {}", email);
+            return "Email de cancelamento enviado com sucesso!";
+
+        } catch (MessagingException e) {
+            logger.error("Erro ao enviar email de cancelamento para: {}", email, e);
+            return "Erro ao enviar email de cancelamento: " + e.getMessage();
         }
     }
 

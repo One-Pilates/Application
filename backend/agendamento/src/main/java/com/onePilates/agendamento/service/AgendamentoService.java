@@ -10,6 +10,7 @@ import com.onePilates.agendamento.repository.*;
 import com.onePilates.agendamento.validator.AgendamentoValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,9 @@ public class AgendamentoService {
     private final AgendamentoNotifier notifier;
     private final AgendamentoAlunoRepository agendamentoAlunoRepository;
     private final AgendamentoValidator agendamentoValidator;
+
+    @Autowired
+    private EmailService emailService;
 
     public AgendamentoService(
             AgendamentoRepository agendamentoRepository,
@@ -251,6 +255,10 @@ public class AgendamentoService {
             if (!agendamentoRepository.existsById(id)) {
                 throw new EntidadeNaoEncontradaException("Agendamento não encontrado");
             }
+           Agendamento agendamento = agendamentoRepository.findById(id).orElseThrow();
+            emailService.envioEmailCancelamentoAula(agendamento.getProfessor().getNome(),
+                    agendamento.getProfessor().getEmail(), agendamento.getDataHora());
+            
             agendamentoRepository.deleteById(id);
             logger.info("Agendamento excluído com sucesso. ID: {}", id);
         } catch (BusinessException e) {
