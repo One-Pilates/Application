@@ -21,7 +21,6 @@ public class ImagemController {
     private static final String UPLOAD_DIR = "imagens/";
 
     @GetMapping(value = "/**", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/webp"})
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Resource> servirImagem(HttpServletRequest request) {
         try {
             // Extrair o caminho da URL (tudo após /api/imagens/)
@@ -35,7 +34,8 @@ public class ImagemController {
                 : UPLOAD_DIR + caminhoRelativo;
             
             // Construir o caminho completo do arquivo
-            Path filePath = Paths.get(caminhoCompleto);
+            Path filePath = Paths.get(caminhoCompleto).normalize();
+
             File file = filePath.toFile();
 
             if (!file.exists() || !file.isFile()) {

@@ -86,7 +86,7 @@ public class ProfessorController {
                 return ResponseEntity.badRequest().body("Arquivo não pode ser vazio");
             }
             String caminho = professorService.salvarFoto(id, file);
-            return ResponseEntity.ok("Foto salva com sucesso: " + caminho);
+            return ResponseEntity.ok( caminho);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao salvar foto: " + e.getMessage());
         }

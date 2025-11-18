@@ -58,7 +58,7 @@ public class SecretariaController {
             @RequestParam("file") MultipartFile file) {
         try {
             String caminho = secretariaService.salvarFoto(id, file);
-            return ResponseEntity.ok("Foto salva com sucesso: " + caminho);
+            return ResponseEntity.ok( caminho);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao salvar foto: " + e.getMessage());
         }

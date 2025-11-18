@@ -1,5 +1,6 @@
 package com.onePilates.agendamento.service;
 
+import com.onePilates.agendamento.controller.ImagemController;
 import com.onePilates.agendamento.dto.FuncionarioLoginDTO;
 import com.onePilates.agendamento.dto.loginPages.LoginDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -98,6 +100,7 @@ public class AuthService {
                     funcionario.getTelefone(),
                     especialidades
             );
+
 
         } else {
 
