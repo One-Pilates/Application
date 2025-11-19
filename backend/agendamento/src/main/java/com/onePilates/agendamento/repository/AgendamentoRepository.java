@@ -68,7 +68,20 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
 
     @EntityGraph(attributePaths = {"agendamentoAlunos", "agendamentoAlunos.aluno", "professor", "sala", "especialidade"})
     List<Agendamento> findByProfessorId(Long professorId);
-    
+
+
+
+    // Query 3: Buscar agendamentos por professor e período
+    @Query("SELECT a FROM Agendamento a " +
+            "WHERE a.professor.id = :professorId " +
+            "AND a.dataHora >= :inicio " +
+            "AND a.dataHora < :fim")
+    List<Agendamento> findAgendamentosByProfessorAndPeriod(
+            @Param("professorId") Long professorId,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fim") LocalDateTime fim
+    );
+
     @EntityGraph(attributePaths = {"agendamentoAlunos", "agendamentoAlunos.aluno", "professor", "sala", "especialidade"})
     @Override
     java.util.Optional<Agendamento> findById(Long id);
