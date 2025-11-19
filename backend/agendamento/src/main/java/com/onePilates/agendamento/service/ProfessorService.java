@@ -7,10 +7,7 @@ import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
 import com.onePilates.agendamento.dto.response.RespostaDashProfessoraDTO;
 import com.onePilates.agendamento.exception.*;
-import com.onePilates.agendamento.model.Endereco;
-import com.onePilates.agendamento.model.Especialidade;
-import com.onePilates.agendamento.model.Professor;
-import com.onePilates.agendamento.model.Role;
+import com.onePilates.agendamento.model.*;
 import com.onePilates.agendamento.repository.AgendamentoRepository;
 import com.onePilates.agendamento.repository.EspecialidadeRepository;
 import com.onePilates.agendamento.repository.ProfessorRepository;
@@ -51,7 +48,6 @@ public class ProfessorService {
     }
 
 
-
     public String salvarFoto(Long id, MultipartFile file) {
         Professor professor = professorRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
@@ -64,7 +60,6 @@ public class ProfessorService {
 
         return caminhoNovaFoto;
     }
-
 
 
     @Transactional
@@ -229,12 +224,12 @@ public class ProfessorService {
         try {
             Professor professor = professorRepository.findById(id)
                     .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
-            
+
             // Remove a imagem se existir
             if (professor.getFoto() != null) {
                 imageService.removerImagem(professor.getFoto());
             }
-            
+
             professorRepository.deleteById(id);
             logger.info("Professor excluído com sucesso. ID: {}", id);
         } catch (BusinessException e) {
@@ -302,105 +297,104 @@ public class ProfessorService {
     private void validateDto(ProfessorDTO dto) {
         if (dto == null) throw new CampoObrigatorioException("Payload inválido");
         if (dto.getNome() == null || dto.getNome().isBlank()) throw new CampoObrigatorioException("Nome é obrigatório");
-        if (dto.getEmail() == null || dto.getEmail().isBlank()) throw new CampoObrigatorioException("Email é obrigatório");
-        if (dto.getSenha() == null || dto.getSenha().isBlank()) throw new CampoObrigatorioException("Senha é obrigatória");
+        if (dto.getEmail() == null || dto.getEmail().isBlank())
+            throw new CampoObrigatorioException("Email é obrigatório");
+        if (dto.getSenha() == null || dto.getSenha().isBlank())
+            throw new CampoObrigatorioException("Senha é obrigatória");
     }
 
     public RespostaDashProfessoraDTO respostaDashProfessora(Long id, Integer qtdUltimosDias) {
-        logger.info("=== INÍCIO: Buscando dashboard para professor ID: {}, últimos {} dias ===", id, qtdUltimosDias);
-        
-        // Validar se o professor existe
         if (!professorRepository.existsById(id)) {
-            logger.warn("Professor com ID {} não encontrado", id);
             throw new EntidadeNaoEncontradaException("Professor não encontrado");
         }
-        logger.debug("Professor ID {} existe no banco", id);
-        
-        // Calcular período considerando timezone
+
         LocalDateTime inicio = LocalDate.now().minusDays(qtdUltimosDias).atStartOfDay();
         LocalDateTime fim = LocalDate.now().plusDays(1).atStartOfDay();
-        
-        logger.info("Período de busca calculado: de {} até {}", inicio, fim);
-        logger.info("Professor ID: {}, Quantidade de dias: {}", id, qtdUltimosDias);
-        
-        // Otimização: contar diretamente no banco em vez de carregar todos os agendamentos
+
         Long totalAgendamentosNoPeriodo = agendamentoRepository.countByProfessorIdAndPeriod(id, inicio, fim);
-        logger.info("Total de agendamentos encontrados no período (countByProfessorIdAndPeriod): {}", totalAgendamentosNoPeriodo);
-        
-        // Se não houver agendamentos, retornar listas vazias
         if (totalAgendamentosNoPeriodo == null || totalAgendamentosNoPeriodo == 0) {
-            logger.warn("Nenhum agendamento encontrado para professor ID {} no período de {} até {}", id, inicio, fim);
-            return new RespostaDashProfessoraDTO(new ArrayList<>(), new ArrayList<>());
+            return new RespostaDashProfessoraDTO(new ArrayList<>(), new ArrayList<>(), new KPIsProfessorDTO());
         }
 
-        try {
-            // Query 1: Agendamentos por dia da semana
-            List<Object[]> resultados1 = agendamentoRepository.buscarAgendamentosPorDiaSemanaRaw(id, inicio, fim);
-            logger.info("Query 1 executada: encontrados {} registros brutos", resultados1.size());
-            
-            // Mapeamento melhorado usando stream e construtor do DTO
-            List<AgendamentoPorDiaDTO> grafico1 = resultados1.stream()
-                    .map(row -> {
-                        try {
-                            String diaSemana = row[0] != null ? row[0].toString() : null;
-                            Number totalNum = (Number) row[1];
-                            Long totalAgendamentos = totalNum != null ? totalNum.longValue() : 0L;
-                            
-                            if (diaSemana != null) {
-                                logger.debug("  Mapeado: {} -> {} agendamentos", diaSemana, totalAgendamentos);
-                                return new AgendamentoPorDiaDTO(diaSemana, totalAgendamentos);
-                            }
-                            return null;
-                        } catch (Exception ex) {
-                            logger.warn("Erro ao mapear linha da Query 1: {}", ex.getMessage());
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            
-            logger.info("Query 1 mapeada: encontrados {} registros de agendamentos por dia", grafico1.size());
+        // Query 1: Agendamentos por dia da semana
+        List<AgendamentoPorDiaDTO> grafico1 = agendamentoRepository.buscarAgendamentosPorDiaSemanaRaw(id, inicio, fim)
+                .stream()
+                .map(row -> new AgendamentoPorDiaDTO(
+                        row[0] != null ? row[0].toString() : null,
+                        row[1] != null ? ((Number) row[1]).longValue() : 0L))
+                .filter(dto -> dto.getDiaSemana() != null)
+                .collect(Collectors.toList());
 
-            // Query 2: Aulas por especialidade
-            // Calcular total geral uma vez antes da query principal
-            Long totalGeral = totalAgendamentosNoPeriodo;
-            
-            List<Object[]> resultados2 = agendamentoRepository.buscarDistribuicaoAulasPorEspecialidadeRaw(
-                    id, inicio, fim, totalGeral);
-            logger.info("Query 2 executada: encontrados {} registros brutos", resultados2.size());
-            
-            // Mapeamento melhorado usando stream e construtor do DTO
-            List<AulaPorEspecialidadeDTO> grafico2 = resultados2.stream()
-                    .map(row -> {
-                        try {
-                            String especialidade = row[0] != null ? row[0].toString() : null;
-                            Number percentualNum = (Number) row[1];
-                            Double percentualAulas = percentualNum != null ? percentualNum.doubleValue() : 0.0;
-                            
-                            if (especialidade != null) {
-                                logger.debug("  Mapeado: {} -> {}%", especialidade, percentualAulas);
-                                return new AulaPorEspecialidadeDTO(id, especialidade, percentualAulas);
-                            }
-                            return null;
-                        } catch (Exception ex) {
-                            logger.warn("Erro ao mapear linha da Query 2: {}", ex.getMessage());
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            
-            logger.info("Query 2 mapeada: encontrados {} registros de aulas por especialidade", grafico2.size());
+        // Query 2: Aulas por especialidade
+        List<AulaPorEspecialidadeDTO> grafico2 = agendamentoRepository.buscarDistribuicaoAulasPorEspecialidadeRaw(
+                        id, inicio, fim, totalAgendamentosNoPeriodo)
+                .stream()
+                .map(row -> new AulaPorEspecialidadeDTO(
+                        id,
+                        row[0] != null ? row[0].toString() : null,
+                        row[1] != null ? ((Number) row[1]).doubleValue() : 0.0))
+                .filter(dto -> dto.getEspecialidade() != null)
+                .collect(Collectors.toList());
 
-            logger.info("=== FIM: Dashboard retornado com sucesso ===");
-            return new RespostaDashProfessoraDTO(grafico1, grafico2);
-        } catch (BusinessException e) {
-            logger.error("Erro de negócio ao buscar dashboard para professor ID {}: {}", id, e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            logger.error("Erro ao executar queries do dashboard para professor ID {}: {}", id, e.getMessage(), e);
-            throw new BusinessException("Erro ao buscar dados do dashboard. Tente novamente mais tarde.");
+        // KPI: dia da semana com maior atendimento
+        KPIsProfessorDTO dto = new KPIsProfessorDTO();
+        AgendamentoPorDiaDTO diaDaSemanaComMaisAgendamentos = grafico1.stream()
+                .max(Comparator.comparingLong(AgendamentoPorDiaDTO::getTotalAgendamentos))
+                .orElse(null);
+
+        if (diaDaSemanaComMaisAgendamentos != null) {
+            switch (diaDaSemanaComMaisAgendamentos.getDiaSemana().toLowerCase()) {
+                case "monday" -> dto.setDiaSemanaComMaiorAtendimento(DiaSemana.SEGUNDA);
+                case "tuesday" -> dto.setDiaSemanaComMaiorAtendimento(DiaSemana.TERCA);
+                case "wednesday" -> dto.setDiaSemanaComMaiorAtendimento(DiaSemana.QUARTA);
+                case "thursday" -> dto.setDiaSemanaComMaiorAtendimento(DiaSemana.QUINTA);
+                case "friday" -> dto.setDiaSemanaComMaiorAtendimento(DiaSemana.SEXTA);
+                case "saturday" -> dto.setDiaSemanaComMaiorAtendimento(DiaSemana.SABADO);
+                case "sunday" -> dto.setDiaSemanaComMaiorAtendimento(DiaSemana.DOMINGO);
+            }
         }
+
+        // Buscar agendamentos completos
+        List<Agendamento> agendamentos = agendamentoRepository.findAgendamentosByProfessorAndPeriod(id, inicio, fim);
+
+        // Filtrar alunos únicos
+        Set<Long> idsUnicos = new HashSet<>();
+        List<Aluno> alunosUnicos = new ArrayList<>();
+
+        // Contador de especialidades
+        Map<String, Long> contadorEspecialidades = new HashMap<>();
+
+        for (Agendamento agendamento : agendamentos) {
+            if (agendamento.getAgendamentoAlunos() != null) {
+                for (AgendamentoAluno aa : agendamento.getAgendamentoAlunos()) {
+                    Aluno aluno = aa.getAluno();
+                    if (aluno != null && idsUnicos.add(aluno.getId())) {
+                        alunosUnicos.add(aluno);
+                    }
+                }
+            }
+
+            if (agendamento.getEspecialidade() != null) {
+                String nomeEsp = agendamento.getEspecialidade().getNome();
+                contadorEspecialidades.put(nomeEsp, contadorEspecialidades.getOrDefault(nomeEsp, 0L) + 1);
+            }
+        }
+
+        // Quantidade de alunos distintos atendidos
+        Integer qtdAlunosAtendidos = alunosUnicos.size();
+        dto.setQtdAlunosAtendidos(qtdAlunosAtendidos);
+
+        // Especialidade mais requisitada
+        String especialidadeMaisRequisitada = contadorEspecialidades.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
+        dto.setEspecialidadeMaisRequisitada(especialidadeMaisRequisitada);
+        dto.setQtdTotalSessoesRealizadas(agendamentos.size());
+
+        return new RespostaDashProfessoraDTO(grafico1, grafico2, dto);
     }
 
 
