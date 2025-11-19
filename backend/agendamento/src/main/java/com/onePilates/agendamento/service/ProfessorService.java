@@ -282,14 +282,6 @@ public class ProfessorService {
             dto.setEspecialidades(especialidadesDTO);
         }
 
-        // Buscar e incluir agendamentos do professor
-        try {
-            List<AgendamentoResponseDTO> agendamentos = agendamentoService.buscarAgendamentosPorIdProfessor(professor.getId());
-            dto.setAgendamentos(agendamentos);
-        } catch (Exception e) {
-            logger.warn("Erro ao buscar agendamentos para professor ID {}: {}", professor.getId(), e.getMessage());
-            dto.setAgendamentos(Collections.emptyList());
-        }
 
         return dto;
     }

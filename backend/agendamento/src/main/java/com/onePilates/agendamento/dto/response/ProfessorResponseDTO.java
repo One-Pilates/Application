@@ -19,7 +19,7 @@ public class ProfessorResponseDTO {
     private EnderecoResponseDTO endereco;
     private String telefone;
     private Set<EspecialidadeResponseDTO> especialidades;
-    private List<AgendamentoResponseDTO> agendamentos;
+
 
     public ProfessorResponseDTO() {
     }
@@ -136,11 +136,4 @@ public class ProfessorResponseDTO {
         this.especialidades = especialidades;
     }
 
-    public List<AgendamentoResponseDTO> getAgendamentos() {
-        return agendamentos;
-    }
-
-    public void setAgendamentos(List<AgendamentoResponseDTO> agendamentos) {
-        this.agendamentos = agendamentos;
-    }
 }
