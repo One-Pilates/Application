@@ -29,11 +29,11 @@ export const useDashboardModel = (period) => {
         const response = await api.get(`api/professores/${user.id}/${dias}`);
         const data = response.data;
 
-        // === GRÁFICO DE FREQUÊNCIA ===
+  
         const grafico1 = data.agendamentosPorDiasDTO || [];
-        setFrequencia(grafico1); // ⚡ Passa direto para o chart, sem mapear ainda
+        setFrequencia(grafico1);
 
-        // === GRÁFICO DE PIZZA === (não muda nada)
+       
         const grafico2 = data.aulasPorEspecialidadesDTO || [];
         const pieData = grafico2.map(item => ({
           name: item.especialidade,
@@ -41,11 +41,11 @@ export const useDashboardModel = (period) => {
         }));
         setPie(pieData);
 
-        // TOTAL DE AULAS
+        
         const total = grafico2.reduce((sum, item) => sum + (item.percentualAulas || 0), 0);
         setTotalAulas(total);
 
-        // TOP 3
+ 
         const top = [...grafico2]
           .sort((a, b) => (b.percentualAulas || 0) - (a.percentualAulas || 0))
           .slice(0, 3)
