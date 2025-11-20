@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { FaChevronDown, FaCog, FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../../../hooks/useAuth.jsx";
 import ContactAdm from "./ContactAdm.jsx";
+import api from "../../../provider/api";
+import userIconImg from "/user-icon.png";
 
 function Account() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [modoEscuro, setModoEscuro] = useState(false);
-  const { user, logout } = useAuth() || {};
+  const { user } = useAuth() || {};
 
   const toggleModoEscuro = () => {
     setModoEscuro(!modoEscuro);
@@ -29,9 +31,6 @@ function Account() {
     return roleRaw;
   })();
 
-  const avatarFromUser = user?.avatar || user?.foto || null;
-  const avatarSrc = avatarFromUser && avatarFromUser !== "" ? avatarFromUser : '/default-avatar.svg';
-
   return (
     <div className="relative">
       <button
@@ -40,9 +39,9 @@ function Account() {
         aria-expanded={menuAberto}
         aria-haspopup="true"
       >
-        {avatarSrc ? (
+        {user && user.foto ? (
           <img
-            src={avatarSrc}
+            src={`${api.defaults.baseURL}/api/imagens/${user.foto}`}
             alt={nome}
             className="w-10 h-10 rounded-full ring-2 ring-orange-500 object-cover"
           />
@@ -73,7 +72,7 @@ function Account() {
             <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4">
               <div className="flex items-center gap-3">
                 <img
-                  src={avatarSrc}
+                  src={user?.foto ? `${api.defaults.baseURL}/api/imagens/${user.foto}` : userIconImg}
                   alt={nome}
                   className="w-14 h-14 rounded-full ring-2 ring-white object-cover"
                 />

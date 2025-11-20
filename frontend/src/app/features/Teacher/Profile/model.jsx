@@ -3,28 +3,29 @@ import { useAuth } from "../../../../hooks/useAuth";
 import api from "../../../../provider/api"
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import userIconImg from "/user-icon.png";
 
 export const useProfileUserModel = () => {
   const { user, setUser } = useAuth();
-  const [dadosUser, setDadosUser] = useState({
+  const [userData, setUserData] = useState({
     nome:  "",
     cargo: "",
     role: "",
     email: "",
+    foto: "",
     dataNascimento: "",
     telefone: "",
     receberNotificacao: false,
   });
-  const [profileImage, setProfileImage] = useState(
-    "https://i.pravatar.cc/150?img=45"
-  );
+  const [profileImage, setProfileImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const fileInputRef = useRef(null);
-  const [originalDados, setOriginalDados] = useState(dadosUser);
+  const [originalData, setOriginalData] = useState(userData);
   const [hasChanged, setHasChanged] = useState(false);
-  const [especialidadesMap, setEspecialidadesMap] = useState([]);
-  const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState(new Set());
+  const [specialtiesMap, setSpecialtiesMap] = useState([]);
+  const [selectedSpecialties, setSelectedSpecialties] = useState(new Set());
   const navigate = useNavigate();
-  const [especialidadesOriginais, setEspecialidadesOriginais] = useState(new Set());
+  const [originalSpecialties, setOriginalSpecialties] = useState(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,11 +41,11 @@ export const useProfileUserModel = () => {
           const idsEspecialidadesProfessor = new Set(
             user.especialidades.map(esp => esp.id)
           );
-          setEspecialidadesSelecionadas(idsEspecialidadesProfessor);
-          setEspecialidadesOriginais(new Set(idsEspecialidadesProfessor));
+          setSelectedSpecialties(idsEspecialidadesProfessor);
+          setOriginalSpecialties(new Set(idsEspecialidadesProfessor));
         }
 
-        setEspecialidadesMap(especialidadesData);
+        setSpecialtiesMap(especialidadesData);
 
       } catch (err) {
         console.error('Erro ao carregar especialidades:', err);
@@ -54,58 +55,103 @@ export const useProfileUserModel = () => {
   }, [user]);
 
   useEffect(() => {
-    const dadosAtuais = {
-          nome: user?.nome || "",
-          cargo: user?.cargo || "",
-          role: user?.role || "",
-          email: user?.email || "",
-          dataNascimento: user?.idade || user?.dataNascimento || "",
-          telefone: user?.telefone || "",
-          receberNotificacao: user?.notificacaoAtiva ?? user?.receberNotificacao ?? false,
-        };
-
-        setDadosUser(dadosAtuais);
-        setOriginalDados(dadosAtuais);
+    
+    const currentData = {
+      nome: user?.nome || "",
+      cargo: user?.cargo || "",
+      role: user?.role || "",
+      foto: user?.foto ? `${api.defaults.baseURL}/api/imagens/${user.foto}` : userIconImg,
+      email: user?.email || "",
+      dataNascimento: user?.idade || user?.dataNascimento || "",
+      telefone: user?.telefone || "",
+      receberNotificacao: user?.notificacaoAtiva ?? user?.receberNotificacao ?? false,
+    };
+    console.log('URL da foto:', currentData.foto);
+    
+        setUserData(currentData);
+        setOriginalData(currentData);
 
         console.log('dadosUser carregados com sucesso');
   }, [user]);
 
   useEffect(() => {
-    const verificarMudancas = () => {
-      const dadosMudaram = JSON.stringify(dadosUser) !== JSON.stringify(originalDados);
+    const checkChanges = () => {
+      const dataChanged = JSON.stringify(userData) !== JSON.stringify(originalData);
 
-      const especialidadesMudaram = 
-        dadosUser.role === 'PROFESSOR' && (
-          especialidadesSelecionadas.size !== especialidadesOriginais.size ||
-          ![...especialidadesSelecionadas].every(id => especialidadesOriginais.has(id))
+      const specialtiesChanged = 
+        userData.role === 'PROFESSOR' && (
+          selectedSpecialties.size !== originalSpecialties.size ||
+          ![...selectedSpecialties].every(id => originalSpecialties.has(id))
         );
       
-      if (dadosMudaram || especialidadesMudaram) {
+      if (dataChanged || specialtiesChanged) {
         setHasChanged(true);
       } else {
         setHasChanged(false);
       }
     };
-    verificarMudancas();
-  }, [dadosUser, originalDados, especialidadesSelecionadas, especialidadesOriginais]);
+    checkChanges();
+  }, [userData, originalData, selectedSpecialties, originalSpecialties]);
 
   const handleEditFotoClick = () => {
-    if (fileInputRef.current) fileInputRef.current.click();
+    console.log('Clicou para editar foto');
+    fileInputRef.current.click();
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files && e.target.files[0];
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    console.log('Arquivo selecionado:', file);
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setProfileImage(reader.result);
-    reader.readAsDataURL(file);
+
+    if (!file.type.startsWith('image/')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Formato inválido',
+        text: 'Por favor, selecione apenas arquivos de imagem (PNG, JPG, JPEG, etc).',
+        confirmButtonText: 'OK',
+      });
+      e.target.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Arquivo muito grande',
+        text: 'A imagem deve ter no máximo 5MB. Por favor, selecione uma imagem menor.',
+        confirmButtonText: 'OK',
+      });
+      e.target.value = '';
+      return;
+    }
+
+    setProfileImage(file);
+    
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+    
+    setUserData(prev => ({
+      ...prev,
+      foto: objectUrl // Temporário para preview
+    }));
+    
+    e.target.value = '';
   };
 
   const cancelChanges = () => {
-    setDadosUser(originalDados);
+    setUserData(originalData);
     if (user.role === 'PROFESSOR') {
-      setEspecialidadesSelecionadas(new Set(especialidadesOriginais));
+      setSelectedSpecialties(new Set(originalSpecialties));
     }
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+      setUserData(prev => ({
+        ...prev,
+        foto: originalData.foto
+      }));
+    }
+    setProfileImage(null);  
     setHasChanged(false);
   }
 
@@ -115,34 +161,75 @@ export const useProfileUserModel = () => {
       return;
     }
 
-    const emailAlterado = dadosUser.email !== originalDados.email;
+    const emailChanged = userData.email !== originalData.email;
 
     try {
-      const userDTO = {
-        nome: dadosUser.nome.trim(),
-        email: dadosUser.email,
-        idade: dadosUser.dataNascimento,
-        telefone: dadosUser.telefone,
-        notificacaoAtiva: dadosUser.receberNotificacao,
-      };
-
-      if (user.role === 'PROFESSOR') {
-        userDTO.especialidadeIds = Array.from(especialidadesSelecionadas);
-      }
 
       let endpoint = '';
+      let endpointImg = ''
       switch (user.role) {
         case 'PROFESSOR':
           endpoint = `api/professores/${user.id}`;
+          endpointImg = `api/professores/${user.id}/uploadFoto`;
           break;
         case 'ADMINISTRADOR':
           endpoint = `api/administradores/${user.id}`;
+          endpointImg = `api/administradores/${user.id}/uploadFoto`;
           break;
         case 'SECRETARIA':
           endpoint = `api/secretarias/${user.id}`;
+          endpointImg = `api/secretarias/${user.id}/uploadFoto`;
           break;
         default:
           throw new Error('Role não reconhecida');
+      }
+
+      let imageName = user.foto;
+
+      if (profileImage) {
+
+        try {
+
+          const formData = new FormData();
+          formData.append("file", profileImage);
+
+          console.log("Enviando foto para:", endpointImg);
+          const fotoResponse = await api.post(endpointImg, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            },
+          });
+
+          imageName = fotoResponse.data;
+          console.log("✅ Foto enviada com sucesso:", imageName);
+          
+          // Limpar preview e arquivo selecionado
+          if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            setPreviewUrl(null);
+          }
+          setProfileImage(null);
+        } catch (err) {
+          console.error("❌ Erro ao fazer upload da foto:", err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro ao enviar foto',
+            text: 'Não foi possível fazer upload da imagem. Os outros dados serão salvos.',
+            confirmButtonText: 'OK',
+          });
+        }
+      }
+
+      const userDTO = {
+        nome: userData.nome.trim(),
+        email: userData.email,
+        idade: userData.dataNascimento,
+        telefone: userData.telefone,
+        notificacaoAtiva: userData.receberNotificacao,
+      };
+
+      if (user.role === 'PROFESSOR') {
+        userDTO.especialidadeIds = Array.from(selectedSpecialties);
       }
 
       console.log("Enviando dados para atualização:", userDTO);
@@ -153,15 +240,21 @@ export const useProfileUserModel = () => {
       
       console.log("✅ Dados atualizados com sucesso:", data);
 
-      setOriginalDados(dadosUser);
-      setEspecialidadesOriginais(new Set(especialidadesSelecionadas));
+      const updatedData = {
+        ...userData,
+        foto: `${api.defaults.baseURL}/api/imagens/${imageName}`
+      };
+
+      setUserData(updatedData);
+      setOriginalData(updatedData);
+      setOriginalSpecialties(new Set(selectedSpecialties));
       
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
       
       setHasChanged(false);
 
-      if (emailAlterado) {
+      if (emailChanged) {
         await Swal.fire({
           icon: 'success',
           title: 'Perfil atualizado!',
@@ -195,35 +288,37 @@ export const useProfileUserModel = () => {
     }
   };
 
-  const toggleEspecialidade = (especialidadeId) => {
-    setEspecialidadesSelecionadas((prev) => {
-      const novoSet = new Set(prev);
+  const toggleSpecialty = (especialidadeId) => {
+    setSelectedSpecialties((prev) => {
+      const newSet = new Set(prev);
       
-      if (novoSet.has(especialidadeId)) {
-        novoSet.delete(especialidadeId);
+      if (newSet.has(especialidadeId)) {
+        newSet.delete(especialidadeId);
       } else {
-        novoSet.add(especialidadeId);
+        newSet.add(especialidadeId);
       }
-      return novoSet;
+      return newSet;
     });
   };
   
-  const isEspecialidadeSelecionada = (especialidadeId) => {
-    return especialidadesSelecionadas.has(especialidadeId);
+  const isSpecialtySelected = (especialidadeId) => {
+    return selectedSpecialties.has(especialidadeId);
   };
 
   return {
-    dadosUser,
-    setDadosUser,
+    userData,
+    setUserData,
     profileImage,
+    previewUrl,
     fileInputRef,
     handleEditFotoClick,
     handleFileChange,
     hasChanged,
-    toggleEspecialidade,
-    isEspecialidadeSelecionada,
+    toggleSpecialty,
+    isSpecialtySelected,
     cancelChanges,
-    especialidadesMap,
-    saveChanges
+    specialtiesMap,
+    saveChanges,
+    userIconImg
   };
 };

@@ -3,17 +3,18 @@ import { FaPen } from "react-icons/fa";
 import "./style.scss";
 
 const ProfileUserView = ({
-  dadosUser,
-  profileImage,
+  userData,
+  previewUrl,
+  userIconImg,
   fileInputRef,
   handleEditFotoClick,
   handleFileChange,
-  setDadosUser,
+  setUserData,
   hasChanged,
   cancelChanges,
-  toggleEspecialidade,
-  isEspecialidadeSelecionada,
-  especialidadesMap,
+  toggleSpecialty,
+  isSpecialtySelected,
+  specialtiesMap,
   saveChanges,
 }) => {
   return (
@@ -21,15 +22,11 @@ const ProfileUserView = ({
       {/* HEADER */}
       <div className="profile-user__header">
         <div className="profile-user__foto-container">
-          {profileImage ? (
-            <img
-              src={profileImage}
-              alt={dadosUser.nome}
-              className="profile-user__foto"
-            />
-          ) : (
-            <div className="profile-user__foto placeholder" />
-          )}
+          <img
+            src={previewUrl || userData.foto || userIconImg}
+            alt={userData.nome || "Usuário"}
+            className="profile-user__foto"
+          />
 
           <button
             type="button"
@@ -49,9 +46,9 @@ const ProfileUserView = ({
         </div>
 
         <div className="profile-user__info">
-          <h2 className="profile-user__nome">{dadosUser.nome}</h2>
+          <h2 className="profile-user__nome">{userData.nome}</h2>
           <p className="profile-user__cargo">
-            {dadosUser.cargo || "Professor"}
+            {userData.cargo || "Professor"}
           </p>
         </div>
       </div>
@@ -65,9 +62,9 @@ const ProfileUserView = ({
             <div className="profile-user__input-group">
               <input
                 type="text"
-                value={dadosUser.nome}
+                value={userData.nome}
                 onChange={(e) =>
-                  setDadosUser({ ...dadosUser, nome: e.target.value })
+                  setUserData({ ...userData, nome: e.target.value })
                 }
                 className="profile-user__input"
               />
@@ -79,10 +76,10 @@ const ProfileUserView = ({
             <div className="profile-user__input-group">
               <input
                 type="email"
-                value={dadosUser.email}
+                value={userData.email}
                 onChange={(e) =>
-                  setDadosUser({
-                    ...dadosUser,
+                  setUserData({
+                    ...userData,
                     email: e.target.value,
                   })
                 }
@@ -98,10 +95,10 @@ const ProfileUserView = ({
             <label className="profile-user__label">Data de nascimento</label>
             <input
               type="date"
-              value={dadosUser.dataNascimento}
+              value={userData.dataNascimento}
               onChange={(e) =>
-                setDadosUser({
-                  ...dadosUser,
+                setUserData({
+                  ...userData,
                   dataNascimento: e.target.value,
                 })
               }
@@ -113,10 +110,10 @@ const ProfileUserView = ({
             <label className="profile-user__label">Telefone</label>
             <input
               type="tel"
-              value={dadosUser.telefone}
+              value={userData.telefone}
               onChange={(e) =>
-                setDadosUser({
-                  ...dadosUser,
+                setUserData({
+                  ...userData,
                   telefone: e.target.value,
                 })
               }
@@ -149,10 +146,10 @@ const ProfileUserView = ({
               <label className="profile-user__switch">
                 <input
                   type="checkbox"
-                  checked={Boolean(dadosUser.receberNotificacao)}
+                  checked={Boolean(userData.receberNotificacao)}
                   onChange={(e) =>
-                    setDadosUser({
-                      ...dadosUser,
+                    setUserData({
+                      ...userData,
                       receberNotificacao: e.target.checked,
                     })
                   }
@@ -164,19 +161,19 @@ const ProfileUserView = ({
         </div>
 
         {/* ESPECIALIDADES */}
-        {dadosUser.role === 'PROFESSOR' && (
+        {userData.role === 'PROFESSOR' && (
         <div className="profile-user__especialidades">
           <label className="profile-user__label">Especialidades</label>
           <div className="profile-user__checkbox-container">
-            {especialidadesMap && especialidadesMap.map((especialidade) => (
+            {specialtiesMap && specialtiesMap.map((especialidade) => (
               <label
                 key={especialidade.id}
                 className="profile-user__checkbox"
               >
                 <input
                   type="checkbox"
-                  checked={isEspecialidadeSelecionada(especialidade.id)}
-                  onChange={() => toggleEspecialidade(especialidade.id)}
+                  checked={isSpecialtySelected(especialidade.id)}
+                  onChange={() => toggleSpecialty(especialidade.id)}
                 />
                 <span>{especialidade.nome}</span>
               </label>
