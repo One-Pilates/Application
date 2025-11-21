@@ -1,5 +1,5 @@
 import {useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import api from "../../../../provider/api";
 
 export const useViewProfileModel = () => {
@@ -7,6 +7,7 @@ export const useViewProfileModel = () => {
   const location = useLocation();
   const [dadosUser, setDadosUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const tipo = location.pathname.includes('/professor') ? 'professor' : 'aluno';
 
@@ -23,7 +24,6 @@ export const useViewProfileModel = () => {
         const data = response.data;
         console.log(`Dados do ${tipo} recebidos:`, data);
         
-        // Apenas professor tem foto
         if (tipo === 'professor' && data.foto) {
           setDadosUser({
             ...data,
@@ -46,6 +46,7 @@ export const useViewProfileModel = () => {
   return { 
     dadosUser, 
     tipo, 
-    loading 
+    loading,
+    navigate
   };
 };
