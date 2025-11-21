@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,15 +26,18 @@ public class AdministradorService {
     private final AdministradorRepository administradorRepository;
     private final EnderecoRepository enderecoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
     public AdministradorService(
             AdministradorRepository administradorRepository,
             EnderecoRepository enderecoRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            ImageService imageService
     ) {
         this.administradorRepository = administradorRepository;
         this.enderecoRepository = enderecoRepository;
         this.passwordEncoder = passwordEncoder;
+        this.imageService = imageService;
     }
 
     @Transactional
@@ -53,7 +57,6 @@ public class AdministradorService {
             administrador.setCpf(dto.getCpf());
             administrador.setDataNascimento(dto.getIdade());
             administrador.setStatus(dto.getStatus());
-            administrador.setFoto(dto.getFoto());
             administrador.setObservacoes(dto.getObservacoes());
             administrador.setNotificacaoAtiva(dto.getNotificacaoAtiva());
             administrador.setSenha(passwordEncoder.encode(dto.getSenha()));
@@ -72,7 +75,25 @@ public class AdministradorService {
             administrador.setEndereco(endereco);
         }
 
+            // Salva o administrador primeiro para obter o ID
             Administrador saved = administradorRepository.save(administrador);
+
+            // Processa imagem se fornecida (após salvar para ter o ID)
+            if (dto.getImagem() != null && !dto.getImagem().isEmpty()) {
+                try {
+                    String caminhoFoto = imageService.salvarImagem(saved.getId(), dto.getImagem(), "administrador");
+                    saved.setFoto(caminhoFoto);
+                    saved = administradorRepository.save(saved);
+                } catch (Exception e) {
+                    logger.error("Erro ao salvar imagem do administrador: {}", e.getMessage(), e);
+                    // Se falhar ao salvar imagem, continua sem foto
+                }
+            } else if (dto.getFoto() != null && !dto.getFoto().isBlank()) {
+                // Mantém compatibilidade com o campo foto (String) se imagem não for fornecida
+                saved.setFoto(dto.getFoto());
+                saved = administradorRepository.save(saved);
+            }
+
             logger.info("Administrador criado com sucesso. ID: {}", saved.getId());
             return saved;
         } catch (BusinessException e) {
@@ -186,13 +207,31 @@ public class AdministradorService {
         }
     }
 
+    public String salvarFoto(Long id, MultipartFile file) {
+        Administrador administrador = administradorRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Administrador não encontrado"));
+
+        String fotoAntiga = administrador.getFoto();
+        String caminhoNovaFoto = imageService.atualizarImagem(id, file, fotoAntiga, "administrador");
+
+        administrador.setFoto(caminhoNovaFoto);
+        administradorRepository.save(administrador);
+
+        return caminhoNovaFoto;
+    }
+
     @Transactional
     public void excluirAdministrador(Long id) {
         logger.info("Tentativa de excluir administrador ID: {}", id);
         try {
-            if (!administradorRepository.existsById(id)) {
-                throw new EntidadeNaoEncontradaException("Administrador não encontrado");
+            Administrador administrador = administradorRepository.findById(id)
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Administrador não encontrado"));
+            
+            // Remove a imagem se existir
+            if (administrador.getFoto() != null) {
+                imageService.removerImagem(administrador.getFoto());
             }
+            
             administradorRepository.deleteById(id);
             logger.info("Administrador excluído com sucesso. ID: {}", id);
         } catch (BusinessException e) {

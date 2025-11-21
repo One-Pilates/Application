@@ -2,6 +2,7 @@ package com.onePilates.agendamento.dto;
 
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -24,8 +25,9 @@ public class SecretariaDTO {
     @NotNull(message = "O campo status é obrigatório")
     private Boolean status;
 
-    @NotBlank(message = "O campo foto é obrigatório")
     private String foto;
+    
+    private MultipartFile imagem;
 
     @Size(max = 500, message = "O campo observações deve ter no máximo 500 caracteres")
     private String observacoes;
@@ -131,5 +133,13 @@ public class SecretariaDTO {
 
     public void setEndereco(EnderecoDTO endereco) {
         this.endereco = endereco;
+    }
+
+    public MultipartFile getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(MultipartFile imagem) {
+        this.imagem = imagem;
     }
 }

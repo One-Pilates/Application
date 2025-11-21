@@ -1,6 +1,8 @@
 import React from "react";
 import { FiSearch, FiPhone, FiMail, FiTrash2, FiCalendar } from "react-icons/fi";
 import Botao from "../../../shared/components/Button";
+import api from "../../../../provider/api";
+import userIconImg from "/user-icon.png";
 
 const GerenciamentoProfessorView = ({
   professores,
@@ -15,7 +17,7 @@ const GerenciamentoProfessorView = ({
         {/* Titulo mais botão criar professor */}
         <div className="flex flex-row w-full justify-between items-center">
           <h1 className="text-3xl font-bold">Gerenciamento de Professor</h1>
-          {user && user.role === 'SECRETARIA' && 
+          {user && user.role === 'ADMINISTRADOR' && 
             <Botao cor="bg-blue-500" texto={"Adicionar Professor"}></Botao>
           }
         </div>
@@ -51,7 +53,7 @@ const GerenciamentoProfessorView = ({
                     onClick={() => navigate('/perfil', { state: { professorId: professor.id } })}
                     className="group relative flex-shrink-0">
                       <img
-                        src="https://cdn-icons-png.flaticon.com/512/147/147142.png"
+                        src={professor.foto ? `${api.defaults.baseURL}/api/imagens/${professor.foto}` : userIconImg}
                         alt={professor.nome}
                         className="w-24 h-24 rounded-full object-cover ring-4 ring-orange-200 group-hover:ring-orange-400 transition-all duration-300"
                       />
