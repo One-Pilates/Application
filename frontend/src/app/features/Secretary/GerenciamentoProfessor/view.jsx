@@ -50,7 +50,7 @@ const GerenciamentoProfessorView = ({
                   <div className="flex items-center gap-4">
                 
                     <button 
-                    onClick={() => navigate('/perfil', { state: { professorId: professor.id } })}
+                    onClick={() => navigate(`/secretaria/perfil/professor/${professor.id}`)}
                     className="group relative flex-shrink-0">
                       <img
                         src={professor.foto ? `${api.defaults.baseURL}/api/imagens/${professor.foto}` : userIconImg}
@@ -64,7 +64,7 @@ const GerenciamentoProfessorView = ({
                   
                       {/* Linha superior: Nome + Badge de Status */}
                       <div className="flex flex-row items-center gap-3">
-                        <h2 className="text-3xl font-bold text-orange-600 hover:text-orange-700 cursor-pointer transition-colors">
+                        <h2 className="text-3xl font-bold text-orange-600">
                           {professor.nome}
                         </h2>
                         <span className={`px-3 py-1 ${professor.status ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} rounded-full text-sm font-semibold`}>

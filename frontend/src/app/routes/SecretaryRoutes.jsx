@@ -7,7 +7,7 @@ import RegisterTeacher from '../features/Secretary/RegisterTeacher';
 import RegisterStudent from '../features/Secretary/RegisterStudent';
 import NotFound from './NotFound';
 import GerenciamentoProfessor from '../features/Secretary/GerenciamentoProfessor';
-import ViewProfile from '../features/Secretary/Profile/';
+import ViewProfile from '../features/Secretary/ProfileView';
 
 
 export default function SecretaryRoutes() {

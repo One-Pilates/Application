@@ -1,7 +1,8 @@
 import React from "react";
 import { FaPen } from "react-icons/fa";
 import { useViewProfileModel } from "./model";
-import "../../Teacher/Profile/styles.scss";
+import userIconImg from "/user-icon.png";
+import "../../Teacher/Profile/style.scss";
 
 const ViewProfile = () => {
   const { dadosUser, tipo, loading } = useViewProfileModel();
@@ -21,22 +22,19 @@ const ViewProfile = () => {
       </div>
     );
   }
-
     return (
       <div className="profile-user">
         {/* HEADER */}
         <div className="profile-user__header">
-          <div className="profile-user__foto-container">
-            {dadosUser.foto ? (
+          {tipo === 'professor' && (
+            <div className="profile-user__foto-container">
               <img
-                src={dadosUser.foto}
+                src={dadosUser.foto || userIconImg}
                 alt={dadosUser.nome}
                 className="profile-user__foto"
               />
-            ) : (
-              <div className="profile-user__foto placeholder" />
-            )}
-          </div>
+            </div>
+          )}
   
           <div className="profile-user__info">
             <h2 className="profile-user__nome">{dadosUser.nome}</h2>
@@ -81,7 +79,7 @@ const ViewProfile = () => {
               <label className="profile-user__label">Data de nascimento</label>
               <input
                 type="date"
-                value={dadosUser.dataNascimento || ''}
+                value={dadosUser.dataNascimento || dadosUser.idade || ''}
                 className="profile-user__input"
                 disabled
               />
@@ -98,25 +96,37 @@ const ViewProfile = () => {
             </div>
           </div>
   
-          {/* SENHA / NOTIFICAÇÃO */}
           <div className="profile-user__row profile-user__row--align-end">
-            {tipo === 'professor' && (
+
               <div className="profile-user__notification">
                 <span className="profile-user__notification-text">
-                  Deseja receber notificação?
+                  {tipo === 'professor' ? 'Deseja receber notificação?' : 'Possui problema de mobilidade?'}
                 </span>
+                
                 <label className="profile-user__switch">
                   <input
                     type="checkbox"
-                    checked={dadosUser.notificacao || false}
-                    aria-label="Receber notificações"
+                    checked={tipo === 'professor' ? (dadosUser.notificacaoAtiva || false) : (dadosUser.alunoComLimitacoesFisicas || false)}
+                    aria-label={tipo === 'professor' ? 'Receber notificações' : 'Aluno com limitações físicas'}
                     disabled
                   />
                   <span className="profile-user__switch-slider" />
                 </label>
               </div>
-            )}
           </div>
+
+          {/* OBSERVAÇÕES - Apenas para Aluno */}
+          {tipo === 'aluno' && (
+            <div className="profile-user__field">
+              <label className="profile-user__label">Observações</label>
+              <textarea
+                value={dadosUser.observacoes || ''}
+                className="profile-user__input"
+                rows={4}
+                disabled
+              />
+            </div>
+          )}
   
           {/* ESPECIALIDADES */}
           {tipo === 'professor' && dadosUser.especialidades?.length > 0 && (

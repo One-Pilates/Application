@@ -22,7 +22,16 @@ export const useViewProfileModel = () => {
         const response = await api.get(endpoint);
         const data = response.data;
         console.log(`Dados do ${tipo} recebidos:`, data);
-        setDadosUser(data);
+        
+        // Apenas professor tem foto
+        if (tipo === 'professor' && data.foto) {
+          setDadosUser({
+            ...data,
+            foto: `${api.defaults.baseURL}/api/imagens/${data.foto}`
+          });
+        } else {
+          setDadosUser(data);
+        }
         
       } catch (error) {
         console.error(`Erro ao buscar ${tipo}:`, error);

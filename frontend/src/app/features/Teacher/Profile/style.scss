@@ -100,10 +100,24 @@
     font-size: 0.875rem;
     outline: none;
     transition: all 0.3s;
+    font-family: inherit;
 
     &--placeholder {
       color: #9ca3af;
     }
+
+    /* Estilos para textarea */
+    &[disabled] {
+      background: #f9fafb;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+
+  textarea.profile-user__input {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
   }
 
   &__edit-icon {
