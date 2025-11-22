@@ -7,6 +7,7 @@ import RegisterTeacher from '../features/Secretary/RegisterTeacher';
 import RegisterStudent from '../features/Secretary/RegisterStudent';
 import NotFound from './NotFound';
 import GerenciamentoProfessor from '../features/Secretary/GerenciamentoProfessor';
+import GerenciamentoAluno from '../features/Secretary/GerenciamentoAluno';
 
 export default function SecretaryRoutes() {
   return (
@@ -18,7 +19,7 @@ export default function SecretaryRoutes() {
         <Route path="agenda" element={<Calendar/>} />
         <Route path="professor" element={<GerenciamentoProfessor/>} />
         <Route path="professor/cadastrar" element={<RegisterTeacher/>} />
-        <Route path="alunos" element={<RegisterStudent/>} />
+        <Route path="alunos" element={<GerenciamentoAluno/>} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
