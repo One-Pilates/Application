@@ -98,7 +98,8 @@ public class AuthService {
                     funcionario.getCargo(),
                     funcionario.getEndereco(),
                     funcionario.getTelefone(),
-                    especialidades
+                    especialidades,
+                    funcionario.getPrimeiroAcesso()
             );
 
 
@@ -117,7 +118,8 @@ public class AuthService {
                     funcionario.getNotificacaoAtiva(),
                     funcionario.getCargo(),
                     funcionario.getEndereco(),
-                    funcionario.getTelefone()
+                    funcionario.getTelefone(),
+                    funcionario.getPrimeiroAcesso()
             );
             }
 

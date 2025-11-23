@@ -39,45 +39,11 @@ public abstract class Funcionario {
     private String telefone;
     private String codigoVerificacao;
     private LocalDateTime dataUltimaCriacaoCodigo;
+    private Boolean primeiroAcesso;
 
     public Funcionario() {
     }
 
-    public Funcionario(Long id, String nome, String email, String senha, Role role, String cpf, LocalDate dataNascimento, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco, String telefone) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.role = role;
-        this.cpf = cpf;
-        this.dataNascimento = dataNascimento;
-        this.status = status;
-        this.foto = foto;
-        this.observacoes = observacoes;
-        this.notificacaoAtiva = notificacaoAtiva;
-        this.cargo = cargo;
-        this.endereco = endereco;
-        this.telefone = telefone;
-    }
-
-    public Funcionario(Long id, String nome, String email, String senha, Role role, String cpf, LocalDate dataNascimento, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco, String telefone, String codigoVerificacao, LocalDateTime dataUltimaCriacaoCodigo) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.role = role;
-        this.cpf = cpf;
-        this.dataNascimento = dataNascimento;
-        this.status = status;
-        this.foto = foto;
-        this.observacoes = observacoes;
-        this.notificacaoAtiva = notificacaoAtiva;
-        this.cargo = cargo;
-        this.endereco = endereco;
-        this.telefone = telefone;
-        this.codigoVerificacao = codigoVerificacao;
-        this.dataUltimaCriacaoCodigo = dataUltimaCriacaoCodigo;
-    }
 
     public Long getId() {
         return id;
@@ -205,5 +171,13 @@ public abstract class Funcionario {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public Boolean getPrimeiroAcesso() {
+        return primeiroAcesso;
+    }
+
+    public void setPrimeiroAcesso(Boolean primeiroAcesso) {
+        this.primeiroAcesso = primeiroAcesso;
     }
 }

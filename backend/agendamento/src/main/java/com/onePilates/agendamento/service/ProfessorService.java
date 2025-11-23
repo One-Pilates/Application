@@ -33,18 +33,20 @@ public class ProfessorService {
     private final AgendamentoService agendamentoService;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    private final EmailService emailService;
 
     public ProfessorService(ProfessorRepository professorRepository,
                             EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository,
                             AgendamentoService agendamentoService,
                             PasswordEncoder passwordEncoder,
-                            ImageService imageService) {
+                            ImageService imageService, EmailService emailService) {
         this.professorRepository = professorRepository;
         this.especialidadeRepository = especialidadeRepository;
         this.agendamentoRepository = agendamentoRepository;
         this.agendamentoService = agendamentoService;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
+        this.emailService = emailService;
     }
 
 
@@ -95,6 +97,7 @@ public class ProfessorService {
         professor.setCargo(dto.getCargo());
         professor.setRole(roleToSet);
         professor.setTelefone(dto.getTelefone());
+        professor.setPrimeiroAcesso(true);
 
         if (dto.getSenha() != null) {
             professor.setSenha(passwordEncoder.encode(dto.getSenha()));
@@ -142,6 +145,7 @@ public class ProfessorService {
             salvo = professorRepository.save(salvo);
         }
 
+        emailService.envioEmailPrimeiroAcesso(professor.getNome(),professor.getEmail(),dto.getSenha());
         return toResponseDTO(salvo);
     }
 
