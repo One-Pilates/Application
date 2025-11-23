@@ -28,17 +28,19 @@ public class SecretariaService {
     private final EnderecoRepository enderecoRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    private final EmailService emailService;
 
     public SecretariaService(
             SecretariaRepository secretariaRepository,
             EnderecoRepository enderecoRepository,
             PasswordEncoder passwordEncoder,
-            ImageService imageService
+            ImageService imageService, EmailService emailService
     ) {
         this.secretariaRepository = secretariaRepository;
         this.enderecoRepository = enderecoRepository;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -63,6 +65,7 @@ public class SecretariaService {
             secretaria.setSenha(passwordEncoder.encode(dto.getSenha()));
             secretaria.setCargo(dto.getCargo());
             secretaria.setRole(Role.SECRETARIA);
+            secretaria.setPrimeiroAcesso(true);
 
             if (dto.getEndereco() != null) {
             Endereco endereco = new Endereco();
@@ -95,7 +98,7 @@ public class SecretariaService {
                 saved.setFoto(dto.getFoto());
                 saved = secretariaRepository.save(saved);
             }
-
+            emailService.envioEmailPrimeiroAcesso(secretaria.getNome(),secretaria.getEmail(),dto.getSenha());
             logger.info("Secretária criada com sucesso. ID: {}", saved.getId());
             return saved;
         } catch (BusinessException e) {

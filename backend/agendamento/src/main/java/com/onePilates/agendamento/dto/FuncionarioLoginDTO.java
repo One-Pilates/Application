@@ -26,13 +26,10 @@ public class FuncionarioLoginDTO {
     private Endereco endereco;
     private String telefone;
     private List<EspecialidadeResponseDTO> especialidades;
-    private MultipartFile Imagem;
+    private Boolean primeiroAcesso;
 
 
-    public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf,
-                               LocalDate dataNascimento, Boolean status, String foto,
-                               String observacoes, Boolean notificacaoAtiva, String cargo,
-                               Endereco endereco, String telefone) {
+    public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf, LocalDate dataNascimento, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco, String telefone,  Boolean primeiroAcesso) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -46,9 +43,10 @@ public class FuncionarioLoginDTO {
         this.cargo = cargo;
         this.endereco = endereco;
         this.telefone = telefone;
+        this.primeiroAcesso = primeiroAcesso;
     }
 
-    public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf, LocalDate dataNascimento, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco, String telefone, List<EspecialidadeResponseDTO> especialidades) {
+    public FuncionarioLoginDTO(Long id, String nome, String email, Role role, String cpf, LocalDate dataNascimento, Boolean status, String foto, String observacoes, Boolean notificacaoAtiva, String cargo, Endereco endereco, String telefone, List<EspecialidadeResponseDTO> especialidades, Boolean primeiroAcesso) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -63,6 +61,15 @@ public class FuncionarioLoginDTO {
         this.endereco = endereco;
         this.telefone = telefone;
         this.especialidades = especialidades;
+        this.primeiroAcesso = primeiroAcesso;
+    }
+
+    public Boolean getPrimeiroAcesso() {
+        return primeiroAcesso;
+    }
+
+    public void setPrimeiroAcesso(Boolean primeiroAcesso) {
+        this.primeiroAcesso = primeiroAcesso;
     }
 
     public String getTelefone() {
@@ -178,11 +185,5 @@ public class FuncionarioLoginDTO {
         this.especialidades = especialidades;
     }
 
-    public MultipartFile getImagem() {
-        return Imagem;
-    }
 
-    public void setImagem(MultipartFile imagem) {
-        Imagem = imagem;
-    }
 }
