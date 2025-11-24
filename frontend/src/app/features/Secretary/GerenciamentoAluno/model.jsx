@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import api from "../../../../provider/api";
 import { useAuth } from "../../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export const useGerenciamentoAlunoModel = () => {
     const {_user} = useAuth();
@@ -10,6 +11,7 @@ export const useGerenciamentoAlunoModel = () => {
     const [filterByNome, setFilterByNome] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const alunosPerPage = 7;
+    const navigate = useNavigate(); 
 
   useEffect(() => {
     fetchAlunos();
@@ -102,5 +104,6 @@ export const useGerenciamentoAlunoModel = () => {
     currentStudents,
     calculateAge,
     deleteAluno,
+    navigate,
   };
 };

@@ -14,13 +14,14 @@ const GerenciamentoAlunoView = ({
   endIndex,
   calculateAge,
   deleteAluno,
+  navigate,
 }) => {
   return (
     <>
       <div className="flex flex-col gap-6 py-6 px-16  h-full mx-auto ml-auto">
         <div className="flex flex-row w-full justify-between items-center">
           <h1 className="text-3xl font-bold">Gerenciamento de Aluno</h1>
-          <Botao cor="bg-blue-500" texto={"Adicionar Aluno"}></Botao>
+          <Botao onClick={()=> navigate("/secretaria/aluno/cadastrar")}  cor="bg-blue-500" texto={"Adicionar Aluno"}></Botao>
         </div>
         <div className="flex w-full items-center gap-4 justify-between">
           <div className="relative w-80">

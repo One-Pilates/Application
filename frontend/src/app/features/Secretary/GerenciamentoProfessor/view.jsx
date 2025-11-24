@@ -9,6 +9,7 @@ const GerenciamentoProfessorView = ({
   user,
   deletarProfessor,
   filterByNome,
+  navigate,
 }) => {
   return (
     <>
@@ -17,7 +18,7 @@ const GerenciamentoProfessorView = ({
         <div className="flex flex-row w-full justify-between items-center">
           <h1 className="text-3xl font-bold">Gerenciamento de Professor</h1>
           {user && user.role === 'ADMINISTRADOR' && 
-            <Botao cor="bg-blue-500" texto={"Adicionar Professor"}></Botao>
+            <Botao  onClick={()=> navigate("/secretaria/professor/cadastrar")} cor="bg-blue-500" texto={"Adicionar Professor"}></Botao>
           }
         </div>
 
