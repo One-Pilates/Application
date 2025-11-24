@@ -110,6 +110,52 @@ public class AgendamentoService {
                 .collect(Collectors.toList());
     }
 
+    public List<AgendamentoResponseDTO> buscarAgendamentosPorIdsDeSalaEProfessor(Long idSala, Long idProfessor) {
+
+        if (idSala == null || idProfessor == null) {
+            throw new IllegalArgumentException("Dados fornecidos inválidos.");
+        }
+        if(salaRepository.findById(idSala).isEmpty()) {
+            throw new RuntimeException("A sala informada não é valida");
+        }
+        if(professorRepository.findById(idProfessor).isEmpty()) {
+            throw new RuntimeException("Professor informado não existente");
+        }
+
+        List<Agendamento> agendamentos;
+
+
+        if (idProfessor != 0) {
+            agendamentos = agendamentoRepository.findByProfessorId(idProfessor);
+
+            if (agendamentos.isEmpty()) {
+                throw new RuntimeException("O professor selecionado não possui agendamentos.");
+            }
+
+        } else {
+
+            agendamentos = agendamentoRepository.findAll();
+
+            if (agendamentos.isEmpty()) {
+                throw new RuntimeException("Nenhum agendamento encontrado.");
+            }
+        }
+
+        List<Agendamento> filtrados = agendamentos.stream()
+                .filter(a -> a.getSala().getId().equals(idSala))
+                .collect(Collectors.toList());
+
+        if (filtrados.isEmpty() && idProfessor != 0) {
+            throw new RuntimeException("Nenhum agendamento encontrado para o(a) professor(a) " + agendamentos.getFirst().getProfessor().getNome() + " na sala informada.");
+        }
+        if(filtrados.isEmpty() && idProfessor == 0) {
+            throw new RuntimeException("Nenhum agendamento encontrado na sala informada.");
+        }
+
+        return filtrados.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 
 
 

@@ -56,6 +56,12 @@ public class AgendamentoController {
         return ResponseEntity.ok(agendamentoService.buscarPorIdDTO(id));
     }
 
+    @GetMapping("/{idSala}/{idProfessor}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    public ResponseEntity<List<AgendamentoResponseDTO>>buscarAgendamentoPorSalaEProfessor(@PathVariable Long idSala, @PathVariable Long idProfessor) {
+        return ResponseEntity.ok(agendamentoService.buscarAgendamentosPorIdsDeSalaEProfessor(idSala, idProfessor));
+    }
+
     /**
      * Atualiza parcialmente um agendamento existente.
      * 
