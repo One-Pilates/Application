@@ -4,11 +4,35 @@ import { useAuth } from "../../../../hooks/useAuth";
 import api from "../../../../provider/api";
 
 export const useDashboardModel = (period) => {
-  const [kpis] = useState([
-    { title: 'Sessões Realizadas', value: '54', subtitle: '12% de Aumento do Último Mês', iconBgColor: '#d8b4fe', icon: <FiActivity size={24} color="#fff" /> },
-    { title: 'Ausências de Alunos', value: '9%', subtitle: '50% de Redução do Último Mês', iconBgColor: '#fdba74', icon: <FiUserX size={24} color="#fff" /> },
-    { title: 'Suas Ausências', value: '2%', subtitle: 'Por dia', iconBgColor: '#93c5fd', icon: <FiUserCheck size={24} color="#fff" /> },
-    { title: 'Alunos Ativos', value: '10', subtitle: 'Por dia', iconBgColor: '#fef08a', icon: <FiUsers size={24} color="#fff" /> }
+  const [kpis, setKpis] = useState([
+    {
+      title: "Sessões Realizadas",
+      value: "0",
+      subtitle: "",
+      iconBgColor: "#d8b4fe",
+      icon: <FiActivity size={24} color="#fff" />,
+    },
+    {
+      title: "Alunos Atendidos",
+      value: "0",
+      subtitle: "",
+      iconBgColor: "#fdba74",
+      icon: <FiUserX size={24} color="#fff" />,
+    },
+    {
+      title: "Dia com Maior Atendimento",
+      value: "",
+      subtitle: "",
+      iconBgColor: "#93c5fd",
+      icon: <FiUserCheck size={24} color="#fff" />,
+    },
+    {
+      title: "Especialidade Mais Requisitada",
+      value: "",
+      subtitle: "",
+      iconBgColor: "#fef08a",
+      icon: <FiUsers size={24} color="#fff" />,
+    },
   ]);
 
   const [pie, setPie] = useState([]);
@@ -16,6 +40,7 @@ export const useDashboardModel = (period) => {
   const [totalAulas, setTotalAulas] = useState(0);
   const [top3, setTop3] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hasData, setHasData] = useState(true);
 
   const { user } = useAuth();
 
@@ -29,39 +54,80 @@ export const useDashboardModel = (period) => {
         const response = await api.get(`api/professores/${user.id}/${dias}`);
         const data = response.data;
 
-  
+        // Atualizar KPIs com dados do backend
+        if (data.kpisProfessorDTO) {
+          const kpisData = data.kpisProfessorDTO;
+          const newKpis = [
+            {
+              title: "Sessões Realizadas",
+              value: kpisData.qtdTotalSessoesRealizadas || "0",
+              subtitle: "",
+              iconBgColor: "#d8b4fe",
+              icon: <FiActivity size={24} color="#fff" />,
+            },
+            {
+              title: "Alunos Atendidos",
+              value: kpisData.qtdAlunosAtendidos || "0",
+              subtitle: "",
+              iconBgColor: "#fdba74",
+              icon: <FiUserX size={24} color="#fff" />,
+            },
+            {
+              title: "Dia com Maior Atendimento",
+              value: kpisData.diaSemanaComMaiorAtendimento || "-",
+              subtitle: "",
+              iconBgColor: "#93c5fd",
+              icon: <FiUserCheck size={24} color="#fff" />,
+            },
+            {
+              title: "Especialidade Mais Requisitada",
+              value: kpisData.especialidadeMaisRequisitada || "-",
+              subtitle: "",
+              iconBgColor: "#fef08a",
+              icon: <FiUsers size={24} color="#fff" />,
+            },
+          ];
+          setKpis(newKpis);
+        }
+
         const grafico1 = data.agendamentosPorDiasDTO || [];
         setFrequencia(grafico1);
 
-       
         const grafico2 = data.aulasPorEspecialidadesDTO || [];
-        const pieData = grafico2.map(item => ({
+        const pieData = grafico2.map((item) => ({
           name: item.especialidade,
-          y: item.percentualAulas || 0
+          y: item.percentualAulas || 0,
         }));
         setPie(pieData);
 
-        
-        const total = grafico2.reduce((sum, item) => sum + (item.percentualAulas || 0), 0);
+        // Verificar se há dados
+        const hasAnyData = grafico1.length > 0 || grafico2.length > 0;
+        setHasData(hasAnyData);
+
+        const total = grafico2.reduce(
+          (sum, item) => sum + (item.percentualAulas || 0),
+          0
+        );
         setTotalAulas(total);
 
- 
         const top = [...grafico2]
           .sort((a, b) => (b.percentualAulas || 0) - (a.percentualAulas || 0))
           .slice(0, 3)
-          .map(item => ({
+          .map((item) => ({
             especialidade: item.especialidade,
             percentual: item.percentualAulas,
-            totalEstimado: Math.round(((item.percentualAulas || 0) * total) / 100)
+            totalEstimado: Math.round(
+              ((item.percentualAulas || 0) * total) / 100
+            ),
           }));
         setTop3(top);
-
       } catch (error) {
         console.error("Erro ao buscar dados do professor:", error);
         setPie([]);
         setFrequencia([]);
         setTotalAulas(0);
         setTop3([]);
+        setHasData(false);
       } finally {
         setLoading(false);
       }
@@ -70,5 +136,5 @@ export const useDashboardModel = (period) => {
     fetchDashboardData();
   }, [user?.id, period]);
 
-  return { kpis, pie, frequencia, loading, totalAulas, top3 };
+  return { kpis, pie, frequencia, loading, totalAulas, top3, hasData };
 };
