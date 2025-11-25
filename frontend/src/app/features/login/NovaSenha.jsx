@@ -18,8 +18,31 @@ export default function NovaSenha() {
   const email = useLocation().state?.email;
   const isPrimeiroAcesso = user?.primeiroAcesso || false;
 
+  // Função de validação
+  const validatePassword = (password) => {
+    return {
+      length: password.length >= 10,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[!@#$%^&*]/.test(password),
+    };
+  };
+
+  const rules = validatePassword(password1);
+
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    const allValid = Object.values(rules).every(Boolean);
+    if (!allValid) {
+      Swal.fire({
+        icon: "error",
+        title: "Senha inválida",
+        text: "A senha não atende aos requisitos mínimos.",
+      });
+      return;
+    }
 
     if (password1 !== password2) {
       Swal.fire({
@@ -40,13 +63,10 @@ export default function NovaSenha() {
     });
 
     try {
-      console.log("Enviando requisição para alterar senha com email:", email);
       const response = await api.post("auth/alterarSenha", {
         senha: password1,
         email: email || user.email,
       });
-
-      console.log("Resposta do servidor:", response.data);
 
       Swal.fire({
         icon: "success",
@@ -58,16 +78,17 @@ export default function NovaSenha() {
 
       setTimeout(() => {
         if (isPrimeiroAcesso) {
-          const route = user.role === 'PROFESSOR' ? '/professora/agenda' : '/secretaria/dashboard';
+          const route =
+            user.role === "PROFESSOR"
+              ? "/professora/agenda"
+              : "/secretaria/dashboard";
           navigate(route);
         } else {
           navigate("/login");
         }
       }, 2000);
-
     } catch (error) {
       console.error("Erro ao redefinir senha:", error);
-      console.log("Detalhes do erro:", error.response?.data);
 
       Swal.fire({
         icon: "error",
@@ -133,6 +154,7 @@ export default function NovaSenha() {
                   <AiOutlineEye size={20} />
                 )}
               </button>
+
             </div>
           </div>
 
@@ -164,6 +186,25 @@ export default function NovaSenha() {
                 )}
               </button>
             </div>
+              <br />
+                  <h3>A senha deve conter:</h3>
+              <ul>
+                <li style={{ color: rules.length ? "green" : "red" }}>
+                  10 caracteres
+                </li>
+                <li style={{ color: rules.uppercase ? "green" : "red" }}>
+                  Uma letra maiúscula
+                </li>
+                <li style={{ color: rules.lowercase ? "green" : "red" }}>
+                  Uma letra minúscula
+                </li>
+                <li style={{ color: rules.number ? "green" : "red" }}>
+                  Um número
+                </li>
+                <li style={{ color: rules.special ? "green" : "red" }}>
+                  Um caractere especial (!@#$%^&*)
+                </li>
+              </ul>
           </div>
 
           <button type="submit" className="login__button">
