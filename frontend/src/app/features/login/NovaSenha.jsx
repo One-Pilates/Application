@@ -1,18 +1,22 @@
 import { useState } from "react";
 import "./Login.scss";
 import "./CodigoVerificacao.scss";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../../../provider/api";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import BackgroundLogin from "../../shared/components/BackgroundLogin";
+import { useAuth } from "../../../hooks/useAuth";
 
 export default function NovaSenha() {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const email = useLocation().state?.email;
+  const isPrimeiroAcesso = user?.primeiroAcesso || false;
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,9 +40,10 @@ export default function NovaSenha() {
     });
 
     try {
+      console.log("Enviando requisição para alterar senha com email:", email);
       const response = await api.post("auth/alterarSenha", {
         senha: password1,
-        email: email,
+        email: email || user.email,
       });
 
       console.log("Resposta do servidor:", response.data);
@@ -52,7 +57,12 @@ export default function NovaSenha() {
       });
 
       setTimeout(() => {
-      navigate("/login");
+        if (isPrimeiroAcesso) {
+          const route = user.role === 'PROFESSOR' ? '/professora/agenda' : '/secretaria/dashboard';
+          navigate(route);
+        } else {
+          navigate("/login");
+        }
       }, 2000);
 
     } catch (error) {
@@ -74,16 +84,20 @@ export default function NovaSenha() {
         role="region"
         aria-label="Formulário de redefinição de senha"
       >
-        <button onClick={() => navigate(-1)} className="botao-voltar">
-          <i className="bi bi-arrow-left-circle-fill"></i>Voltar
-        </button>
+        {!isPrimeiroAcesso && (
+          <button onClick={() => navigate(-1)} className="botao-voltar">
+            <i className="bi bi-arrow-left-circle-fill"></i>Voltar
+          </button>
+        )}
 
         <div className="login__header">
           <h1 id="login-title" className="login__title">
-            Criar nova senha
+            {isPrimeiroAcesso ? "Primeiro Acesso" : "Criar Nova Senha"}
           </h1>
           <p className="login__subtitle">
-            Defina uma nova senha para sua conta
+            {isPrimeiroAcesso
+              ? "Defina sua senha para acessar o sistema."
+              : "Por favor, crie uma nova senha para sua conta."}
           </p>
         </div>
 
@@ -153,14 +167,12 @@ export default function NovaSenha() {
           </div>
 
           <button type="submit" className="login__button">
-            Redefinir Senha
+            {isPrimeiroAcesso ? "Definir Senha" : "Redefinir Senha"}
           </button>
         </form>
       </div>
 
-      <div className="background-login" aria-hidden="true">
-        <img src="/logoBranca.png" alt="Logo branca" />
-      </div>
+      <BackgroundLogin />
     </div>
   );
 }

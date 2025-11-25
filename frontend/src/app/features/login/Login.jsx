@@ -5,10 +5,11 @@ import { useAuth } from "../../../hooks/useAuth";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import BackgroundLogin from "../../shared/components/BackgroundLogin";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
+  const {login, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -129,13 +130,11 @@ export default function Login() {
         </form>
         
         <p className="login__contact">
-          Precisa de acesso? Contate o administrador.
-        </p>
+        Precisa de acesso? Contate o administrador.
+      </p>
       </div>
       
-      <div className="background-login" aria-hidden="true">
-        <img src="/logoBranca.png" alt="Logo OnePilates" />
-      </div>
+      <BackgroundLogin />
     </div>
   );
 }

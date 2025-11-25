@@ -3,6 +3,7 @@ import "./CodigoVerificacao.scss";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../../../provider/api";
+import BackgroundLogin from "../../shared/components/BackgroundLogin";
 
 export default function EsqueciSenha() {
   const [email, setEmail] = useState("");
@@ -91,9 +92,7 @@ export default function EsqueciSenha() {
         </button>
       </div>
 
-      <div className="background-login">
-        <img src="/logoBranca.png" alt="Logo branca" />
-      </div>
+      <BackgroundLogin />
     </div>
   );
 }

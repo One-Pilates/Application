@@ -3,6 +3,7 @@ import "./CodigoVerificacao.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../../../provider/api";
+import BackgroundLogin from "../../shared/components/BackgroundLogin";
 
 export default function CodigoVerificacao() {
   const [codigo, setCodigo] = useState(["", "", "", "", ""]);
@@ -161,9 +162,7 @@ export default function CodigoVerificacao() {
         </div>
       </div>
 
-      <div className="background-login">
-        <img src="/logoBranca.png" alt="Logo branca" />
-      </div>
+      <BackgroundLogin />
     </div>
   );
 }

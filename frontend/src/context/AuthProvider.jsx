@@ -30,6 +30,7 @@ export function AuthProvider({ children }) {
 
       const role = data.funcionario.role;
       const nome = data.funcionario.nome;
+      const primeiroAcesso = data.funcionario.primeiroAcesso;
 
       const rotas = {
         PROFESSOR: {
@@ -46,7 +47,14 @@ export function AuthProvider({ children }) {
         },
       };
 
-      const destino = rotas[role];
+      let destino = rotas[role];
+
+      if (primeiroAcesso) {
+        destino = {
+          path: "/login/nova-senha",
+          msg: `Por favor, defina sua senha, ${nome}!`,
+        };
+      }
 
       if (!destino) {
         Swal.fire({
