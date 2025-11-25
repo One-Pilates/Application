@@ -32,6 +32,7 @@ const DashboardView = ({
         <FrequenciaChart
           title="Frequência por Dia da Semana"
           data={frequencia}
+          period={selectedPeriod}
         />
 
         <PieChart title="TOP 3 Aulas mais Realizadas" data={pie} />
