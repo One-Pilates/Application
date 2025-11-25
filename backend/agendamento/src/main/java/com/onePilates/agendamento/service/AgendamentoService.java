@@ -118,8 +118,10 @@ public class AgendamentoService {
         if(salaRepository.findById(idSala).isEmpty()) {
             throw new RuntimeException("A sala informada não é valida");
         }
-        if(professorRepository.findById(idProfessor).isEmpty()) {
-            throw new RuntimeException("Professor informado não existente");
+        if(idProfessor !=0){
+            if(professorRepository.findById(idProfessor).isEmpty()) {
+                throw new RuntimeException("Professor informado não existente");
+            }
         }
 
         List<Agendamento> agendamentos;
