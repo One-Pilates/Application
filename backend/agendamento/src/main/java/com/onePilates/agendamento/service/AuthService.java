@@ -211,6 +211,9 @@ public class AuthService {
             if (funcionario == null) {
                 throw new EntidadeNaoEncontradaException("Funcionário não encontrado");
             }
+            if(funcionario.getPrimeiroAcesso().equals(true)){
+                funcionario.setPrimeiroAcesso(false);
+            }
             funcionario.setSenha(passwordEncoder.encode(senha));
             funcionarioRepository.save(funcionario);
             NovaSenhaResponseDTO dtoResponse = new NovaSenhaResponseDTO();
