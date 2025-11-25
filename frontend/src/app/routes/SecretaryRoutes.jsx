@@ -8,6 +8,8 @@ import RegisterStudent from '../features/Secretary/RegisterStudent';
 import NotFound from './NotFound';
 import GerenciamentoProfessor from '../features/Secretary/GerenciamentoProfessor';
 import GerenciamentoAluno from '../features/Secretary/GerenciamentoAluno';
+import ViewProfile from '../features/Secretary/ProfileView';
+
 
 export default function SecretaryRoutes() {
   return (
@@ -16,6 +18,8 @@ export default function SecretaryRoutes() {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard/>} />
         <Route path="perfil" element={<Profile/>} />
+        <Route path="perfil/professor/:id" element={<ViewProfile/>} />
+        <Route path="perfil/aluno/:id" element={<ViewProfile/>} />
         <Route path="agenda" element={<Calendar/>} />
         <Route path="professor" element={<GerenciamentoProfessor/>} />
         <Route path="professor/cadastrar" element={<RegisterTeacher/>} />
