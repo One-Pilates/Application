@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Button from './Components/Button';
 import LoadingSpinner from '../../../shared/components/LoadingSpinner';
+import AgendamentoModal from './Components/AulaModal';
 import './styles/Calendar.scss';
 import './styles/Filtros.scss';
 
@@ -19,14 +20,16 @@ const SecretariaCalendarView = ({
   errorMessage,
   agendamentos,
   jaBuscou,
+  modalOpen,
+  setModalOpen,
+  agendamentoSelecionado,
 }) => {
   const [activeView, setActiveView] = useState('timeGridWeek');
   const [showLoading, setShowLoading] = useState(false);
 
   const handleChangeView = (viewName) => {
-    const calendar = calendarInstance.current;
-    if (calendar) {
-      calendar.changeView(viewName);
+    if (calendarInstance.current) {
+      calendarInstance.current.changeView(viewName);
       setActiveView(viewName);
     }
   };
@@ -38,12 +41,10 @@ const SecretariaCalendarView = ({
   }, [calendarInstance]);
 
   useEffect(() => {
-    let timeout;
-    if (isLoading) {
-      setShowLoading(true);
-    } else {
-      timeout = setTimeout(() => setShowLoading(false), 400);
-    }
+    const timeout = isLoading
+      ? null
+      : setTimeout(() => setShowLoading(false), 400);
+    if (isLoading) setShowLoading(true);
     return () => clearTimeout(timeout);
   }, [isLoading]);
 
@@ -57,68 +58,38 @@ const SecretariaCalendarView = ({
       <main className="calendar-main">
         <div className="calendar-header-info">
           <div className="calendar-view-buttons">
-            <button
-              className={`filter-button ${activeView === 'dayGridMonth' ? 'active' : ''}`}
-              onClick={() => handleChangeView('dayGridMonth')}
-            >
-              Mês
-            </button>
-            <button
-              className={`filter-button ${activeView === 'timeGridWeek' ? 'active' : ''}`}
-              onClick={() => handleChangeView('timeGridWeek')}
-            >
-              Semana
-            </button>
-            <button
-              className={`filter-button ${activeView === 'timeGridDay' ? 'active' : ''}`}
-              onClick={() => handleChangeView('timeGridDay')}
-            >
-              Dia
-            </button>
+            <button className={`filter-button ${activeView === 'dayGridMonth' ? 'active' : ''}`}
+                    onClick={() => handleChangeView('dayGridMonth')}>Mês</button>
+            <button className={`filter-button ${activeView === 'timeGridWeek' ? 'active' : ''}`}
+                    onClick={() => handleChangeView('timeGridWeek')}>Semana</button>
+            <button className={`filter-button ${activeView === 'timeGridDay' ? 'active' : ''}`}
+                    onClick={() => handleChangeView('timeGridDay')}>Dia</button>
           </div>
 
           <div className="filtros-inline">
             <div className="filtro-item">
               <label htmlFor="filtro-sala">Sala:</label>
-              <select
-                id="filtro-sala"
-                value={idSala}
-                onChange={(e) => setIdSala(e.target.value)}
-                className="filtro-select-inline"
-                disabled={isLoading}
-              >
+              <select id="filtro-sala" value={idSala} onChange={(e) => setIdSala(e.target.value)}
+                      className="filtro-select-inline" disabled={isLoading}>
                 <option value="">Todas</option>
                 {salas.map((sala) => (
-                  <option key={sala.id} value={sala.id}>
-                    {sala.nome}
-                  </option>
+                  <option key={sala.id} value={sala.id}>{sala.nome}</option>
                 ))}
               </select>
             </div>
 
             <div className="filtro-item">
               <label htmlFor="filtro-professor">Professor:</label>
-              <select
-                id="filtro-professor"
-                value={idProfessor}
-                onChange={(e) => setIdProfessor(e.target.value)}
-                className="filtro-select-inline"
-                disabled={isLoading}
-              >
+              <select id="filtro-professor" value={idProfessor} onChange={(e) => setIdProfessor(e.target.value)}
+                      className="filtro-select-inline" disabled={isLoading}>
                 <option value="0">Todos</option>
                 {professores.map((prof) => (
-                  <option key={prof.id} value={prof.id}>
-                    {prof.nome}
-                  </option>
+                  <option key={prof.id} value={prof.id}>{prof.nome}</option>
                 ))}
               </select>
             </div>
 
-            <Button
-              onClick={fetchAgendamentosFiltro}
-              disabled={!isFiltroValido || isLoading}
-              className="btn-aplicar"
-            >
+            <Button onClick={fetchAgendamentosFiltro} disabled={!isFiltroValido || isLoading} className="btn-aplicar">
               {isLoading ? 'Carregando...' : 'Aplicar'}
             </Button>
 
@@ -153,17 +124,15 @@ const SecretariaCalendarView = ({
             <div className={`loading-container ${showLoading ? 'show' : ''}`}>
               <LoadingSpinner />
             </div>
-
-            <div
-              ref={calendarRef}
-              className="fullcalendar"
-              style={{
-                opacity: showLoading ? 0 : 1,
-                transition: 'opacity 0.4s ease',
-              }}
-            />
+            <div ref={calendarRef} className="fullcalendar" style={{ opacity: showLoading ? 0 : 1, transition: 'opacity 0.4s ease' }} />
           </div>
         )}
+
+        <AgendamentoModal
+          isOpen={modalOpen}
+          agendamento={agendamentoSelecionado}
+          onClose={() => setModalOpen(false)}
+        />
       </main>
     </div>
   );

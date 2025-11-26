@@ -11,8 +11,11 @@ export const useCalendarSecretaryModel = () => {
   const [agendamentos, setAgendamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  
   const [jaBuscou, setJaBuscou] = useState(false);
+
+  // ESTADOS DO MODAL
+  const [modalOpen, setModalOpen] = useState(false);
+  const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
 
   const calendarRef = useRef(null);
   const calendarInstance = useRef(null);
@@ -30,30 +33,24 @@ export const useCalendarSecretaryModel = () => {
 
   const getColorForEspecialidade = (esp) => {
     const backgroundColor = especialidadeCores[esp] || "#3788d8";
-    const textColor = [
-      "#ff6600", "#4CAF50", "#2196F3", "#9C27B0",
-      "#673AB7", "#E91E63", "#009688", "#03A9F4",
-    ].includes(backgroundColor) ? "#fff" : "#000";
+    const textColor = ["#ff6600", "#4CAF50", "#2196F3", "#9C27B0", "#673AB7", "#E91E63", "#009688", "#03A9F4"].includes(backgroundColor)
+      ? "#fff"
+      : "#000";
     return { backgroundColor, textColor };
   };
 
   async function fetchFiltros() {
     try {
       setErrorMessage("");
-
       const [respSalas, respProfs] = await Promise.all([
         api.get("/api/salas").catch(() => ({ data: [] })),
         api.get("/api/professores").catch(() => ({ data: [] }))
       ]);
-
       setSalas(Array.isArray(respSalas.data) ? respSalas.data : []);
       setProfessores(Array.isArray(respProfs.data) ? respProfs.data : []);
-
     } catch (err) {
       console.error("Erro ao carregar filtros:", err);
       setErrorMessage("Erro ao carregar filtros. Tente novamente.");
-      setSalas([]);
-      setProfessores([]);
     }
   }
 
@@ -66,11 +63,10 @@ export const useCalendarSecretaryModel = () => {
 
     try {
       setIsLoading(true);
-      setErrorMessage(""); 
-      setJaBuscou(true);  
+      setErrorMessage("");
+      setJaBuscou(true);
 
       let url = "";
-
       if (idSala && idProfessor) {
         url = `/api/agendamentos/${idSala}/${idProfessor}`;
       } else if (idProfessor) {
@@ -86,8 +82,8 @@ export const useCalendarSecretaryModel = () => {
       setAgendamentos(dados);
 
     } catch (err) {
-      console.error("Erro ao buscar agendamentos:", err);
-      setErrorMessage("Erro ao buscar agendamentos. Tente novamente.");
+      console.error("Erro ao buscar:", err);
+      setErrorMessage("Erro ao buscar agendamentos.");
       setAgendamentos([]);
     } finally {
       setIsLoading(false);
@@ -100,6 +96,8 @@ export const useCalendarSecretaryModel = () => {
     setAgendamentos([]);
     setErrorMessage("");
     setJaBuscou(false);
+    setModalOpen(false);             
+    setAgendamentoSelecionado(null); 
 
     if (calendarInstance.current) {
       calendarInstance.current.destroy();
@@ -131,7 +129,7 @@ export const useCalendarSecretaryModel = () => {
         backgroundColor,
         borderColor: backgroundColor,
         textColor,
-        extendedProps: aula,
+        extendedProps: aula, 
       };
     });
 
@@ -144,14 +142,11 @@ export const useCalendarSecretaryModel = () => {
       allDaySlot: false,
       expandRows: true,
       slotDuration: "00:30:00",
-      headerToolbar: {
-        left: "",
-        center: "title",
-        right: "prev,next",
-      },
+      headerToolbar: { left: "", center: "title", right: "prev,next" },
       events: eventos,
       eventClick: (info) => {
-        console.log("Agendamento clicado:", info.event.extendedProps);
+        setAgendamentoSelecionado(info.event.extendedProps);
+        setModalOpen(true);
       },
       eventDidMount: (info) => {
         info.el.style.cursor = "pointer";
@@ -205,6 +200,9 @@ export const useCalendarSecretaryModel = () => {
     calendarInstance,
     errorMessage,
     agendamentos,
-    jaBuscou, 
+    jaBuscou,
+    modalOpen,
+    setModalOpen,
+    agendamentoSelecionado,
   };
 };
