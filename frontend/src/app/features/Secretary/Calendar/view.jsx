@@ -122,7 +122,7 @@ const SecretariaCalendarView = ({
         {hasAgendamentos && (
           <div className="calendar-wrapper">
             <div className={`loading-container ${showLoading ? 'show' : ''}`}>
-              <LoadingSpinner />
+              <LoadingSpinner message={'Carregando calendário...'} />
             </div>
             <div ref={calendarRef} className="fullcalendar" style={{ opacity: showLoading ? 0 : 1, transition: 'opacity 0.4s ease' }} />
           </div>

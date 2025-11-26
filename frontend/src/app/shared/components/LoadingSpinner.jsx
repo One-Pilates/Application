@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FiLoader } from 'react-icons/fi';
 import '../styles/Loading.scss';
 
-const LoadingSpinner = ({ delay = 400 }) => {
+const LoadingSpinner = ({ delay = 400, message }) => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const LoadingSpinner = ({ delay = 400 }) => {
   return (
     <div className={`loading-container ${show ? 'show' : ''}`}>
       <div className="loading-spinner"><FiLoader size={48} /></div>
-      <p className="loading-text">Carregando calendário...</p>
+      <p className="loading-text">{message}</p>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,6 +15,7 @@ export function AuthProvider({ children }) {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+    setIsCheckingAuth(false);
   }, []);
 
   async function login(email, senha) {
@@ -119,10 +121,11 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
+        isLoading,
+        isCheckingAuth,
         setUser,
         login,
         logout,
-        isLoading,
       }}
     >
       {children}

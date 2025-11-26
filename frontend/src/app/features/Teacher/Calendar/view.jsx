@@ -78,7 +78,7 @@ const CalendarView = ({
 
         <div className="calendar-wrapper">
           <div className={`loading-container ${showLoading ? 'show' : ''}`}>
-            <LoadingSpinner />
+            <LoadingSpinner message={'Carregando calendário...'} />
           </div>
 
 
