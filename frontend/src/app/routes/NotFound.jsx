@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 
 export default function NotFound() {
   const [isHovering, setIsHovering] = useState(false);
-  const [float, setFloat] = useState(0);
-
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center p-4 overflow-hidden relative">
