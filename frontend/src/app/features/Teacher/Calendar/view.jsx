@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Button from './Components/Button';
-import LoadingSpinner from './Components/LoadingSpinner';
+import LoadingSpinner from '../../../shared/components/LoadingSpinner';
 import AgendamentoModal from './Components/AulaModal';
 import DefinirAusenciaModal from './Components/DefinirAusenciaModal';
 import './Styles/calendar.scss';

@@ -1,0 +1,176 @@
+@use '../../../../shared/styles/variables.scss' as *;
+
+.calendar-header-info {
+  .filtros-inline {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+
+    .filtro-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      label {
+        font-weight: 600;
+        color: #555;
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      .filtro-select-inline {
+        padding: 8px 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 150px;
+
+        &:hover {
+          border-color: $laranja-principal;
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $laranja-principal;
+          box-shadow: 0 0 0 3px rgba(255, 112, 67, 0.1);
+        }
+
+        &:disabled {
+          background: #f5f5f5;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+    }
+
+    .btn-aplicar,
+    .btn-limpar {
+      padding: 8px 20px;
+      font-size: 0.95rem;
+      min-width: auto;
+      height: 38px;
+    }
+
+    .btn-limpar {
+      background-color: #6c757d;
+
+      &:hover {
+        background-color: #5a6268;
+      }
+    }
+  }
+}
+
+ 
+.aviso-info,
+.aviso-erro,
+.aviso-vazio {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  animation: slideDown 0.3s ease;
+
+  span,
+  p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+}
+
+.aviso-info {
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  color: #1565c0;
+  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.1);
+}
+
+.aviso-erro {
+  background: #ffebee;
+  border: 1px solid #ef9a9a;
+  color: #c62828;
+  box-shadow: 0 2px 4px rgba(244, 67, 54, 0.1);
+}
+
+.aviso-vazio {
+  background: #fffbea;
+  border: 1px solid #ffd93d;
+  color: #856404;
+  text-align: center;
+  padding: 40px 20px;
+  box-shadow: 0 2px 4px rgba(255, 193, 7, 0.1);
+
+  p {
+    justify-content: center;
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .calendar-header-info {
+    gap: 1rem;
+
+    .filtros-inline {
+      width: 100%;
+      order: 1;
+    }
+
+    .calendar-view-buttons {
+      width: 100%;
+      order: 2;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-header-info {
+    .filtros-inline {
+      flex-direction: column;
+      align-items: stretch;
+
+      .filtro-item {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+
+        label {
+          font-size: 0.85rem;
+        }
+
+        .filtro-select-inline {
+          width: 100%;
+        }
+      }
+
+      .btn-aplicar,
+      .btn-limpar {
+        width: 100%;
+      }
+    }
+  }
+
+  .aviso-info,
+  .aviso-erro,
+  .aviso-vazio {
+    font-size: 0.9rem;
+    padding: 10px 14px;
+  }
+}

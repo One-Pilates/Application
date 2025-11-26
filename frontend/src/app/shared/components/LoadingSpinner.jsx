@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FiLoader } from 'react-icons/fi';
-import '../Styles/Loading.scss';
+import '../styles/Loading.scss';
 
 const LoadingSpinner = ({ delay = 400 }) => {
   const [show, setShow] = useState(false);
