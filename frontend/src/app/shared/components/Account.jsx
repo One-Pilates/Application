@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { FaChevronDown, FaCog, FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaChevronDown, FaCog, FaKey, FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../../../hooks/useAuth.jsx";
 import ContactAdm from "./ContactAdm.jsx";
 import api from "../../../provider/api";
 import userIconImg from "/user-icon.png";
 
 function Account() {
+  const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
   const [modoEscuro, setModoEscuro] = useState(false);
   const { user } = useAuth() || {};
@@ -90,6 +92,14 @@ function Account() {
               >
                 <FaCog className="text-gray-600" />
                 <span className="text-gray-700">Configurações</span>
+              </button>
+
+              <button
+                onClick={() => navigate("/redifinir-senha")}
+                className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3"
+              >
+                <FaKey className="text-gray-600" />
+                <span className="text-gray-700">Senhas</span>
               </button>
 
               <button 

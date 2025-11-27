@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 
-
+// Função para validar CPF
 const validarCPF = (cpf) => {
   cpf = cpf.replace(/\D/g, "");
-  
+
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
 
   let soma = 0;
@@ -117,11 +118,11 @@ export const useRegisterStudentModel = () => {
             estado: data.uf || "",
           });
         } else {
-          alert("CEP não encontrado!");
+          Swal.fire("CEP não encontrado!", "", "warning");
         }
       } catch (err) {
         console.error("Erro ao buscar CEP:", err);
-        alert("Erro ao buscar CEP. Tente novamente.");
+        Swal.fire("Erro ao buscar CEP", "Tente novamente", "error");
       }
     }
   };
@@ -153,27 +154,13 @@ export const useRegisterStudentModel = () => {
     }
 
     if (etapaAtual === 2) {
-      if (!endereco.cep.trim()) {
-        novosErros.cep = "CEP é obrigatório";
-      }
-      if (!endereco.logradouro.trim()) {
-        novosErros.logradouro = "Logradouro é obrigatório";
-      }
-      if (!endereco.numero.trim()) {
-        novosErros.numero = "Número é obrigatório";
-      }
-      if (!endereco.bairro.trim()) {
-        novosErros.bairro = "Bairro é obrigatório";
-      }
-      if (!endereco.cidade.trim()) {
-        novosErros.cidade = "Cidade é obrigatória";
-      }
-      if (!endereco.estado) {
-        novosErros.estado = "Estado é obrigatório";
-      }
+      if (!endereco.cep.trim()) novosErros.cep = "CEP é obrigatório";
+      if (!endereco.logradouro.trim()) novosErros.logradouro = "Logradouro é obrigatório";
+      if (!endereco.numero.trim()) novosErros.numero = "Número é obrigatório";
+      if (!endereco.bairro.trim()) novosErros.bairro = "Bairro é obrigatório";
+      if (!endereco.cidade.trim()) novosErros.cidade = "Cidade é obrigatória";
+      if (!endereco.estado) novosErros.estado = "Estado é obrigatório";
     }
-
-  
 
     setErros(novosErros);
     return Object.keys(novosErros).length === 0;
@@ -187,7 +174,11 @@ export const useRegisterStudentModel = () => {
         setEtapaAtual(etapaAtual + 1);
       }
     } else {
-      alert("Por favor, preencha todos os campos obrigatórios corretamente.");
+      Swal.fire(
+        "Campos obrigatórios",
+        "Por favor, preencha todos os campos obrigatórios corretamente.",
+        "warning"
+      );
     }
   };
 
@@ -224,7 +215,7 @@ export const useRegisterStudentModel = () => {
   };
 
   const concluir = () => {
-    console.log("✅ Cadastro de aluno concluído com sucesso!");
+    Swal.fire("Cadastro concluído!", "Aluno cadastrado com sucesso!", "success");
     navigate("/secretary");
   };
 
