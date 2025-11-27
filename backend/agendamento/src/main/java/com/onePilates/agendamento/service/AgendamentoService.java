@@ -110,6 +110,27 @@ public class AgendamentoService {
                 .collect(Collectors.toList());
     }
 
+    public List<AgendamentoResponseDTO> buscarAgendamentosPorIdSala(Long id) {
+
+
+        if (salaRepository.findById(id).isEmpty()) {
+            throw new RuntimeException("A sala informada não é válida.");
+        }
+
+
+        List<Agendamento> agendamentos = agendamentoRepository.findBySalaId(id);
+
+        if (agendamentos.isEmpty()) {
+            throw new RuntimeException("Nenhum agendamento encontrado para a sala informada.");
+        }
+
+
+        return agendamentos.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+
     public List<AgendamentoResponseDTO> buscarAgendamentosPorIdsDeSalaEProfessor(Long idSala, Long idProfessor) {
 
         if (idSala == null || idProfessor == null) {
