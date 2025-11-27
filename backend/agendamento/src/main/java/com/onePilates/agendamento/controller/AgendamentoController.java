@@ -102,8 +102,8 @@ public class AgendamentoController {
 
     @GetMapping("/sala/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
-    public ResponseEntity<List<AgendamentoResponseDTO>> agendamentosPorSala(@PathVariable Long SalaId) {
-        return  ResponseEntity.ok(agendamentoService.buscarAgendamentosPorIdSala(SalaId));
+    public ResponseEntity<List<AgendamentoResponseDTO>> agendamentosPorSala(@PathVariable Long id) {
+        return  ResponseEntity.ok(agendamentoService.buscarAgendamentosPorIdSala(id));
     }
     /**
      * Registra a presença dos alunos em um agendamento.
