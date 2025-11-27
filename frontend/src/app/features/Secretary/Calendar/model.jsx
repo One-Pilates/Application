@@ -33,7 +33,16 @@ export const useCalendarSecretaryModel = () => {
 
   const getColorForEspecialidade = (esp) => {
     const backgroundColor = especialidadeCores[esp] || "#3788d8";
-    const textColor = ["#ff6600", "#4CAF50", "#2196F3", "#9C27B0", "#673AB7", "#E91E63", "#009688", "#03A9F4"].includes(backgroundColor)
+    const textColor = [
+      "#ff6600",
+      "#4CAF50",
+      "#2196F3",
+      "#9C27B0",
+      "#673AB7",
+      "#E91E63",
+      "#009688",
+      "#03A9F4",
+    ].includes(backgroundColor)
       ? "#fff"
       : "#000";
     return { backgroundColor, textColor };
@@ -44,7 +53,7 @@ export const useCalendarSecretaryModel = () => {
       setErrorMessage("");
       const [respSalas, respProfs] = await Promise.all([
         api.get("/api/salas").catch(() => ({ data: [] })),
-        api.get("/api/professores").catch(() => ({ data: [] }))
+        api.get("/api/professores").catch(() => ({ data: [] })),
       ]);
       setSalas(Array.isArray(respSalas.data) ? respSalas.data : []);
       setProfessores(Array.isArray(respProfs.data) ? respProfs.data : []);
@@ -72,15 +81,12 @@ export const useCalendarSecretaryModel = () => {
       } else if (idProfessor) {
         url = `/api/agendamentos/professorId/${idProfessor}`;
       } else if (idSala) {
-        setErrorMessage("Filtro por sala ainda não está disponível.");
-        setIsLoading(false);
-        return;
+        url = `/api/agendamentos/sala/${idSala}`;
       }
 
       const response = await api.get(url);
       const dados = Array.isArray(response.data) ? response.data : [];
       setAgendamentos(dados);
-
     } catch (err) {
       console.error("Erro ao buscar:", err);
       setErrorMessage("Erro ao buscar agendamentos.");
@@ -96,8 +102,8 @@ export const useCalendarSecretaryModel = () => {
     setAgendamentos([]);
     setErrorMessage("");
     setJaBuscou(false);
-    setModalOpen(false);             
-    setAgendamentoSelecionado(null); 
+    setModalOpen(false);
+    setAgendamentoSelecionado(null);
 
     if (calendarInstance.current) {
       calendarInstance.current.destroy();
@@ -119,17 +125,24 @@ export const useCalendarSecretaryModel = () => {
     }
 
     const eventos = agendamentos.map((aula) => {
-      const { backgroundColor, textColor } = getColorForEspecialidade(aula.especialidade);
+      const { backgroundColor, textColor } = getColorForEspecialidade(
+        aula.especialidade
+      );
 
       return {
         id: String(aula.id),
-        title: `${aula.especialidade} - ${aula.professorNome || 'Professor'} - ${new Date(aula.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`,
+        title: `${aula.especialidade} - ${
+          aula.professorNome || "Professor"
+        } - ${new Date(aula.dataHora).toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`,
         start: aula.dataHora,
         end: calcularDuracao(aula.dataHora),
         backgroundColor,
         borderColor: backgroundColor,
         textColor,
-        extendedProps: aula, 
+        extendedProps: aula,
       };
     });
 
@@ -150,7 +163,7 @@ export const useCalendarSecretaryModel = () => {
       },
       eventDidMount: (info) => {
         info.el.style.cursor = "pointer";
-      }
+      },
     });
 
     calendar.render();
@@ -161,11 +174,13 @@ export const useCalendarSecretaryModel = () => {
     if (!window.FullCalendar) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css";
+      link.href =
+        "https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css";
       document.head.appendChild(link);
 
       const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js";
+      script.src =
+        "https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js";
       script.onload = () => fetchFiltros();
       document.body.appendChild(script);
     } else {
