@@ -1,12 +1,17 @@
 package com.onePilates.agendamento.service;
 
+import com.onePilates.agendamento.dto.AgendamentoPorDiaDTO;
+import com.onePilates.agendamento.dto.AgendamentosPorProfessorDTO;
 import com.onePilates.agendamento.dto.SecretariaDTO;
 import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
+import com.onePilates.agendamento.dto.response.ResponsDashSecretariaAdmDTO;
 import com.onePilates.agendamento.dto.response.SecretariaResponseDTO;
 import com.onePilates.agendamento.exception.*;
+import com.onePilates.agendamento.model.Agendamento;
 import com.onePilates.agendamento.model.Endereco;
 import com.onePilates.agendamento.model.Role;
 import com.onePilates.agendamento.model.Secretaria;
+import com.onePilates.agendamento.repository.AgendamentoRepository;
 import com.onePilates.agendamento.repository.EnderecoRepository;
 import com.onePilates.agendamento.repository.SecretariaRepository;
 import org.slf4j.Logger;
@@ -16,6 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,18 +38,20 @@ public class SecretariaService {
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
     private final EmailService emailService;
+    private final AgendamentoRepository agendamentoRepository;
 
     public SecretariaService(
             SecretariaRepository secretariaRepository,
             EnderecoRepository enderecoRepository,
             PasswordEncoder passwordEncoder,
-            ImageService imageService, EmailService emailService
+            ImageService imageService, EmailService emailService, AgendamentoRepository agendamentoRepository
     ) {
         this.secretariaRepository = secretariaRepository;
         this.enderecoRepository = enderecoRepository;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
         this.emailService = emailService;
+        this.agendamentoRepository = agendamentoRepository;
     }
 
     @Transactional
@@ -68,17 +79,17 @@ public class SecretariaService {
             secretaria.setPrimeiroAcesso(true);
 
             if (dto.getEndereco() != null) {
-            Endereco endereco = new Endereco();
-            endereco.setRua(dto.getEndereco().getRua());
-            endereco.setNumero(dto.getEndereco().getNumero());
-            endereco.setBairro(dto.getEndereco().getBairro());
-            endereco.setCidade(dto.getEndereco().getCidade());
-            endereco.setEstado(dto.getEndereco().getEstado());
-            endereco.setCep(dto.getEndereco().getCep());
-            endereco.setUf(dto.getEndereco().getUf());
-            endereco = enderecoRepository.save(endereco);
-            secretaria.setEndereco(endereco);
-        }
+                Endereco endereco = new Endereco();
+                endereco.setRua(dto.getEndereco().getRua());
+                endereco.setNumero(dto.getEndereco().getNumero());
+                endereco.setBairro(dto.getEndereco().getBairro());
+                endereco.setCidade(dto.getEndereco().getCidade());
+                endereco.setEstado(dto.getEndereco().getEstado());
+                endereco.setCep(dto.getEndereco().getCep());
+                endereco.setUf(dto.getEndereco().getUf());
+                endereco = enderecoRepository.save(endereco);
+                secretaria.setEndereco(endereco);
+            }
 
             // Salva a secretária primeiro para obter o ID
             Secretaria saved = secretariaRepository.save(secretaria);
@@ -98,7 +109,7 @@ public class SecretariaService {
                 saved.setFoto(dto.getFoto());
                 saved = secretariaRepository.save(saved);
             }
-            emailService.envioEmailPrimeiroAcesso(secretaria.getNome(),secretaria.getEmail(),dto.getSenha());
+            emailService.envioEmailPrimeiroAcesso(secretaria.getNome(), secretaria.getEmail(), dto.getSenha());
             logger.info("Secretária criada com sucesso. ID: {}", saved.getId());
             return saved;
         } catch (BusinessException e) {
@@ -175,27 +186,27 @@ public class SecretariaService {
                 if (endereco == null) {
                     endereco = new Endereco();
                 }
-            if (dto.getEndereco().getRua() != null) {
-                endereco.setRua(dto.getEndereco().getRua());
-            }
-            if (dto.getEndereco().getNumero() != null) {
-                endereco.setNumero(dto.getEndereco().getNumero());
-            }
-            if (dto.getEndereco().getBairro() != null) {
-                endereco.setBairro(dto.getEndereco().getBairro());
-            }
-            if (dto.getEndereco().getCidade() != null) {
-                endereco.setCidade(dto.getEndereco().getCidade());
-            }
-            if (dto.getEndereco().getEstado() != null) {
-                endereco.setEstado(dto.getEndereco().getEstado());
-            }
-            if (dto.getEndereco().getCep() != null) {
-                endereco.setCep(dto.getEndereco().getCep());
-            }
-            if (dto.getEndereco().getUf() != null) {
-                endereco.setUf(dto.getEndereco().getUf());
-            }
+                if (dto.getEndereco().getRua() != null) {
+                    endereco.setRua(dto.getEndereco().getRua());
+                }
+                if (dto.getEndereco().getNumero() != null) {
+                    endereco.setNumero(dto.getEndereco().getNumero());
+                }
+                if (dto.getEndereco().getBairro() != null) {
+                    endereco.setBairro(dto.getEndereco().getBairro());
+                }
+                if (dto.getEndereco().getCidade() != null) {
+                    endereco.setCidade(dto.getEndereco().getCidade());
+                }
+                if (dto.getEndereco().getEstado() != null) {
+                    endereco.setEstado(dto.getEndereco().getEstado());
+                }
+                if (dto.getEndereco().getCep() != null) {
+                    endereco.setCep(dto.getEndereco().getCep());
+                }
+                if (dto.getEndereco().getUf() != null) {
+                    endereco.setUf(dto.getEndereco().getUf());
+                }
                 endereco = enderecoRepository.save(endereco);
                 secretaria.setEndereco(endereco);
             }
@@ -231,12 +242,12 @@ public class SecretariaService {
         try {
             Secretaria secretaria = secretariaRepository.findById(id)
                     .orElseThrow(() -> new EntidadeNaoEncontradaException("Secretária não encontrada"));
-            
+
             // Remove a imagem se existir
             if (secretaria.getFoto() != null) {
                 imageService.removerImagem(secretaria.getFoto());
             }
-            
+
             secretariaRepository.deleteById(id);
             logger.info("Secretária excluída com sucesso. ID: {}", id);
         } catch (BusinessException e) {
@@ -273,4 +284,67 @@ public class SecretariaService {
 
         return dto;
     }
+
+    public ResponsDashSecretariaAdmDTO respostaDashSecretariaAdm(Integer qtdUltimosDias) {
+
+        LocalDateTime inicio = LocalDate.now().minusDays(qtdUltimosDias).atStartOfDay();
+        LocalDateTime fim = LocalDate.now().plusDays(1).atStartOfDay();
+
+
+        List<Agendamento> agendamentos = agendamentoRepository.buscarAgendamentosPorIntervalo(inicio, fim);
+
+        List<AgendamentoPorDiaDTO> grafico1 = agendamentoRepository.buscarAgendamentosPorDiaSemana(inicio, fim)
+                .stream()
+                .map(row -> new AgendamentoPorDiaDTO(
+                        row[0] != null ? row[0].toString() : null,
+                        row[1] != null ? ((Number) row[1]).longValue() : 0L))
+                .filter(dto -> dto.getDiaSemana() != null)
+                .collect(Collectors.toList());
+
+
+        List<Agendamento> ordenados = agendamentos.stream()
+                .sorted(Comparator.comparing(a -> a.getProfessor().getNome()))
+                .toList();
+
+        List<AgendamentosPorProfessorDTO> professoresObservados = new ArrayList<>();
+
+        AgendamentosPorProfessorDTO professorObservadoAtual = new AgendamentosPorProfessorDTO();
+        professorObservadoAtual.setProfessorId(ordenados.get(0).getProfessor().getId());
+        professorObservadoAtual.setNomeProfessor(ordenados.get(0).getProfessor().getNome());
+        professorObservadoAtual.setTotalAgendamentosPorProfessor(0L);
+
+        for (Agendamento ag : ordenados) {
+
+            if (ag.getProfessor().getNome().equals(professorObservadoAtual.getNomeProfessor())) {
+
+
+                professorObservadoAtual.setTotalAgendamentosPorProfessor(
+                        professorObservadoAtual.getTotalAgendamentosPorProfessor() + 1
+                );
+
+            } else {
+
+
+                professoresObservados.add(professorObservadoAtual);
+
+
+                professorObservadoAtual = new AgendamentosPorProfessorDTO();
+                professorObservadoAtual.setProfessorId(ag.getProfessor().getId());
+                professorObservadoAtual.setNomeProfessor(ag.getProfessor().getNome());
+                professorObservadoAtual.setTotalAgendamentosPorProfessor(1L); // começa com 1
+            }
+        }
+
+
+        professoresObservados.add(professorObservadoAtual);
+
+
+        ResponsDashSecretariaAdmDTO resposta = new ResponsDashSecretariaAdmDTO();
+        resposta.setAgendamentosPorDias(grafico1);
+        resposta.setQtdSessoesPorProfessor(professoresObservados);
+
+        return resposta;
+    }
+
 }
+

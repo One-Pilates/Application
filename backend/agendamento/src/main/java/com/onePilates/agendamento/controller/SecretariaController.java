@@ -1,6 +1,8 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.SecretariaDTO;
+import com.onePilates.agendamento.dto.response.ResponsDashSecretariaAdmDTO;
+import com.onePilates.agendamento.dto.response.RespostaDashProfessoraDTO;
 import com.onePilates.agendamento.dto.response.SecretariaResponseDTO;
 import com.onePilates.agendamento.service.SecretariaService;
 import jakarta.validation.Valid;
@@ -62,5 +64,18 @@ public class SecretariaController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao salvar foto: " + e.getMessage());
         }
+    }
+
+    @GetMapping("qtdUltimosDias/{qtdUltimosDias}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    public ResponseEntity<ResponsDashSecretariaAdmDTO> buscarPorIdDados(
+            @PathVariable Integer qtdUltimosDias) {
+
+
+        if (qtdUltimosDias == null || qtdUltimosDias < 1 || qtdUltimosDias > 365) {
+            throw new IllegalArgumentException("Período deve estar entre 1 e 365 dias");
+        }
+
+        return ResponseEntity.ok(secretariaService.respostaDashSecretariaAdm( qtdUltimosDias));
     }
 }

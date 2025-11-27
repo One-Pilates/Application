@@ -31,6 +31,32 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
                                                       @Param("inicio") LocalDateTime inicio,
                                                       @Param("fim") LocalDateTime fim);
 
+
+
+    @Query(value = """
+    SELECT 
+        DAYNAME(a.data_hora) AS diaSemana,
+        CAST(COUNT(*) AS UNSIGNED) AS totalAgendamentos
+    FROM agendamento a
+    WHERE a.data_hora >= :inicio
+      AND a.data_hora < :fim
+    GROUP BY DAYNAME(a.data_hora), DAYOFWEEK(a.data_hora)
+    ORDER BY DAYOFWEEK(a.data_hora)
+    """, nativeQuery = true)
+    List<Object[]> buscarAgendamentosPorDiaSemana(@Param("inicio") LocalDateTime inicio,
+                                                                 @Param("fim") LocalDateTime fim);
+
+
+    @Query("""
+    SELECT a
+    FROM Agendamento a
+    WHERE a.dataHora >= :inicio
+      AND a.dataHora < :fim
+""")
+    List<Agendamento> buscarAgendamentosPorIntervalo(@Param("inicio") LocalDateTime inicio,
+                                                     @Param("fim") LocalDateTime fim);
+
+
     // Query 2: Distribuição de aulas por especialidade (percentual)
     // Otimizada: calcula total uma vez e usa como parâmetro
     @Query(value = """
