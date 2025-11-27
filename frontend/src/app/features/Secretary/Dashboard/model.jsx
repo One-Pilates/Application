@@ -14,6 +14,34 @@ export const useDashboardSecretaryModel = (period) => {
 
   const { user } = useAuth();
 
+  // helper: KPIs vazios (usado para limpar)
+  const emptyKpis = [
+    {
+      title: "Sessões Realizadas",
+      value: "",
+      iconBgColor: "#d8b4fe",
+      icon: <FiActivity size={24} color="#fff" />,
+    },
+    {
+      title: "Alunos Atendidos",
+      value: "",
+      iconBgColor: "#fdba74",
+      icon: <FiUserX size={24} color="#fff" />,
+    },
+    {
+      title: "Dia com Maior Atendimento",
+      value: "",
+      iconBgColor: "#93c5fd",
+      icon: <FiUserCheck size={24} color="#fff" />,
+    },
+    {
+      title: "Professor Mais Atendido",
+      value: "",
+      iconBgColor: "#fef08a",
+      icon: <FiUsers size={24} color="#fff" />,
+    },
+  ];
+
   useEffect(() => {
     if (!user || !user.id) return;
 
@@ -27,24 +55,38 @@ export const useDashboardSecretaryModel = (period) => {
         const { data } = await api.get(endpoint);
 
         const graficoDias = data.agendamentosPorDias || [];
-        setFrequencia(graficoDias);
-
         const graficoProf = data.qtdSessoesPorProfessor || [];
 
+        // Se não vier nenhum dado — limpar tudo e sair
+        const hasAnyData = graficoDias.length > 0 || graficoProf.length > 0;
+        if (!hasAnyData) {
+          setPie([]);
+          setFrequencia([]);
+          setTop3([]);
+          setTotalAulas(0);
+          setKpis(emptyKpis);
+          setHasData(false);
+          return;
+        }
+
+        // ============ FREQUÊNCIA ==============
+        setFrequencia(graficoDias);
+
+        // ============ GRÁFICO DE BARRAS (pie state) ==============
         const pieData = graficoProf.map((p) => ({
           name: p.nomeProfessor,
           y: p.totalAgendamentosPorProfessor,
         }));
-
         setPie(pieData);
 
+        // ============ TOTAL ==============
         const total = graficoProf.reduce(
           (sum, item) => sum + item.totalAgendamentosPorProfessor,
           0
         );
-
         setTotalAulas(total);
 
+        // ============ DIA COM MAIOR ATENDIMENTO (traduz) ==============
         let diaComMaiorAtendimento =
           graficoDias.length > 0
             ? graficoDias.reduce((a, b) =>
@@ -53,18 +95,21 @@ export const useDashboardSecretaryModel = (period) => {
             : "-";
 
         const diasPT = {
-          Monday: "Segunda-feira",
-          Tuesday: "Terça-feira",
-          Wednesday: "Quarta-feira",
-          Thursday: "Quinta-feira",
-          Friday: "Sexta-feira",
-          Saturday: "Sábado",
-          Sunday: "Domingo",
+          monday: "Segunda-feira",
+          tuesday: "Terça-feira",
+          wednesday: "Quarta-feira",
+          thursday: "Quinta-feira",
+          friday: "Sexta-feira",
+          saturday: "Sábado",
+          sunday: "Domingo",
         };
 
-        diaComMaiorAtendimento = diasPT[diaComMaiorAtendimento] || "-";
+        // normaliza para lowercase antes de mapear
+        diaComMaiorAtendimento = (diaComMaiorAtendimento || "").toLowerCase();
+        diaComMaiorAtendimento = diasPT[diaComMaiorAtendimento] || "";
 
-        const especialidadeMaisRequisitada =
+        // ============ PROFESSOR MAIS ATENDIDO ==============
+        const professorMaisAtendido =
           graficoProf.length > 0
             ? graficoProf.reduce((a, b) =>
                 a.totalAgendamentosPorProfessor >
@@ -72,19 +117,19 @@ export const useDashboardSecretaryModel = (period) => {
                   ? a
                   : b
               ).nomeProfessor
-            : "-";
-        console.log(diaComMaiorAtendimento);
+            : "";
 
+        // ============ NOVOS KPIs ==============
         const newKpis = [
           {
             title: "Sessões Realizadas",
-            value: total.toString(),
+            value: total ? total.toString() : "",
             iconBgColor: "#d8b4fe",
             icon: <FiActivity size={24} color="#fff" />,
           },
           {
             title: "Alunos Atendidos",
-            value: total.toString(),
+            value: total ? total.toString() : "",
             iconBgColor: "#fdba74",
             icon: <FiUserX size={24} color="#fff" />,
           },
@@ -96,7 +141,7 @@ export const useDashboardSecretaryModel = (period) => {
           },
           {
             title: "Professor Mais Atendido",
-            value: especialidadeMaisRequisitada,
+            value: professorMaisAtendido || "",
             iconBgColor: "#fef08a",
             icon: <FiUsers size={24} color="#fff" />,
           },
@@ -104,6 +149,7 @@ export const useDashboardSecretaryModel = (period) => {
 
         setKpis(newKpis);
 
+        // ============ TOP 3 ==============
         const top = [...graficoProf]
           .sort(
             (a, b) =>
@@ -113,20 +159,19 @@ export const useDashboardSecretaryModel = (period) => {
           .map((item) => ({
             professor: item.nomeProfessor,
             total: item.totalAgendamentosPorProfessor,
-            percentual: Math.round(
-              (item.totalAgendamentosPorProfessor / total) * 100
-            ),
+            percentual: total ? Math.round((item.totalAgendamentosPorProfessor / total) * 100) : 0,
           }));
 
         setTop3(top);
-
-        setHasData(graficoDias.length > 0 || graficoProf.length > 0);
+        setHasData(true);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
+        // Em caso de erro, limpamos
         setPie([]);
         setFrequencia([]);
         setTotalAulas(0);
         setTop3([]);
+        setKpis(emptyKpis);
         setHasData(false);
       } finally {
         setLoading(false);
