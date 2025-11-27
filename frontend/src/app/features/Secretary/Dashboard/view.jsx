@@ -1,9 +1,44 @@
-import React from "react";
+import "./style.scss";
+import KPICard from "./components/KPICard";
+import FrequenciaChart from "./components/FrequenciaChart";
+import PieChart from "./components/PieChart";
+import Filter from "./components/Filter";
+import NoDataAlert from "./components/NoDataAlert";
 
-export default function DashboardSecretaryView() {
+const DashboardSecretaryView = ({
+  kpis,
+  frequencia,
+  pie,
+  selectedPeriod,
+  onFilterChange,
+  hasData,
+}) => {
   return (
-    <>
-      <div> Dashboard Secretary</div>
-    </>
+    <div className="overview-teacher">
+      <div className="overview-header">
+        <h1>Visão Geral</h1>
+        <Filter value={selectedPeriod} onChange={onFilterChange} />
+      </div>
+
+      {!hasData && <NoDataAlert selectedPeriod={selectedPeriod} />}
+
+      <div className="kpi-grid">
+        {kpis.map((kpi, idx) => (
+          <KPICard key={idx} {...kpi} />
+        ))}
+      </div>
+
+      <div className="charts-grid">
+        <FrequenciaChart
+          title="Frequência por Dia da Semana"
+          data={frequencia}
+          period={selectedPeriod}
+        />
+
+        <PieChart title="Porcentagem de aulas por professor" data={pie} />
+      </div>
+    </div>
   );
-}
+};
+
+export default DashboardSecretaryView;
