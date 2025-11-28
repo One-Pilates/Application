@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ItemSidebar({ Icon, texto, navAberta, ativo, onClick }) {
+export default function ItemSidebar({ icon, texto, navAberta, ativo, onClick }) {
   return (
     <div
       onClick={onClick}
@@ -8,7 +8,7 @@ export default function ItemSidebar({ Icon, texto, navAberta, ativo, onClick }) 
         ativo ? "bg-white text-orange-500 font-bold" : "hover:bg-orange-600"
       }`}
     >
-      <Icon size={22} />
+      {React.createElement(icon, { size: 22 })}
       {navAberta && <span>{texto}</span>}
     </div>
   );
