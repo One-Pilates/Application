@@ -79,7 +79,7 @@ const GerenciamentoProfessorView = ({
                   </div>
                   {/* ===== SEÇÃO DIREITA: Botão de Ação ===== */}
                   <button className="group flex items-center gap-2 px-5 py-3 bg-orange-500 text-white rounded-xl font-semibold transition-all ease-in-out shadow-sm hover:bg-white hover:text-orange-500 hover:shadow-md">
-                    <span>Ver agenda</span>
+                    <span onClick={()=> navigate("/secretaria/agenda", {state:  {idProfessor: professor.id}})}>Ver agenda</span>
                     <FiCalendar className="group-hover:text-orange-500" size={18} />
                   </button>
                 </div>

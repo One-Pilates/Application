@@ -122,7 +122,10 @@ const GerenciamentoAlunoView = ({
                       className="hover:bg-gray-100 transition"
                     >
                       <td className="px-6 py-4 text-sm text-gray-900">
+                        <button
+                        onClick={() => navigate(`/secretaria/perfil/aluno/${aluno.id}`)}>
                         {aluno.nome}
+                        </button>
                       </td>
 
                       <td className="px-6 py-4 text-sm text-gray-900">

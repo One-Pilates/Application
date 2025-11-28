@@ -1,24 +1,38 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef} from "react";
 import api from "../../../../provider/api";
+import { useLocation } from "react-router-dom";
 
 export const useCalendarSecretaryModel = () => {
   const [salas, setSalas] = useState([]);
   const [professores, setProfessores] = useState([]);
-
+  
   const [idSala, setIdSala] = useState("");
   const [idProfessor, setIdProfessor] = useState("");
-
+  
   const [agendamentos, setAgendamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [jaBuscou, setJaBuscou] = useState(false);
-
+  
   // ESTADOS DO MODAL
   const [modalOpen, setModalOpen] = useState(false);
   const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
-
+  
   const calendarRef = useRef(null);
   const calendarInstance = useRef(null);
+  const location = useLocation();
+  
+  useEffect(() => {
+    if (location.state?.idProfessor) {
+      setIdProfessor(location.state.idProfessor);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (idProfessor && location.state?.idProfessor === idProfessor) {
+      fetchAgendamentosFiltro();
+    }
+  }, [idProfessor]);
 
   const especialidadeCores = {
     Pilates: "#ff6600",
