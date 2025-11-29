@@ -47,6 +47,9 @@ class AgendamentoServiceTest {
     @Mock
     private AgendamentoValidator agendamentoValidator;
 
+    @Mock
+    private EmailService emailService;
+
     @InjectMocks
     private AgendamentoService agendamentoService;
 
@@ -69,6 +72,7 @@ class AgendamentoServiceTest {
         professor = new Professor();
         professor.setId(1L);
         professor.setNome("Professor Teste");
+        professor.setEmail("professor@teste.com");
         professor.setNotificacaoAtiva(true);
 
         sala = new Sala();
@@ -134,10 +138,20 @@ class AgendamentoServiceTest {
     @Test
     void excluirAgendamento_DeveExcluirComSucesso_QuandoAgendamentoExiste() {
         when(agendamentoRepository.existsById(1L)).thenReturn(true);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
         doNothing().when(agendamentoRepository).deleteById(1L);
+        when(emailService.envioEmailCancelamentoAula(any(), any(), any(LocalDateTime.class), any(), any()))
+            .thenReturn("Email enviado");
 
         assertDoesNotThrow(() -> agendamentoService.excluirAgendamento(1L));
         verify(agendamentoRepository, times(1)).deleteById(1L);
+        verify(emailService, times(1)).envioEmailCancelamentoAula(
+            eq(professor.getNome()),
+            eq(professor.getEmail()),
+            eq(agendamento.getDataHora()),
+            eq(sala.getNome()),
+            eq(especialidade.getNome())
+        );
     }
 
     @Test
@@ -146,6 +160,114 @@ class AgendamentoServiceTest {
 
         assertThrows(BusinessException.class, () -> agendamentoService.excluirAgendamento(1L));
         verify(agendamentoRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void criarAgendamento_DeveValidarConflitosAntesDeSalvar() {
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHora(any(), any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamento);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class));
+
+        Agendamento resultado = agendamentoService.criarAgendamento(dto);
+
+        assertNotNull(resultado);
+        verify(agendamentoRepository).existsByProfessorIdAndDataHora(any(), any());
+        verify(agendamentoRepository).existsBySalaIdAndDataHora(any(), any());
+    }
+
+    @Test
+    void criarAgendamento_DeveLancarExcecao_QuandoConflitoProfessor() {
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(true);
+
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class));
+
+        assertThrows(BusinessException.class, () -> agendamentoService.criarAgendamento(dto));
+        verify(agendamentoRepository, never()).save(any(Agendamento.class));
+    }
+
+    @Test
+    void criarAgendamento_DeveLancarExcecao_QuandoConflitoSala() {
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(true);
+
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class));
+
+        assertThrows(BusinessException.class, () -> agendamentoService.criarAgendamento(dto));
+        verify(agendamentoRepository, never()).save(any(Agendamento.class));
+    }
+
+    @Test
+    void criarAgendamento_DeveLancarExcecao_QuandoConflitoAluno() {
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(false);
+        
+        Agendamento conflito = new Agendamento();
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHora(any(), any()))
+                .thenReturn(Collections.singletonList(conflito));
+
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class));
+
+        assertThrows(BusinessException.class, () -> agendamentoService.criarAgendamento(dto));
+        verify(agendamentoRepository, never()).save(any(Agendamento.class));
+    }
+
+    @Test
+    void criarAgendamento_DeveNotificarProfessor_QuandoNotificacaoAtiva() {
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHora(any(), any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamento);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class));
+
+        agendamentoService.criarAgendamento(dto);
+
+        verify(notifier).notificarTodos(any(Agendamento.class));
+    }
+
+    @Test
+    void criarAgendamento_DeveNaoNotificarProfessor_QuandoNotificacaoInativa() {
+        professor.setNotificacaoAtiva(false);
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHora(any(), any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamento);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class));
+
+        agendamentoService.criarAgendamento(dto);
+
+        verify(notifier, never()).notificarTodos(any(Agendamento.class));
     }
 }
 

@@ -3,7 +3,6 @@ package com.onePilates.agendamento.controller;
 import com.onePilates.agendamento.dto.AlunoDTO;
 import com.onePilates.agendamento.dto.response.AlunoResponseDTO;
 import com.onePilates.agendamento.service.AlunoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +13,11 @@ import java.util.List;
 @RequestMapping("/api/alunos")
 public class AlunoController {
 
-    @Autowired
-    private AlunoService alunoService;
+    private final AlunoService alunoService;
+
+    public AlunoController(AlunoService alunoService) {
+        this.alunoService = alunoService;
+    }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
