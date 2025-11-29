@@ -157,7 +157,7 @@ INSERT INTO professor (id) VALUES (2);
 
 -- Professor 2: Guilherme Queiroz
 INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
-('Guilherme Queiroz', 'andrei.vasconcelos@sptech.school', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '22233344400', '1985-08-20', TRUE, TRUE, 'Professor de Pilates', 3, '(11) 99999-2222', TRUE);
+('Guilherme Queiroz', 'guilherme@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '22233344400', '1985-08-20', TRUE, TRUE, 'Professor de Pilates', 3, '(11) 99999-2222', TRUE);
 
 INSERT INTO professor (id) VALUES (3);
 
@@ -721,7 +721,6 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 -- NOTA: StatusPresenca é um ENUM com valores: PENDENTE, PRESENTE, FALTA
 -- Agendamentos passados (até 14/11/2025): PRESENTE ou FALTA
 -- Agendamentos futuros (após 14/11/2025): PENDENTE
--- IMPORTANTE: Distribuir alunos evitando conflitos de horário entre professores
 
 -- ============================================
 -- AGENDAMENTOS DO PROFESSOR ANDREI (IDs 1-97)
