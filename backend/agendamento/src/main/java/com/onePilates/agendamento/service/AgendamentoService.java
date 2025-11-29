@@ -258,6 +258,10 @@ public class AgendamentoService {
         try {
             Agendamento agendamento = buscarPorId(agendamentoId);
             
+            // Guardar professor antigo para detectar troca
+            Professor professorAntigo = agendamento.getProfessor();
+            Long professorIdAntigo = professorAntigo.getId();
+            
             // Criar DTO temporário com dados do agendamento existente para validação
             AgendamentoDTO dtoValidacao = new AgendamentoDTO();
             dtoValidacao.setDataHora(dto.getDataHora() != null ? dto.getDataHora() : agendamento.getDataHora());
@@ -269,14 +273,25 @@ public class AgendamentoService {
                     .map(aa -> aa.getAluno().getId())
                     .collect(Collectors.toSet()));
             
-            // Validar com os novos dados usando o validator
-            agendamentoValidator.validar(dtoValidacao);
+            // Validar com os novos dados usando o validator, excluindo o agendamento atual das verificações de conflito
+            agendamentoValidator.validar(dtoValidacao, agendamentoId);
             
             if (dto.getDataHora() != null) agendamento.setDataHora(dto.getDataHora());
+            
+            Professor professorNovo = null;
+            boolean professorFoiTrocado = false;
+            
             if (dto.getProfessorId() != null) {
-                Professor professor = professorRepository.findById(dto.getProfessorId())
+                professorNovo = professorRepository.findById(dto.getProfessorId())
                         .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
-                agendamento.setProfessor(professor);
+                
+                // Verificar se houve troca de professor
+                if (!professorIdAntigo.equals(professorNovo.getId())) {
+                    professorFoiTrocado = true;
+                    agendamento.setProfessor(professorNovo);
+                }
+            } else {
+                professorNovo = professorAntigo; // Mantém o mesmo professor
             }
             if (dto.getSalaId() != null) {
                 Sala sala = salaRepository.findById(dto.getSalaId())
@@ -289,16 +304,81 @@ public class AgendamentoService {
                 agendamento.setEspecialidade(especialidade);
             }
             if (dto.getAlunoIds() != null) {
-                // Remover alunos antigos e adicionar novos
-                agendamento.getAgendamentoAlunos().clear();
-                List<Aluno> alunos = alunoRepository.findAllById(dto.getAlunoIds());
-                Set<AgendamentoAluno> agendamentoAlunos = alunos.stream()
-                        .map(aluno -> new AgendamentoAluno(agendamento, aluno))
-                        .collect(Collectors.toSet());
-                agendamento.setAgendamentoAlunos(agendamentoAlunos);
+                // Atualizar alunos mantendo a mesma instância da coleção (importante para orphanRemoval)
+                Set<Long> novosAlunoIds = dto.getAlunoIds();
+                Set<AgendamentoAluno> agendamentoAlunosAtuais = agendamento.getAgendamentoAlunos();
+                
+                // Criar um mapa dos alunos atuais por ID para facilitar a busca
+                Map<Long, AgendamentoAluno> alunosAtuaisPorId = agendamentoAlunosAtuais.stream()
+                        .collect(Collectors.toMap(aa -> aa.getAluno().getId(), aa -> aa));
+                
+                // Remover alunos que não estão mais na lista
+                agendamentoAlunosAtuais.removeIf(aa -> !novosAlunoIds.contains(aa.getAluno().getId()));
+                
+                // Buscar todos os alunos novos
+                List<Aluno> alunos = alunoRepository.findAllById(novosAlunoIds);
+                
+                // Adicionar novos alunos que ainda não estão na coleção
+                for (Aluno aluno : alunos) {
+                    if (!alunosAtuaisPorId.containsKey(aluno.getId())) {
+                        AgendamentoAluno novoAgendamentoAluno = new AgendamentoAluno(agendamento, aluno);
+                        agendamentoAlunosAtuais.add(novoAgendamentoAluno);
+                    }
+                }
             }
             
-            AgendamentoResponseDTO response = toResponseDTO(agendamentoRepository.save(agendamento));
+            // Salvar o agendamento antes de notificar
+            Agendamento agendamentoSalvo = agendamentoRepository.save(agendamento);
+            
+            // Recarregar o agendamento com todas as relações para as notificações
+            agendamentoSalvo = agendamentoRepository.findById(agendamentoSalvo.getId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Erro ao recarregar agendamento"));
+            
+            // Notificações de atualização
+            if (professorFoiTrocado) {
+                // Caso especial: troca de professor - notificar ambos
+                logger.debug("Troca de professor detectada. Notificando professor antigo e novo");
+                
+                // Notificar professor antigo sobre remoção
+                if (professorAntigo.getNotificacaoAtiva() != null && professorAntigo.getNotificacaoAtiva()) {
+                    logger.debug("Enviando notificação de remoção para professor: {}", professorAntigo.getNome());
+                    emailService.envioEmailCancelamentoAula(
+                            professorAntigo.getNome(),
+                            professorAntigo.getEmail(),
+                            agendamentoSalvo.getDataHora()
+                    );
+                }
+                
+                // Notificar professor novo sobre novo agendamento
+                if (professorNovo.getNotificacaoAtiva() != null && professorNovo.getNotificacaoAtiva()) {
+                    logger.debug("Enviando notificação de novo agendamento para professor: {}", professorNovo.getNome());
+                    List<String> nomesAlunos = agendamentoSalvo.getAgendamentoAlunos().stream()
+                            .map(aa -> aa.getAluno().getNome())
+                            .collect(Collectors.toList());
+                    emailService.enviarEmailAvisoDeAulaMarcada(
+                            professorNovo.getNome(),
+                            nomesAlunos,
+                            professorNovo.getEmail(),
+                            agendamentoSalvo.getDataHora()
+                    );
+                }
+            } else {
+                // Caso normal: atualização sem troca de professor - notificar apenas o professor atual
+                if (professorNovo.getNotificacaoAtiva() != null && professorNovo.getNotificacaoAtiva()) {
+                    logger.debug("Enviando notificação de atualização para professor: {}", professorNovo.getNome());
+                    List<String> nomesAlunos = agendamentoSalvo.getAgendamentoAlunos().stream()
+                            .map(aa -> aa.getAluno().getNome())
+                            .collect(Collectors.toList());
+                    emailService.enviarEmailAvisoDeAulaAtualizada(
+                            professorNovo.getNome(),
+                            nomesAlunos,
+                            professorNovo.getEmail(),
+                            agendamentoSalvo.getDataHora()
+                    );
+                }
+            }
+            
+            AgendamentoResponseDTO response = toResponseDTO(agendamentoSalvo);
             logger.info("Agendamento atualizado com sucesso. ID: {}", agendamentoId);
             return response;
         } catch (BusinessException e) {
@@ -325,8 +405,17 @@ public class AgendamentoService {
                 throw new EntidadeNaoEncontradaException("Agendamento não encontrado");
             }
            Agendamento agendamento = agendamentoRepository.findById(id).orElseThrow();
-            emailService.envioEmailCancelamentoAula(agendamento.getProfessor().getNome(),
-                    agendamento.getProfessor().getEmail(), agendamento.getDataHora());
+            
+            // Notificar professor sobre cancelamento (se tiver notificação ativa)
+            Professor professor = agendamento.getProfessor();
+            if (professor.getNotificacaoAtiva() != null && professor.getNotificacaoAtiva()) {
+                logger.debug("Enviando notificação de cancelamento para professor: {}", professor.getNome());
+                emailService.envioEmailCancelamentoAula(
+                        professor.getNome(),
+                        professor.getEmail(),
+                        agendamento.getDataHora()
+                );
+            }
             
             agendamentoRepository.deleteById(id);
             logger.info("Agendamento excluído com sucesso. ID: {}", id);

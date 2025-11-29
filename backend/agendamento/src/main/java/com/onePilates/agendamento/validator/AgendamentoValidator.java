@@ -49,7 +49,20 @@ public class AgendamentoValidator {
      * @throws BusinessException se alguma validação falhar
      */
     public void validar(AgendamentoDTO dto) {
-        logger.debug("Iniciando validação de agendamento para data/hora: {}", dto.getDataHora());
+        validar(dto, null);
+    }
+
+    /**
+     * Valida todas as regras de negócio para um agendamento, excluindo um agendamento específico das verificações de conflito.
+     * Este método é usado na atualização de agendamentos para evitar que o próprio agendamento seja considerado como conflito.
+     * 
+     * @param dto DTO contendo os dados do agendamento a ser validado
+     * @param agendamentoIdExcluir ID do agendamento a ser excluído das verificações de conflito (null para criação)
+     * @throws BusinessException se alguma validação falhar
+     */
+    public void validar(AgendamentoDTO dto, Long agendamentoIdExcluir) {
+        logger.debug("Iniciando validação de agendamento para data/hora: {} (excluindo ID: {})", 
+                dto.getDataHora(), agendamentoIdExcluir);
 
         LocalDateTime dataHora = dto.getDataHora();
 
@@ -67,8 +80,8 @@ public class AgendamentoValidator {
             throw new EntidadeNaoEncontradaException("Um ou mais alunos não foram encontrados");
         }
 
-        // Validações básicas de conflito
-        validarConflitosBasicos(dto, dataHora, alunos);
+        // Validações básicas de conflito (excluindo o agendamento atual se fornecido)
+        validarConflitosBasicos(dto, dataHora, alunos, agendamentoIdExcluir);
 
         // Validações de regras de negócio
         validarLotacaoSala(sala, alunos.size());
@@ -82,18 +95,20 @@ public class AgendamentoValidator {
         logger.debug("Validação de agendamento concluída com sucesso");
     }
 
-    private void validarConflitosBasicos(AgendamentoDTO dto, LocalDateTime dataHora, List<Aluno> alunos) {
-        if (agendamentoRepository.existsBySalaIdAndDataHora(dto.getSalaId(), dataHora)) {
+    private void validarConflitosBasicos(AgendamentoDTO dto, LocalDateTime dataHora, List<Aluno> alunos, Long agendamentoIdExcluir) {
+        // Verificar conflito de sala, excluindo o agendamento atual se fornecido
+        if (agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(dto.getSalaId(), dataHora, agendamentoIdExcluir)) {
             throw new ConflitoHorarioException("Sala indisponível para o horário agendado.");
         }
 
-        if (agendamentoRepository.existsByProfessorIdAndDataHora(dto.getProfessorId(), dataHora)) {
+        // Verificar conflito de professor, excluindo o agendamento atual se fornecido
+        if (agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(dto.getProfessorId(), dataHora, agendamentoIdExcluir)) {
             throw new ConflitoHorarioException("Professor indisponível para o horário agendado.");
         }
 
-        // Validar conflito de alunos
+        // Validar conflito de alunos, excluindo o agendamento atual se fornecido
         List<String> nomesIndisponiveis = alunos.stream()
-                .filter(aluno -> !agendamentoRepository.findAgendamentosByAlunoAndDataHora(aluno, dataHora).isEmpty())
+                .filter(aluno -> !agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(aluno, dataHora, agendamentoIdExcluir).isEmpty())
                 .map(Aluno::getNome)
                 .toList();
 
@@ -211,10 +226,10 @@ public class AgendamentoValidator {
             .anyMatch(esp -> esp.getId().equals(especialidade.getId()));
 
         if (!professorLecionaEspecialidade) {
-            logger.warn("Tentativa de agendar especialidade {} com professor {} que não a leciona", 
+            logger.warn("Tentativa de agendar especialidade {} com professora {} que não a atende", 
                     especialidade.getNome(), professor.getNome());
             throw new EspecialidadeIncompativelException(
-                String.format("O professor %s não leciona a especialidade %s.",
+                String.format("A professora %s não atende a especialidade %s.",
                     professor.getNome(),
                     especialidade.getNome())
             );
