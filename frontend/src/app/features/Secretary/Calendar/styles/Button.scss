@@ -12,7 +12,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--branco);
 }
 
 .btn-primary {
@@ -40,7 +40,7 @@
 .btn-primary:disabled,
 .btn-primary[aria-disabled='true'] {
   background: #8da6ff;
-  color: #f0f0f0;
+  color: var(--cor-borda);
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -71,7 +71,7 @@
 .btn-secondary:disabled,
 .btn-secondary[aria-disabled='true'] {
   background: #ef9a9a;
-  color: #ffffff;
+  color: var(--branco);
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -82,3 +82,5 @@
     font-size: 1rem;
   }
 }
+
+

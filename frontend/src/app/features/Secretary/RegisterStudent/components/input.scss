@@ -8,7 +8,7 @@
 .input-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #4b5563;
+  color: var(--text-cinza);
 }
 
 .input-required {
@@ -20,19 +20,19 @@
   width: 100%;
   padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
-  color: #1f2937;
-  background-color: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  color: var(--text-escuro);
+  background-color: var(--branco);
+  border: 1px solid var(--cor-borda);
   border-radius: 0.5rem;
   transition: all 0.2s ease;
   outline: none;
 
   &::placeholder {
-    color: #9ca3af;
+    color: var(--text-cinza);
   }
 
   &:focus {
-    background-color: #ffffff;
+    background-color: var(--branco);
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }

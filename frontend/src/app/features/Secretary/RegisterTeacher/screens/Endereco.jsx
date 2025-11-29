@@ -54,7 +54,7 @@ export default function EnderecoScreen({
 
         <Input
           label="Logradouro"
-          placeholder="Rua Antônio Candido de Alvarenga"
+          placeholder="Avenida Paulista"
           value={dados.logradouro}
           onChange={(e) => atualizar({ logradouro: e.target.value })}
           required
@@ -65,7 +65,7 @@ export default function EnderecoScreen({
         <div className="numero-wrapper">
           <Input
             label="Número"
-            placeholder="539"
+            placeholder="123"
             value={semNumero ? "S/N" : dados.numero}
             onChange={(e) => atualizar({ numero: e.target.value })}
             required={!semNumero}
@@ -85,7 +85,7 @@ export default function EnderecoScreen({
 
         <Input
           label="Bairro"
-          placeholder="Perus"
+          placeholder="São Paulo"
           value={dados.bairro}
           onChange={(e) => atualizar({ bairro: e.target.value })}
           required

@@ -16,7 +16,10 @@ export default function SidebarTeacher({ navAberta}) {
     <div
       className={`${
         navAberta ? "w-60" : "w-20"
-      } bg-orange-500 text-white flex flex-col justify-between transition-all duration-300`}
+      } text-white flex flex-col justify-between transition-all duration-300`}
+      style={{
+        backgroundColor: 'var(--laranja-principal)'
+      }}
     >
       <div>
         <div className="flex justify-center py-8">
@@ -78,7 +81,10 @@ export function SidebarSecretary({ navAberta }) {
     <div
       className={`${
         navAberta ? "w-60" : "w-20"
-      } bg-orange-500 text-white flex flex-col justify-between transition-all duration-300`}
+      } text-white flex flex-col justify-between transition-all duration-300`}
+      style={{
+        backgroundColor: 'var(--laranja-principal)'
+      }}
     >
       <div>
         <div className="flex justify-center py-8">

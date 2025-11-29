@@ -26,7 +26,7 @@
 
 .loading-spinner {
   animation: spin 1s linear infinite;
-  color: $laranja-principal;
+  color: var(--laranja-principal);
   width: 48px;
   height: 48px;
 }
@@ -41,7 +41,7 @@
 }
 
 .loading-text {
-  color: #666;
+  color: var(--text-cinza);
   font-size: 0.938rem;
   font-weight: 600;
 }

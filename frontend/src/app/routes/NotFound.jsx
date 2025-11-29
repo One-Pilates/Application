@@ -25,7 +25,7 @@ export default function NotFound() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
             Oops! Página não encontrada
           </h2>
-          <p className="text-lg text-gray-600 max-w-md mx-auto leading-relaxed">
+          <p className="text-lg text-gray-600 dark:text-fontSec max-w-md mx-auto leading-relaxed">
             Esta página não existe no nosso estúdio. Que tal voltar e explorar nossas aulas de Pilates?
           </p>
         </div>

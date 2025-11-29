@@ -42,14 +42,21 @@ const GerenciamentoAlunoView = ({
         <div className="flex w-full items-center gap-4 justify-between">
           <div className="relative w-80">
             <FiSearch
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2"
               size={20}
+              style={{ color: 'var(--laranja-principal)' }}
             />
             <input
               type="text"
               onChange={(e) => setFilterByNome(e.target.value)}
               placeholder="Buscar por nome"
-              className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full pl-10 pr-8 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              style={{
+                borderColor: 'var(--cor-borda)',
+                borderWidth: '1px',
+                backgroundColor: 'var(--branco)',
+                color: 'var(--text-escuro)'
+              }}
             />
           </div>
 
@@ -57,7 +64,8 @@ const GerenciamentoAlunoView = ({
 
             <button
               onClick={() => abrirModalDownload(filteredStudents, calculateAge)}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition focus:outline-none focus:ring-2"
+              style={{ backgroundColor: 'var(--laranja-principal)', outlineColor: 'var(--laranja-principal)' }}
             >
               <FiDownload size={20} />
               <span>Exportar</span>
@@ -66,11 +74,18 @@ const GerenciamentoAlunoView = ({
             <div className="relative">
               <FiFilter
                 size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none"
+                className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                style={{ color: 'var(--text-cinza)' }}
               />
               <select
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                className="pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                style={{
+                  borderColor: 'var(--cor-borda)',
+                  borderWidth: '1px',
+                  backgroundColor: 'var(--branco)',
+                  color: 'var(--text-escuro)'
+                }}
               >
                 <option value="todos">Status: Todos</option>
                 <option value="ativo">Status: Ativo</option>
@@ -85,58 +100,78 @@ const GerenciamentoAlunoView = ({
         </div>
 
 
-        <div className="bg-white rounded-xl shadow-md border border-gray-200 flex flex-col overflow-hidden">
+        <div 
+          className="rounded-xl shadow-md flex flex-col overflow-hidden"
+          style={{
+            backgroundColor: 'var(--branco)',
+            borderColor: 'var(--cor-borda)',
+            borderWidth: '1px'
+          }}
+        >
           <div className="overflow-x-auto flex-1">
             <table className="w-full table-fixed">
-              <thead className="bg-gray-100 border-b border-gray-300">
+              <thead 
+                className="border-b text-sm font-semibold"
+                style={{
+                  backgroundColor: 'var(--branco)',
+                  borderBottomColor: 'var(--cor-borda)'
+                }}
+              >
                 <tr>
-                  <th className="w-[20%] px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="w-[20%] px-6 py-4 text-left text-sm font-semibold" style={{ color: 'var(--text-escuro)' }}>
                     Nome do Aluno
                   </th>
-                  <th className="w-[20%] px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="w-[20%] px-6 py-4 text-left text-sm font-semibold" style={{ color: 'var(--text-escuro)' }}>
                     Email
                   </th>
-                  <th className="w-[12%] px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="w-[12%] px-6 py-4 text-left text-sm font-semibold" style={{ color: 'var(--text-escuro)' }}>
                     CPF
                   </th>
-                  <th className="w-[8%] px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="w-[8%] px-6 py-4 text-left text-sm font-semibold" style={{ color: 'var(--text-escuro)' }}>
                     Idade
                   </th>
-                  <th className="w-[12%] px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="w-[12%] px-6 py-4 text-left text-sm font-semibold" style={{ color: 'var(--text-escuro)' }}>
                     Status
                   </th>
-                  <th className="w-[12%] px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="w-[12%] px-6 py-4 text-left text-sm font-semibold" style={{ color: 'var(--text-escuro)' }}>
                     Limitações
                   </th>
-                  <th className="w-[16%] px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  <th className="w-[16%] px-6 py-4 text-center text-sm font-semibold" style={{ color: 'var(--text-escuro)' }}>
                     Ações
                   </th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-gray-200">
+              <tbody 
+                className="divide-y"
+                style={{ borderColor: 'var(--cor-borda)' }}
+              >
                 {currentStudents && currentStudents.length > 0 ? (
                   currentStudents.map((aluno) => (
                     <tr
                       key={aluno.id}
-                      className="hover:bg-gray-100 transition"
+                      className="transition"
+                      style={{ 
+                        backgroundColor: 'var(--branco)',
+                        color: 'var(--text-escuro)'
+                      }}
                     >
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm">
                         <button
                         onClick={() => navigate(`/secretaria/perfil/aluno/${aluno.id}`)}>
                         {aluno.nome}
                         </button>
                       </td>
 
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm">
                         {aluno.email}
                       </td>
 
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm">
                         {aluno.cpf}
                       </td>
 
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm">
                         {calculateAge(aluno.dataNascimento)}
                       </td>
 
@@ -157,7 +192,7 @@ const GerenciamentoAlunoView = ({
                             Sim
                           </span>
                         ) : (
-                          <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-400">
+                          <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-white dark:bg-dark text-gray-400">
                             Não
                           </span>
                         )}
@@ -179,7 +214,8 @@ const GerenciamentoAlunoView = ({
                   <tr>
                     <td
                       colSpan="7"
-                      className="px-6 py-12 text-center text-sm text-gray-500"
+                      className="px-6 py-12 text-center text-sm"
+                      style={{ color: 'var(--text-cinza)' }}
                     >
                       Nenhum aluno encontrado.
                     </td>
@@ -191,8 +227,14 @@ const GerenciamentoAlunoView = ({
 
 
           {filteredStudents && filteredStudents.length > 0 && (
-            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
-              <div className="text-sm text-gray-800">
+            <div 
+              className="px-6 py-4 border-t flex items-center justify-between"
+              style={{
+                backgroundColor: 'var(--branco)',
+                borderTopColor: 'var(--cor-borda)'
+              }}
+            >
+              <div className="text-sm" style={{ color: 'var(--text-cinza)' }}>
                 Mostrando {startIndex + 1} a {Math.min(endIndex, filteredStudents.length)} de{" "}
                 {filteredStudents.length} alunos
               </div>
@@ -202,7 +244,13 @@ const GerenciamentoAlunoView = ({
                 <button
                   onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
-                  className="p-2 rounded-lg bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="p-2 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: 'var(--branco)',
+                    color: currentPage === 1 ? 'var(--text-cinza)' : 'var(--text-escuro)',
+                    borderColor: 'var(--cor-borda)',
+                    borderWidth: '1px'
+                  }}
                 >
                   <FiArrowLeft size={18} />
                 </button>
@@ -217,10 +265,13 @@ const GerenciamentoAlunoView = ({
                       <button
                         key={p}
                         onClick={() => setCurrentPage(p)}
-                        className={`w-10 h-10 rounded-full text-sm font-medium transition ${currentPage === p
-                            ? "bg-orange-500 text-white shadow-md"
-                            : "bg-white text-gray-700 hover:bg-gray-100"
-                          }`}
+                        className="w-10 h-10 rounded-full text-sm font-medium transition"
+                        style={{
+                          backgroundColor: currentPage === p ? 'var(--laranja-principal)' : 'var(--branco)',
+                          color: currentPage === p ? '#fff' : 'var(--text-escuro)',
+                          borderColor: 'var(--cor-borda)',
+                          borderWidth: '1px'
+                        }}
                       >
                         {p}
                       </button>
@@ -232,7 +283,7 @@ const GerenciamentoAlunoView = ({
 
                     if (currentPage > 3) {
                       pages.push(
-                        <span key="dots1" className="px-2 text-gray-500">
+                        <span key="dots1" className="px-2" style={{ color: 'var(--text-cinza)' }}>
                           …
                         </span>
                       );
@@ -248,7 +299,7 @@ const GerenciamentoAlunoView = ({
 
                     if (currentPage < total - 2) {
                       pages.push(
-                        <span key="dots2" className="px-2 text-gray-500">
+                        <span key="dots2" className="px-2" style={{ color: 'var(--text-cinza)' }}>
                           …
                         </span>
                       );
@@ -265,7 +316,13 @@ const GerenciamentoAlunoView = ({
                     setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className="p-2 rounded-lg bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="p-2 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: 'var(--branco)',
+                    color: currentPage === totalPages ? 'var(--text-cinza)' : 'var(--text-escuro)',
+                    borderColor: 'var(--cor-borda)',
+                    borderWidth: '1px'
+                  }}
                 >
                   <FiArrowRight size={18} />
                 </button>
@@ -279,3 +336,4 @@ const GerenciamentoAlunoView = ({
 };
 
 export default GerenciamentoAlunoView;
+
