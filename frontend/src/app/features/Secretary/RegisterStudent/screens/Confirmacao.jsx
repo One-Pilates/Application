@@ -19,10 +19,8 @@ export default function ConfirmacaoAlunoScreen({
   return (
     <div className="confirmacao-aluno-screen">
       <div className="confirm-header">
-        <h2 className="confirm-title">Resumo - Confirmação dos Dados</h2>
-        <p className="confirm-message">
-          Revise todas as informações antes de concluir o cadastro.
-        </p>
+         <h2 className="confirm-title">Revise os dados</h2>
+        <p className="confirm-message">Verifique se tudo está correto antes de cadastrar</p>
       </div>
 
       <div className="data-sections">
