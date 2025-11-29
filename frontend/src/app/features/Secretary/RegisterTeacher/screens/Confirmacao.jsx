@@ -16,6 +16,7 @@ export default function ConfirmacaoProfessorScreen({
   especialidades = [],
   cadastrando = false,
   onCadastrar,
+  onCancelar,
   onVoltar,
 }) {
   const especialidadesNomes = informacoesProfissionais.especialidades
@@ -26,9 +27,7 @@ export default function ConfirmacaoProfessorScreen({
   return (
     <div className="confirmacao-aluno-screen">
       <div className="success-section">
-        <div className="success-icon">
-          <FaCheckCircle size={64} color="#22C55E" />
-        </div>
+  
         <h2 className="confirm-title">Revise os dados</h2>
         <p className="confirm-message">Verifique se tudo está correto antes de cadastrar</p>
       </div>
@@ -91,20 +90,18 @@ export default function ConfirmacaoProfessorScreen({
         justifyContent: 'center',
         flexWrap: 'wrap'
       }}>
-        <Button 
-          variant="secondary" 
-          onClick={onVoltar}
-          disabled={cadastrando}
-        >
+       
+      <div className="confirm-actions">
+        <Button variant="tertiary" onClick={onVoltar}>
           Voltar
         </Button>
-        <Button 
-          variant="primary" 
-          onClick={onCadastrar}
-          disabled={cadastrando}
-        >
-          {cadastrando ? "Cadastrando..." : "Cadastrar Professor"}
+        <Button variant="secondary" onClick={onCancelar}>
+          Cancelar
         </Button>
+        <Button variant="primary" onClick={onCadastrar}>
+          Cadastrar
+        </Button>
+      </div>
       </div>
     </div>
   );

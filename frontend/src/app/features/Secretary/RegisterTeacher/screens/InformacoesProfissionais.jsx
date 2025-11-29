@@ -58,25 +58,28 @@ export default function InformacoesProfissionaisScreen({
         </div>
 
         <div className="observacoes-section">
-          <label className="section-label">Observações</label>
+          <label className="textarea-label">Observações</label>
           <textarea
             placeholder="Informações adicionais sobre o professor..."
             value={dados.observacoes || ""}
             onChange={(e) => atualizar({ observacoes: e.target.value })}
-            className="textarea-field"
+            className={`textarea-field ${erros.observacoes ? "textarea-error" : ""}`}
             rows={4}
           />
+          {erros.observacoes && (
+            <span className="error-message">{erros.observacoes}</span>
+          )}
         </div>
 
-        <div className="checkbox-toggle">
-          <label className="toggle-label">
+        <div className="checkbox-item">
+          <label className="checkbox-toggle-label">
             <input
               type="checkbox"
               checked={dados.notificacaoAtiva ?? true}
               onChange={(e) => atualizar({ notificacaoAtiva: e.target.checked })}
-              className="toggle-input"
+              className="checkbox-toggle-input"
             />
-            <span className="toggle-text">Ativar notificações por e-mail</span>
+            <span className="checkbox-toggle-text">Ativar notificações por e-mail</span>
           </label>
         </div>
       </div>

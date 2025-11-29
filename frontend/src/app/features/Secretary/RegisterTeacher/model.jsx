@@ -401,6 +401,43 @@ export const useRegisterTeacherModel = () => {
     }
   };
 
+
+const cancelarCadastro = () => {
+  
+    setDadosPessoais({
+   
+      nomeCompleto: "",
+      email: "",
+      cpf: "",
+      dataNascimento: "",
+      telefone: "",
+    });
+
+    setEndereco({
+      cep: "",
+      logradouro: "",
+      numero: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
+      uf: "",
+    });
+
+    setInformacoesProfissionais({
+    cargo: "",
+    especialidades: [],
+    notificacaoAtiva: true,
+    observacoes: "",
+    });
+
+    navigate("/secretaria/professor");
+  };
+
+
+
+
+
+
   const uploadFoto = async (professorId) => {
     if (!dadosPessoais.fotoPerfil) {
       console.log("⚠️ Nenhuma foto para enviar");
@@ -464,5 +501,6 @@ export const useRegisterTeacherModel = () => {
     voltarEtapa,
     irParaEtapa,
     cadastrarProfessor,
+    cancelarCadastro
   };
 };
