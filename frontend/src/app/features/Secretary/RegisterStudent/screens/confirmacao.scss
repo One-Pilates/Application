@@ -91,7 +91,6 @@
   line-height: 1.5;
 }
 
-
 .badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
@@ -111,7 +110,6 @@
   }
 }
 
-
 @keyframes scaleIn {
   from {
     transform: scale(0);
@@ -127,5 +125,26 @@
 @media (max-width: 768px) {
   .card-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+.confirm-actions {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+
+  .btn {
+    min-width: 140px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+    align-items: stretch;
+
+    .btn {
+      width: 100%;
+    }
   }
 }

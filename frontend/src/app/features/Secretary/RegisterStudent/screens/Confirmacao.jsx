@@ -1,5 +1,5 @@
-import { FaCheckCircle } from "react-icons/fa";
 import "./confirmacao.scss";
+import Button from "../components/Button";
 
 const CardInfo = ({ label, valor }) => (
   <div className="card-info">
@@ -12,17 +12,16 @@ export default function ConfirmacaoAlunoScreen({
   dadosPessoais,
   endereco,
   informacoesAluno,
+  onVoltar,
+  onCancelar,
+  onCadastrar,
 }) {
   return (
     <div className="confirmacao-aluno-screen">
-      <div className="success-section">
-        <div className="success-icon">
-          <FaCheckCircle size={64} color="#22C55E" />
-        </div>
-
-        <h2 className="confirm-title">Cadastro feito com sucesso!</h2>
+      <div className="confirm-header">
+        <h2 className="confirm-title">Resumo - Confirmação dos Dados</h2>
         <p className="confirm-message">
-          A senha foi gerada e enviada ao email do usuário
+          Revise todas as informações antes de concluir o cadastro.
         </p>
       </div>
 
@@ -33,7 +32,10 @@ export default function ConfirmacaoAlunoScreen({
             <CardInfo label="Nome" valor={dadosPessoais.nomeCompleto} />
             <CardInfo label="Email" valor={dadosPessoais.email} />
             <CardInfo label="CPF" valor={dadosPessoais.cpf} />
-            <CardInfo label="Data de Nascimento" valor={dadosPessoais.dataNascimento} />
+            <CardInfo
+              label="Data de Nascimento"
+              valor={dadosPessoais.dataNascimento}
+            />
             <CardInfo label="Telefone" valor={dadosPessoais.telefone} />
           </div>
         </div>
@@ -63,15 +65,28 @@ export default function ConfirmacaoAlunoScreen({
                 )}
               </span>
             </div>
-            
+
             <div className="card-info observacoes-card">
               <span className="card-label">Observações</span>
               <span className="card-value observacoes-text">
-                {informacoesAluno.observacoes || "Nenhuma observação registrada"}
+                {informacoesAluno.observacoes ||
+                  "Nenhuma observação registrada"}
               </span>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="confirm-actions">
+        <Button variant="tertiary" onClick={onVoltar}>
+          Voltar
+        </Button>
+        <Button variant="secondary" onClick={onCancelar}>
+          Cancelar
+        </Button>
+        <Button variant="primary" onClick={onCadastrar}>
+          Cadastrar
+        </Button>
       </div>
     </div>
   );
