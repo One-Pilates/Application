@@ -38,7 +38,7 @@
 
 .navbar-menu a {
   text-decoration: none;
-  color: white;
+  color: var(--branco);
   font-weight: 500;
   font-size: 1.1rem;
   transition: color 0.3s ease;
@@ -89,7 +89,7 @@
 }
 
 .mobile-menu a {
-  color: white;
+  color: var(--branco);
   font-size: 1.2rem;
   text-decoration: none;
   transition: color 0.3s ease;
@@ -109,3 +109,4 @@
     display: block;
   }
 }
+

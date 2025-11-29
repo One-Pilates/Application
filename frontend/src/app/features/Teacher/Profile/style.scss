@@ -28,14 +28,14 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background: white;
+    background: var(--branco);
     border: none;
     border-radius: 50%;
     padding: 0.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     cursor: pointer;
     transition: all 0.3s;
-    color: #666;
+    color: var(--text-cinza);
 
     &:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -50,12 +50,12 @@
   &__nome {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-escuro);
   }
 
   &__cargo {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--text-cinza);
   }
 
   &__form {
@@ -83,7 +83,7 @@
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #374151;
+    color: var(--text-escuro);
     margin-bottom: 0.5rem;
   }
 
@@ -94,22 +94,22 @@
   &__input {
     width: 100%;
     padding: 0.75rem 1rem;
-    background: #ffffff;
+    background: var(--branco);
     border: none;
     border-radius: 0.5rem;
-    color: #1f2937;
+    color: var(--text-escuro);
     font-size: 0.875rem;
     outline: none;
     transition: all 0.3s;
     font-family: inherit;
 
     &--placeholder {
-      color: #9ca3af;
+      color: var(--text-cinza);
     }
 
     /* Estilos para textarea */
     &[disabled] {
-      background: #f9fafb;
+      background: var(--bg-claro);
       cursor: not-allowed;
       opacity: 0.7;
     }
@@ -146,7 +146,7 @@
   
   &__notification-text {
     font-size: 0.875rem;
-    color: #374151;
+    color: var(--text-escuro);
   }
   
   &__radio-group {
@@ -191,7 +191,7 @@
       left: 3px;
       width: 22px;
       height: 22px;
-      background: #ffffff;
+      background: var(--branco);
       border-radius: 50%;
       box-shadow: 0 1px 3px rgba(0,0,0,0.15);
       transition: transform 0.2s ease;
@@ -282,7 +282,7 @@
 
     &--cancel {
       background: #ef4444;
-      color: white;
+      color: var(--branco);
 
       &:hover {
         background: #dc2626;
@@ -291,7 +291,7 @@
 
     &--save {
       background: #3b82f6;
-      color: white;
+      color: var(--branco);
 
       &:hover {
         background: #2563eb;
@@ -304,3 +304,4 @@
     }
   }
 }
+

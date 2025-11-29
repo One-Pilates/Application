@@ -9,11 +9,19 @@ import userIconImg from "/user-icon.png";
 function Account() {
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
-  const [modoEscuro, setModoEscuro] = useState(false);
+  const [modoEscuro, setModoEscuro] = useState(() => localStorage.getItem('theme') === 'dark');
   const { user } = useAuth() || {};
 
   const toggleModoEscuro = () => {
-    setModoEscuro(!modoEscuro);
+    const newValue = !modoEscuro;
+    setModoEscuro(newValue);
+    if (newValue) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   };
 
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
@@ -37,7 +45,10 @@ function Account() {
     <div className="relative">
       <button
         onClick={() => setMenuAberto(!menuAberto)}
-        className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-3 px-2 py-2 rounded-lg transition-colors"
+        style={{ 
+          color: 'var(--text-escuro)',
+        }}
         aria-expanded={menuAberto}
         aria-haspopup="true"
       >
@@ -45,21 +56,26 @@ function Account() {
           <img
             src={`${api.defaults.baseURL}/api/imagens/${user.foto}`}
             alt={nome}
-            className="w-10 h-10 rounded-full ring-2 ring-orange-500 object-cover"
+            className="w-10 h-10 rounded-full object-cover"
+            style={{ outline: '2px solid var(--laranja-principal)' }}
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-            <FaUserCircle className="text-gray-500 text-2xl" />
+          <div 
+            className="w-10 h-10 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: 'var(--bg-claro)', color: 'var(--text-cinza)' }}
+          >
+            <FaUserCircle className="text-2xl" />
           </div>
         )}
 
         <div className="hidden md:block text-left">
-          <p className="font-semibold text-gray-800 leading-tight">{nome}</p>
-          <p className="text-xs text-gray-500">{papel}</p>
+          <p className="font-semibold leading-tight" style={{ color: 'var(--text-escuro)' }}>{nome}</p>
+          <p className="text-xs" style={{ color: 'var(--text-cinza)' }}>{papel}</p>
         </div>
 
         <FaChevronDown 
-          className={`text-gray-600 transition-transform ${menuAberto ? 'rotate-180' : ''}`}
+          className="transition-transform"
+          style={{ color: 'var(--text-cinza)' }}
         />
       </button>
 
@@ -70,8 +86,15 @@ function Account() {
             className="fixed inset-0 z-40"
           />
 
-          <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4">
+          <div 
+            className="absolute right-0 mt-2 w-72 rounded-lg shadow-lg z-50 overflow-hidden"
+            style={{ 
+              backgroundColor: 'var(--branco)',
+              borderColor: 'var(--cor-borda)',
+              borderWidth: '1px'
+            }}
+          >
+            <div className="p-4" style={{ background: `linear-gradient(to right, var(--laranja-principal), #E85D25)` }}>
               <div className="flex items-center gap-3">
                 <img
                   src={user?.foto ? `${api.defaults.baseURL}/api/imagens/${user.foto}` : userIconImg}
@@ -88,34 +111,46 @@ function Account() {
             <div className="py-2">
               <button 
                 onClick={openAdminModal}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3"
+                className="w-full px-4 py-3 text-left transition-colors flex items-center gap-3"
+                style={{ 
+                  backgroundColor: 'var(--branco)',
+                  color: 'var(--text-escuro)'
+                }}
               >
-                <FaCog className="text-gray-600" />
-                <span className="text-gray-700">Configurações</span>
+                <FaCog style={{ color: 'var(--text-cinza)' }} />
+                <span>Configurações</span>
               </button>
 
               <button
                 onClick={() => navigate("/redifinir-senha")}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3"
+                className="w-full px-4 py-3 text-left transition-colors flex items-center gap-3"
+                style={{ 
+                  backgroundColor: 'var(--branco)',
+                  color: 'var(--text-escuro)'
+                }}
               >
-                <FaKey className="text-gray-600" />
-                <span className="text-gray-700">Senhas</span>
+                <FaKey style={{ color: 'var(--text-cinza)' }} />
+                <span>Senhas</span>
               </button>
 
               <button 
                 onClick={toggleModoEscuro}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center justify-between"
+                className="w-full px-4 py-3 text-left transition-colors flex items-center justify-between"
+                style={{ 
+                  backgroundColor: 'var(--branco)',
+                  color: 'var(--text-escuro)'
+                }}
               >
                 <div className="flex items-center gap-3">
                   {modoEscuro ? (
                     <FaSun className="text-yellow-500" />
                   ) : (
-                    <FaMoon className="text-gray-600" />
+                    <FaMoon style={{ color: 'var(--text-cinza)' }} />
                   )}
-                  <span className="text-gray-700">Modo Escuro</span>
+                  <span>Modo Escuro</span>
                 </div>
-                <div className={`w-11 h-6 rounded-full transition-colors ${modoEscuro ? 'bg-orange-500' : 'bg-gray-300'}`}>
-                  <div className={`w-4 h-4 rounded-full bg-white mt-1 transition-transform ${modoEscuro ? 'translate-x-6 ml-1' : 'translate-x-1'}`}></div>
+                <div className="w-11 h-6 rounded-full transition-colors" style={{ backgroundColor: modoEscuro ? 'var(--laranja-principal)' : 'var(--cor-borda)' }}>
+                  <div className="w-4 h-4 rounded-full bg-white mt-1 transition-transform" style={{ transform: modoEscuro ? 'translateX(24px) translateX(4px)' : 'translateX(4px)' }}></div>
                 </div>
               </button>
             </div>
@@ -129,3 +164,4 @@ function Account() {
 }
 
 export default Account;
+

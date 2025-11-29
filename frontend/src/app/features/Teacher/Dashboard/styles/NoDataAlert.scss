@@ -23,13 +23,13 @@
       margin: 0;
       font-size: 16px;
       font-weight: 600;
-      color: #92400e;
+      color: var(--text-escuro);
     }
 
     p {
       margin: 4px 0 0 0;
       font-size: 14px;
-      color: #b45309;
+      color: var(--text-cinza);
     }
   }
 }

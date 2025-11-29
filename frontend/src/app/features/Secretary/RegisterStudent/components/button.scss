@@ -19,7 +19,7 @@
 
   &-primary {
     background-color: #3b82f6;
-    color: white;
+    color: var(--branco);
 
     &:hover:not(:disabled) {
       background-color: #2563eb;
@@ -34,7 +34,7 @@
 
   &-secondary {
     background-color: #ef4444;
-    color: white;
+    color: var(--branco);
 
     &:hover:not(:disabled) {
       background-color: #dc2626;
@@ -48,8 +48,8 @@
   }
 
   &-tertiary {
-    background-color: #6b7280; // gray-500
-    color: white;
+    background-color: var(--text-cinza); // gray-500
+    color: var(--branco);
 
     &:hover:not(:disabled) {
       background-color: #4b5563; // gray-600
@@ -62,3 +62,5 @@
     }
   }
 }
+
+

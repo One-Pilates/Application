@@ -36,14 +36,14 @@
 .confirm-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-escuro);
   margin-bottom: 0.5rem;
   text-align: center;
 }
 
 .confirm-message {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-cinza);
   text-align: center;
 }
 
@@ -61,7 +61,7 @@
 .section-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-escuro);
   margin-bottom: 1rem;
 }
 
@@ -88,7 +88,7 @@
 .card-label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--text-cinza);
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
@@ -96,7 +96,7 @@
 .card-value {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #1f2937;
+  color: var(--text-escuro);
 }
 
 .tag-container {
@@ -132,14 +132,14 @@
   }
 }
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-escuro);
   margin-bottom: 0.5rem;
   text-align: center;
 }
 
 .confirm-message {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-cinza);
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -152,7 +152,7 @@
 .section-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-escuro);
   margin-bottom: 1rem;
 }
 
@@ -175,7 +175,7 @@
 .card-label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--text-cinza);
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
@@ -183,7 +183,7 @@
 .card-value {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #1f2937;
+  color: var(--text-escuro);
 }
 
 .tag-container {
@@ -218,3 +218,5 @@
     grid-template-columns: 1fr;
   }
 }
+
+

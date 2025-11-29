@@ -21,13 +21,13 @@ export default function ContactAdm({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-[90%] text-center">
+      <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-2xl p-6 max-w-sm w-[90%] text-center">
         <h2 className="text-lg font-semibold text-gray-800 mb-2">Está com algum problema?</h2>
-        <p className="text-gray-600 mb-6 text-sm">Deseja contatar o administrador para relatar um problema?</p>
+        <p className="text-gray-600 dark:text-fontSec mb-6 text-sm">Deseja contatar o administrador para relatar um problema?</p>
         <div className="flex justify-center gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-dark-component text-gray-700 dark:text-fontMain hover:bg-white dark:bg-dark transition"
           >
             Voltar
           </button>
@@ -43,4 +43,6 @@ export default function ContactAdm({ isOpen, onClose }) {
     </div>
   );
 }
+
+
 
