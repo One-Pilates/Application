@@ -26,6 +26,7 @@ const RegisterTeacherView = ({
   voltarEtapa,
   irParaEtapa,
   cadastrarProfessor,
+  cancelarCadastro,
 }) => {
   const navigate = useNavigate();
 
@@ -67,6 +68,7 @@ const RegisterTeacherView = ({
             cadastrando={cadastrando}
             onCadastrar={cadastrarProfessor}
             onVoltar={voltarEtapa}
+            onCancelar={cancelarCadastro}
           />
         );
       default:

@@ -226,9 +226,9 @@ export const useRegisterStudentModel = () => {
   };
 
   const cancelarCadastro = () => {
-    // Resetar estados para os valores iniciais
+   
     setDadosPessoais({
-      fotoPerfil: "",
+    
       nomeCompleto: "",
       email: "",
       cpf: "",
