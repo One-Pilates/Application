@@ -3,14 +3,21 @@ import api from "../../../../provider/api";
 import Swal from "sweetalert2";
 
 export const useStudioModel = () => {
-  const [especialidades, setEspecialidades] = useState([]);
-  const [salas, setSalas] = useState([]);
   const [activeTab, setActiveTab] = useState("especialidades");
 
-  // Modal States
+  // Especialidades States
+  const [especialidades, setEspecialidades] = useState([]);
+    // Modal Especialidades States
   const [showEspModal, setShowEspModal] = useState(false);
   const [editingEsp, setEditingEsp] = useState(null);
   const [formEsp, setFormEsp] = useState("");
+  
+  // Salas States
+  const [salas, setSalas] = useState([]);
+    // Modal Salas States
+  const [showSalaModal, setShowSalaModal] = useState(false);
+  const [editingSala, setEditingSala] = useState(null);
+  const [formSala, setFormSala] = useState({ nome: '', quantidadeMaximaAlunos: '', quantidadeEquipamentosPCD: '' });
 
     useEffect(() => {
     fetchData();
@@ -92,7 +99,7 @@ export const useStudioModel = () => {
     setShowEspModal(false);
   };
 
-  const deleteEspecialidade = async (id) => {
+  const handleDeleteEspecialidade = async (id) => {
      Swal.fire({
           title: "Tem certeza?",
           text: "Essa ação não poderá ser desfeita!",
@@ -128,6 +135,68 @@ export const useStudioModel = () => {
         });
     };
 
+  // Funções Salas
+  const handleAddSala = () => {
+    setEditingSala(null);
+    setFormSala({ nome: '', quantidadeMaximaAlunos: '', quantidadeEquipamentosPCD: '' });
+    setShowSalaModal(true);
+  };
+
+  const handleEditSala = (sala) => {
+    setEditingSala(sala);
+    setFormSala({ nome: sala.nome, quantidadeMaximaAlunos: sala.quantidadeMaximaAlunos, quantidadeEquipamentosPCD: sala.quantidadeEquipamentosPCD });
+    setShowSalaModal(true);
+  };
+
+  const handleSaveSala = () => {
+    if (!formSala.nome.trim() || !formSala.quantidadeMaximaAlunos || !formSala.quantidadeEquipamentosPCD) return;
+    
+    if (editingSala) {
+      setSalas(salas.map(s => 
+        s.id === editingSala.id ? { ...s, ...formSala, capacidade: Number(formSala.capacidade) } : s
+      ));
+    } else {
+      setSalas([...salas, { id: Date.now(), ...formSala, capacidade: Number(formSala.capacidade) }]);
+    }
+    setShowSalaModal(false);
+  };
+
+  const handleDeleteSala = (id) => {
+    Swal.fire({
+          title: "Tem certeza?",
+          text: "Essa ação não poderá ser desfeita!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Sim, deletar!",
+          cancelButtonText: "Cancelar",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await api.delete(`api/salas/${id}`);
+              console.log("Sala deletada:", response.data);
+              setSalas(salas.filter(s => s.id !== id));
+              Swal.fire({
+                icon: "success",
+                title: "Deletado!",
+                text: "A sala foi deletada com sucesso.",
+                confirmButtonText: "OK",
+              });
+              
+            } catch (error) {
+              console.error("Erro ao deletar sala:", error);
+              Swal.fire({
+                icon: "error",
+                title: "Erro",
+                text: "Ocorreu um erro ao deletar a sala.",
+                confirmButtonText: "OK",
+              });
+            }
+          }
+        });
+  };
+
   const fetchData = async () => {
     if (activeTab === "especialidades") {
       try {
@@ -137,15 +206,14 @@ export const useStudioModel = () => {
       } catch (error) {
         console.error("Erro ao buscar especialidades:", error);
       }
-      // } else if (activeTab === 'salas') {
-      //   try {
-      //     const response = await api.get(`api/salas`);
-      //     const data = response.data
-      //     setSalas(data)
-      //   } catch (error) {
-      //     console.error("Erro ao buscar salas:", error);
-      //   }
-      // }
+      } else if (activeTab === 'salas') {
+        try {
+          const response = await api.get(`api/salas`);
+          const data = response.data
+          setSalas(data)
+        } catch (error) {
+          console.error("Erro ao buscar salas:", error);
+        }
     }
   };
 
@@ -157,7 +225,7 @@ export const useStudioModel = () => {
     setSalas,
     activeTab,
     setActiveTab,
-    deleteEspecialidade,
+    handleDeleteEspecialidade,
     showEspModal,
     setShowEspModal,
     editingEsp,
@@ -167,5 +235,15 @@ export const useStudioModel = () => {
     handleAddEsp,
     handleEditEsp,
     handleSaveEsp,
+    showSalaModal,
+    setShowSalaModal,
+    editingSala,
+    setEditingSala,
+    formSala,
+    setFormSala,
+    handleAddSala,
+    handleEditSala,
+    handleSaveSala,
+    handleDeleteSala,
   };
 };
