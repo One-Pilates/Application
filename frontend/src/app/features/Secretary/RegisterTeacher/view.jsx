@@ -14,19 +14,19 @@ const RegisterTeacherView = ({
   dadosPessoais,
   endereco,
   informacoesProfissionais,
+  especialidades,
+  cadastrando,
   erros,
-  atualizarDadosPessoais,
-  atualizarEndereco,
-  atualizarInformacoesProfissionais,
+  setDadosPessoais,
+  setEndereco,
+  setInformacoesProfissionais,
   buscarCep,
   proximaEtapa,
   etapaAnterior,
+  voltarEtapa,
   irParaEtapa,
-  finalizar,
-  concluir,
-  voltar,
+  cadastrarProfessor,
 }) => {
-
   const navigate = useNavigate();
 
   const renderEtapa = () => {
@@ -35,7 +35,7 @@ const RegisterTeacherView = ({
         return (
           <DadosPessoaisScreen
             dados={dadosPessoais}
-            atualizar={atualizarDadosPessoais}
+            atualizar={(novos) => setDadosPessoais(prev => ({ ...prev, ...novos }))}
             erros={erros}
           />
         );
@@ -43,7 +43,7 @@ const RegisterTeacherView = ({
         return (
           <EnderecoScreen
             dados={endereco}
-            atualizar={atualizarEndereco}
+            atualizar={(novos) => setEndereco(prev => ({ ...prev, ...novos }))}
             buscarCep={buscarCep}
             erros={erros}
           />
@@ -52,7 +52,8 @@ const RegisterTeacherView = ({
         return (
           <InformacoesProfissionaisScreen
             dados={informacoesProfissionais}
-            atualizar={atualizarInformacoesProfissionais}
+            atualizar={(novos) => setInformacoesProfissionais(prev => ({ ...prev, ...novos }))}
+            especialidades={especialidades}
             erros={erros}
           />
         );
@@ -62,6 +63,10 @@ const RegisterTeacherView = ({
             dadosPessoais={dadosPessoais}
             endereco={endereco}
             informacoesProfissionais={informacoesProfissionais}
+            especialidades={especialidades}
+            cadastrando={cadastrando}
+            onCadastrar={cadastrarProfessor}
+            onVoltar={voltarEtapa}
           />
         );
       default:
@@ -72,10 +77,7 @@ const RegisterTeacherView = ({
   return (
     <div className="register-container">
       <div className="register-header">
-        <button
-          className="back-button"
-          onClick={() => navigate("/secretaria/professor")} 
-        >
+        <button className="back-button" onClick={() => navigate("/secretaria/professor")}>
           <FaArrowLeft />
           <span>Voltar</span>
         </button>
@@ -84,7 +86,6 @@ const RegisterTeacherView = ({
 
       <div className="register-content">
         <div className="register-card">
-
           <StepIndicator
             steps={etapas}
             currentStep={etapaAtual}
@@ -98,28 +99,15 @@ const RegisterTeacherView = ({
               <div className="button-group">
                 {etapaAtual > 1 && (
                   <Button variant="secondary" onClick={etapaAnterior}>
-                    Cancelar
+                    Voltar
                   </Button>
                 )}
-
                 <Button variant="primary" onClick={proximaEtapa}>
-                  {etapaAtual === 3 ? "Cadastrar" : "Continuar"}
-                </Button>
-              </div>
-            )}
-
-            {etapaAtual === 4 && (
-              <div className="button-group">
-                <Button
-                  variant="primary"
-                  onClick={() => navigate("/secretaria/professor")}
-                >
-                  Voltar
+                  {etapaAtual === 3 ? "Revisar" : "Continuar"}
                 </Button>
               </div>
             )}
           </form>
-
         </div>
       </div>
     </div>

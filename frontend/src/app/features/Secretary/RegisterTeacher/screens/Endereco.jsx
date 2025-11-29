@@ -12,6 +12,7 @@ export default function EnderecoScreen({
 
     // Busca o CEP quando tiver 8 dígitos
     if (valor.replace(/\D/g, "").length === 8) {
+      console.log("🔍 Chamando buscarCep para:", valor);
       buscarCep(valor);
     }
   };
@@ -66,14 +67,23 @@ export default function EnderecoScreen({
           erro={erros.cidade}
         />
 
+        <Input
+          label="Estado"
+          placeholder="São Paulo"
+          value={dados.estado}
+          onChange={(e) => atualizar({ estado: e.target.value })}
+          required
+          erro={erros.estado}
+        />
+
         <div className="select-wrapper">
           <label className="select-label">
-            Estado<span className="select-required">*</span>
+            UF<span className="select-required">*</span>
           </label>
           <select
-            className={`select-field ${erros.estado ? "select-error" : ""}`}
-            value={dados.estado}
-            onChange={(e) => atualizar({ estado: e.target.value })}
+            className={`select-field ${erros.uf ? "select-error" : ""}`}
+            value={dados.uf}
+            onChange={(e) => atualizar({ uf: e.target.value })}
             required
           >
             <option value="">Selecione</option>
@@ -105,7 +115,7 @@ export default function EnderecoScreen({
             <option value="SE">SE</option>
             <option value="TO">TO</option>
           </select>
-          {erros.estado && <span className="select-error-message">{erros.estado}</span>}
+          {erros.uf && <span className="select-error-message">{erros.uf}</span>}
         </div>
       </div>
     </div>
