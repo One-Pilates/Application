@@ -5,7 +5,6 @@ import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.model.StatusPresenca;
 import com.onePilates.agendamento.service.AgendamentoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,11 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class AgendamentoController {
 
-    @Autowired
-    private AgendamentoService agendamentoService;
+    private final AgendamentoService agendamentoService;
+
+    public AgendamentoController(AgendamentoService agendamentoService) {
+        this.agendamentoService = agendamentoService;
+    }
 
     /**
      * Cria um novo agendamento.

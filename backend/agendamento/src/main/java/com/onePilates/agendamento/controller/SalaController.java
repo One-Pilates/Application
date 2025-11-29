@@ -3,7 +3,6 @@ package com.onePilates.agendamento.controller;
 import com.onePilates.agendamento.dto.SalaDTO;
 import com.onePilates.agendamento.dto.response.SalaResponseDTO;
 import com.onePilates.agendamento.service.SalaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +13,11 @@ import java.util.List;
 @RequestMapping("/api/salas")
 public class SalaController {
 
-    @Autowired
-    private SalaService salaService;
+    private final SalaService salaService;
+
+    public SalaController(SalaService salaService) {
+        this.salaService = salaService;
+    }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")

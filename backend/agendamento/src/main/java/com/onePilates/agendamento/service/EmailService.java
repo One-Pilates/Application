@@ -28,7 +28,7 @@ public class EmailService {
 
 
     public String enviarEmailAvisoDeAulaMarcada(String nomeProfessor, List<String> listaNomesAlunos, String email,
-                                                LocalDateTime dataHoraAgendamento) {
+                                                LocalDateTime dataHoraAgendamento, String nomeSala, String nomeEspecialidade) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -101,6 +101,26 @@ public class EmailService {
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
+                                                                            <td style="padding:16px 0; border-top:1px solid #e0e0e0;">
+                                                                                <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666666; text-transform:uppercase; letter-spacing:0.5px;">
+                                                                                    Especialidade
+                                                                                </p>
+                                                                                <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                                                    %s
+                                                                                </p>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="padding:16px 0; border-top:1px solid #e0e0e0;">
+                                                                                <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666666; text-transform:uppercase; letter-spacing:0.5px;">
+                                                                                    Sala
+                                                                                </p>
+                                                                                <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                                                    %s
+                                                                                </p>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
                                                                             <td style="padding:16px 0 0 0; border-top:1px solid #e0e0e0;">
                                                                                 <p style="margin:0 0 12px 0; font-size:13px; font-weight:600; color:#666666; text-transform:uppercase; letter-spacing:0.5px;">
                                                                                     Alunos Confirmados
@@ -143,7 +163,7 @@ public class EmailService {
                             </body>
                             </html>
                     """
-                    .formatted(nomeProfessor, dataHoraFormatada, listaAlunosHtml);
+                    .formatted(nomeProfessor, dataHoraFormatada, nomeEspecialidade, nomeSala, listaAlunosHtml);
 
             helper.setText(corpoHtml, true);
             mailSender.send(message);
@@ -229,7 +249,7 @@ public class EmailService {
         }
     }
 
-    public String envioEmailCancelamentoAula(String nomeProfessor, String email, LocalDateTime dataHoraAgendamento) {
+    public String envioEmailCancelamentoAula(String nomeProfessor, String email, LocalDateTime dataHoraAgendamento, String nomeSala, String nomeEspecialidade) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -283,12 +303,38 @@ public class EmailService {
                                                    style="background-color:#f9f9f9; border:1px solid #e0e0e0; border-radius:6px; margin:24px 0;">
                                                 <tr>
                                                     <td style="padding:24px;">
-                                                        <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666; text-transform:uppercase;">
-                                                            Data e horário original
-                                                        </p>
-                                                        <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
-                                                            %s
-                                                        </p>
+                                                        <table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0">
+                                                            <tr>
+                                                                <td style="padding:0 0 16px 0;">
+                                                                    <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666; text-transform:uppercase;">
+                                                                        Data e horário original
+                                                                    </p>
+                                                                    <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                                        %s
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding:16px 0; border-top:1px solid #e0e0e0;">
+                                                                    <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666; text-transform:uppercase;">
+                                                                        Especialidade
+                                                                    </p>
+                                                                    <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                                        %s
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding:16px 0; border-top:1px solid #e0e0e0;">
+                                                                    <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666; text-transform:uppercase;">
+                                                                        Sala
+                                                                    </p>
+                                                                    <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                                        %s
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -316,7 +362,7 @@ public class EmailService {
                 </body>
                 </html>
                 """
-                    .formatted(nomeProfessor, dataHoraFormatada);
+                    .formatted(nomeProfessor, dataHoraFormatada, nomeEspecialidade, nomeSala);
 
             helper.setText(corpoHtml, true);
             mailSender.send(message);
@@ -331,7 +377,7 @@ public class EmailService {
     }
 
     public String enviarEmailAvisoDeAulaAtualizada(String nomeProfessor, List<String> listaNomesAlunos, String email,
-                                                    LocalDateTime dataHoraAgendamento) {
+                                                    LocalDateTime dataHoraAgendamento, String nomeSala, String nomeEspecialidade) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -404,6 +450,26 @@ public class EmailService {
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
+                                                                            <td style="padding:16px 0; border-top:1px solid #e0e0e0;">
+                                                                                <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666666; text-transform:uppercase; letter-spacing:0.5px;">
+                                                                                    Especialidade
+                                                                                </p>
+                                                                                <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                                                    %s
+                                                                                </p>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="padding:16px 0; border-top:1px solid #e0e0e0;">
+                                                                                <p style="margin:0 0 8px 0; font-size:13px; font-weight:600; color:#666666; text-transform:uppercase; letter-spacing:0.5px;">
+                                                                                    Sala
+                                                                                </p>
+                                                                                <p style="margin:0; font-size:16px; font-weight:600; color:#1a1a1a;">
+                                                                                    %s
+                                                                                </p>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
                                                                             <td style="padding:16px 0 0 0; border-top:1px solid #e0e0e0;">
                                                                                 <p style="margin:0 0 12px 0; font-size:13px; font-weight:600; color:#666666; text-transform:uppercase; letter-spacing:0.5px;">
                                                                                     Alunos Confirmados
@@ -446,7 +512,7 @@ public class EmailService {
                             </body>
                             </html>
                     """
-                    .formatted(nomeProfessor, dataHoraFormatada, listaAlunosHtml);
+                    .formatted(nomeProfessor, dataHoraFormatada, nomeEspecialidade, nomeSala, listaAlunosHtml);
 
             helper.setText(corpoHtml, true);
             mailSender.send(message);

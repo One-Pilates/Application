@@ -1,31 +1,26 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.EspecialidadeDTO;
-import com.onePilates.agendamento.dto.SalaDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.ProfessorPorEspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.SalasPorEspecialidadeResponseDTO;
-import com.onePilates.agendamento.model.Professor;
-import com.onePilates.agendamento.repository.ProfessorRepository;
 import com.onePilates.agendamento.service.EspecialidadeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/especialidades")
 @CrossOrigin(origins = "*")
 public class EspecialidadeController {
 
-    @Autowired
-    private EspecialidadeService especialidadeService;
+    private final EspecialidadeService especialidadeService;
 
-    @Autowired
-    private ProfessorRepository professorRepository;
+    public EspecialidadeController(EspecialidadeService especialidadeService) {
+        this.especialidadeService = especialidadeService;
+    }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")

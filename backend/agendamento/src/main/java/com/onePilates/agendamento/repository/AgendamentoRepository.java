@@ -154,4 +154,17 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
                                                                      @Param("dataHora") LocalDateTime dataHora,
                                                                      @Param("excludeId") Long excludeId);
 
+    // Métodos para buscar agendamentos conflitantes exatos (para mensagens de erro detalhadas)
+    @EntityGraph(attributePaths = {"professor", "sala", "especialidade"})
+    @Query("SELECT a FROM Agendamento a WHERE a.professor.id = :professorId AND a.dataHora = :dataHora AND (:excludeId IS NULL OR a.id != :excludeId)")
+    java.util.Optional<Agendamento> findByProfessorIdAndDataHoraExcludingId(@Param("professorId") Long professorId,
+                                                                             @Param("dataHora") LocalDateTime dataHora,
+                                                                             @Param("excludeId") Long excludeId);
+
+    @EntityGraph(attributePaths = {"professor", "sala", "especialidade"})
+    @Query("SELECT a FROM Agendamento a WHERE a.sala.id = :salaId AND a.dataHora = :dataHora AND (:excludeId IS NULL OR a.id != :excludeId)")
+    java.util.Optional<Agendamento> findBySalaIdAndDataHoraExcludingId(@Param("salaId") Long salaId,
+                                                                        @Param("dataHora") LocalDateTime dataHora,
+                                                                        @Param("excludeId") Long excludeId);
+
 }

@@ -51,7 +51,9 @@ class AgendamentoValidatorTest {
     @BeforeEach
     void setUp() {
         dto = new AgendamentoDTO();
-        dto.setDataHora(LocalDateTime.now().plusDays(1));
+        // Usar horário fixo válido (14:00) para evitar problemas com validação de horário
+        LocalDateTime dataHoraValida = LocalDateTime.now().plusDays(1).withHour(14).withMinute(0).withSecond(0).withNano(0);
+        dto.setDataHora(dataHoraValida);
         dto.setSalaId(1L);
         dto.setProfessorId(1L);
         dto.setEspecialidadeId(1L);
@@ -91,21 +93,21 @@ class AgendamentoValidatorTest {
 
     @Test
     void validar_DevePassar_QuandoTodosOsDadosSaoValidos() {
-        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
-        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
-        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
-        when(alunoRepository.findAllById(any())).thenReturn(alunos);
-        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(false);
-        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
-        when(agendamentoRepository.findAgendamentosByAlunoAndDataHora(any(), any())).thenReturn(Collections.emptyList());
-        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
-
         // Configurar especialidades para validação
         Especialidade esp = new Especialidade();
         esp.setId(1L);
         esp.setNome("Pilates Clássico");
         sala.setEspecialidades(Set.of(esp));
         professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), any())).thenReturn(Collections.emptyList());
 
         assertDoesNotThrow(() -> validator.validar(dto));
     }
@@ -134,10 +136,7 @@ class AgendamentoValidatorTest {
         when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
         when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
         when(alunoRepository.findAllById(any())).thenReturn(alunos);
-        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(false);
-        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
-        when(agendamentoRepository.findAgendamentosByAlunoAndDataHora(any(), any())).thenReturn(Collections.emptyList());
-        // Nota: ausenciaRepository não é mockado aqui porque a exceção é lançada antes de chegar à validação de ausência
+        // Nota: Não mockamos conflitos ou ausências porque a exceção é lançada na validação de lotação (antes)
 
         assertThrows(SalaLotadaException.class, () -> validator.validar(dto));
     }
@@ -164,10 +163,7 @@ class AgendamentoValidatorTest {
         when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
         when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
         when(alunoRepository.findAllById(any())).thenReturn(alunos);
-        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(false);
-        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
-        when(agendamentoRepository.findAgendamentosByAlunoAndDataHora(any(), any())).thenReturn(Collections.emptyList());
-        // Nota: ausenciaRepository não é mockado aqui porque a exceção é lançada antes de chegar à validação de ausência
+        // Nota: Não mockamos conflitos ou ausências porque a exceção é lançada na validação de equipamentos (antes)
 
         assertThrows(EquipamentoPCDInsuficienteException.class, () -> validator.validar(dto));
     }
@@ -181,11 +177,27 @@ class AgendamentoValidatorTest {
 
     @Test
     void validar_DeveLancarConflitoHorarioException_QuandoSalaJaEstaOcupada() {
+        // Configurar especialidades para validação
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        esp.setNome("Pilates Clássico");
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        // Criar um agendamento conflitante para a mensagem de erro
+        Agendamento agendamentoConflitante = new Agendamento();
+        agendamentoConflitante.setProfessor(professor);
+        agendamentoConflitante.setSala(sala);
+
         when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
         when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
         when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
         when(alunoRepository.findAllById(any())).thenReturn(alunos);
-        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(true);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(true);
+        when(agendamentoRepository.findBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(Optional.of(agendamentoConflitante));
+        // Nota: Não mockamos findAgendamentosByAlunoAndDataHoraExcludingId porque a exceção é lançada antes (conflito de sala)
 
         assertThrows(ConflitoHorarioException.class, () -> validator.validar(dto));
     }
