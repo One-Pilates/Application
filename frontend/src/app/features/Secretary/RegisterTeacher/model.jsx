@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const API_URL = "http://localhost:8080/api";
 
@@ -76,6 +77,12 @@ export const useRegisterTeacherModel = () => {
       setEspecialidades(response.data);
     } catch (error) {
       console.error("❌ Erro ao buscar especialidades:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao carregar especialidades",
+        text: "Não foi possível carregar as especialidades. Tente recarregar a página.",
+        confirmButtonColor: "#3b82f6",
+      });
     }
   };
 
@@ -90,7 +97,6 @@ export const useRegisterTeacherModel = () => {
         console.log("📍 Resposta ViaCEP:", data);
         
         if (!data.erro) {
-          // Mapear nome completo do estado
           const estadosMap = {
             'AC': 'Acre', 'AL': 'Alagoas', 'AP': 'Amapá', 'AM': 'Amazonas',
             'BA': 'Bahia', 'CE': 'Ceará', 'DF': 'Distrito Federal', 
@@ -120,11 +126,21 @@ export const useRegisterTeacherModel = () => {
           }));
         } else {
           console.log("❌ CEP não encontrado");
-          alert("CEP não encontrado!");
+          Swal.fire({
+            icon: "warning",
+            title: "CEP não encontrado",
+            text: "Verifique o CEP digitado e tente novamente.",
+            confirmButtonColor: "#3b82f6",
+          });
         }
       } catch (err) {
         console.error("❌ Erro ao buscar CEP:", err);
-        alert("Erro ao buscar CEP. Tente novamente.");
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao buscar CEP",
+          text: "Não foi possível consultar o CEP. Tente novamente.",
+          confirmButtonColor: "#3b82f6",
+        });
       }
     }
   };
@@ -235,7 +251,12 @@ export const useRegisterTeacherModel = () => {
       }
     } else {
       console.log("❌ Validação falhou, mostrando erros");
-      alert("Por favor, preencha todos os campos obrigatórios.");
+      Swal.fire({
+        icon: "warning",
+        title: "Campos obrigatórios",
+        text: "Por favor, preencha todos os campos obrigatórios corretamente.",
+        confirmButtonColor: "#3b82f6",
+      });
     }
   };
 
@@ -280,26 +301,13 @@ export const useRegisterTeacherModel = () => {
       const senhaGerada = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-4) + "A1!";
       console.log("🔐 Senha gerada:", senhaGerada);
       
-      // Validação final antes de enviar
-      console.log("🔍 Validando dados antes de enviar...");
-      console.log("   Nome:", dadosPessoais.nomeCompleto);
-      console.log("   Email:", dadosPessoais.email);
-      console.log("   CPF:", dadosPessoais.cpf);
-      console.log("   Data Nascimento:", dadosPessoais.dataNascimento);
-      console.log("   Telefone:", dadosPessoais.telefone);
-      console.log("   Cargo:", informacoesProfissionais.cargo);
-      console.log("   Especialidades:", informacoesProfissionais.especialidades);
-      console.log("   CEP:", endereco.cep);
-      console.log("   UF:", endereco.uf);
-      
-      // ⚠️ CRITICAL: Remover campos imagem e foto - são MultipartFile no backend
       const payload = {
         nome: dadosPessoais.nomeCompleto.trim(),
         email: dadosPessoais.email.trim().toLowerCase(),
         cpf: dadosPessoais.cpf.replace(/\D/g, ""),
         idade: dadosPessoais.dataNascimento,
         status: true,
-        foto: null, // String ou null
+        foto: null,
         observacoes: informacoesProfissionais.observacoes?.trim() || "",
         notificacaoAtiva: informacoesProfissionais.notificacaoAtiva,
         senha: senhaGerada,
@@ -307,7 +315,7 @@ export const useRegisterTeacherModel = () => {
         role: "PROFESSOR",
         endereco: {
           rua: endereco.logradouro.trim(),
-          numero: endereco.numero === "S/N" ? "0" : endereco.numero.trim(), // Converte S/N para 0
+          numero: endereco.numero === "S/N" ? "0" : endereco.numero.trim(),
           bairro: endereco.bairro.trim(),
           cidade: endereco.cidade.trim(),
           estado: endereco.estado.trim(),
@@ -315,16 +323,10 @@ export const useRegisterTeacherModel = () => {
           uf: endereco.uf
         },
         telefone: dadosPessoais.telefone.replace(/\D/g, ""),
-        // ⚠️ NÃO ENVIAR imagem aqui - é MultipartFile
         especialidadeIds: informacoesProfissionais.especialidades
       };
       
-      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-      console.log("📦 PAYLOAD COMPLETO:");
-      console.log(JSON.stringify(payload, null, 2));
-      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-
-      console.log("📡 Enviando requisição POST para:", `${API_URL}/professores`);
+      console.log("📦 PAYLOAD:", JSON.stringify(payload, null, 2));
 
       const response = await axios.post(`${API_URL}/professores`, payload, {
         headers: {
@@ -333,12 +335,7 @@ export const useRegisterTeacherModel = () => {
         },
       });
 
-      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-      console.log("✅ SUCESSO! Professor cadastrado!");
-      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-      console.log("Resposta do servidor:", response.data);
-      console.log("Status:", response.status);
-      console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+      console.log("✅ SUCESSO! Professor cadastrado:", response.data);
 
       // Se tiver foto, fazer upload separado
       if (dadosPessoais.fotoPerfil && response.data.id) {
@@ -351,38 +348,53 @@ export const useRegisterTeacherModel = () => {
         }
       }
 
-      alert(`✅ Professor cadastrado com sucesso!\n\nSenha gerada: ${senhaGerada}\n\n(Guarde esta senha para o primeiro acesso)`);
+      await Swal.fire({
+        icon: "success",
+        title: "Professor cadastrado com sucesso!",
+        html: `
+          <div style="text-align: left; padding: 1rem;">
+            <p><strong>Nome:</strong> ${dadosPessoais.nomeCompleto}</p>
+            <p><strong>Email:</strong> ${dadosPessoais.email}</p>
+            <p style="margin-top: 1rem; padding: 1rem; background: #fef3c7; border-radius: 8px;">
+              <strong>🔐 Senha gerada:</strong><br/>
+              <code style="font-size: 1.2rem; color: #92400e;">${senhaGerada}</code><br/>
+              <small style="color: #92400e;">Guarde esta senha para o primeiro acesso</small>
+            </p>
+          </div>
+        `,
+        confirmButtonText: "OK, entendi!",
+        confirmButtonColor: "#22c55e",
+        width: "600px",
+      });
+
       navigate("/secretaria/professor");
       
     } catch (error) {
-      console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-      console.error("❌ ERRO NO CADASTRO!");
-      console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-      console.error("Status:", error.response?.status);
-      console.error("Mensagem do servidor:", error.response?.data);
-      console.error("Erro completo:", error);
-      console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+      console.error("❌ ERRO NO CADASTRO:", error);
       
       let mensagemErro = "Erro ao cadastrar professor";
+      let detalhes = "";
       
       if (error.response?.status === 409) {
-        mensagemErro = "❌ CPF ou Email já cadastrado no sistema!\n\nVerifique os dados e tente novamente com informações diferentes.";
+        mensagemErro = "CPF ou Email já cadastrado";
+        detalhes = "Este CPF ou email já existe no sistema. Verifique os dados e tente novamente.";
       } else if (error.response?.status === 400) {
-        const msgServidor = error.response?.data;
-        if (typeof msgServidor === 'string') {
-          mensagemErro = `❌ Erro de validação:\n\n${msgServidor}`;
-        } else {
-          mensagemErro = "❌ Dados inválidos. Verifique todos os campos.";
-        }
+        mensagemErro = "Dados inválidos";
+        detalhes = error.response?.data || "Verifique todos os campos e tente novamente.";
       } else if (error.response?.status === 401) {
-        mensagemErro = "❌ Sessão expirada. Faça login novamente.";
-      } else if (error.response?.data?.erro) {
-        mensagemErro = `❌ ${error.response.data.erro}`;
+        mensagemErro = "Sessão expirada";
+        detalhes = "Sua sessão expirou. Faça login novamente.";
       } else if (error.message) {
-        mensagemErro = `❌ ${error.message}`;
+        mensagemErro = "Erro ao cadastrar";
+        detalhes = error.message;
       }
       
-      alert(mensagemErro);
+      await Swal.fire({
+        icon: "error",
+        title: mensagemErro,
+        text: detalhes,
+        confirmButtonColor: "#ef4444",
+      });
     } finally {
       setCadastrando(false);
       console.log("🏁 Processo de cadastro finalizado");
@@ -399,7 +411,6 @@ export const useRegisterTeacherModel = () => {
       const token = localStorage.getItem("token");
       console.log("📤 Enviando foto do professor ID:", professorId);
       
-      // Converter base64 para File se necessário
       let arquivo;
       if (typeof dadosPessoais.fotoPerfil === 'string' && dadosPessoais.fotoPerfil.startsWith('data:')) {
         console.log("🔄 Convertendo base64 para File...");
