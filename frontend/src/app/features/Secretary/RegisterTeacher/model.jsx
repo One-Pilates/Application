@@ -90,15 +90,29 @@ export const useRegisterTeacherModel = () => {
         console.log("📍 Resposta ViaCEP:", data);
         
         if (!data.erro) {
+          // Mapear nome completo do estado
+          const estadosMap = {
+            'AC': 'Acre', 'AL': 'Alagoas', 'AP': 'Amapá', 'AM': 'Amazonas',
+            'BA': 'Bahia', 'CE': 'Ceará', 'DF': 'Distrito Federal', 
+            'ES': 'Espírito Santo', 'GO': 'Goiás', 'MA': 'Maranhão',
+            'MT': 'Mato Grosso', 'MS': 'Mato Grosso do Sul', 
+            'MG': 'Minas Gerais', 'PA': 'Pará', 'PB': 'Paraíba',
+            'PR': 'Paraná', 'PE': 'Pernambuco', 'PI': 'Piauí',
+            'RJ': 'Rio de Janeiro', 'RN': 'Rio Grande do Norte',
+            'RS': 'Rio Grande do Sul', 'RO': 'Rondônia', 'RR': 'Roraima',
+            'SC': 'Santa Catarina', 'SP': 'São Paulo', 
+            'SE': 'Sergipe', 'TO': 'Tocantins'
+          };
+          
           const novoEndereco = {
             logradouro: data.logradouro || "",
             bairro: data.bairro || "",
             cidade: data.localidade || "",
-            estado: data.uf || "",
             uf: data.uf || "",
+            estado: estadosMap[data.uf] || data.uf || "",
           };
           
-          console.log("✅ Preenchendo endereço:", novoEndereco);
+          console.log("✅ Preenchendo endereço automático:", novoEndereco);
           
           setEndereco(prev => ({
             ...prev,
@@ -163,8 +177,9 @@ export const useRegisterTeacherModel = () => {
         novosErros.logradouro = "Logradouro obrigatório";
         console.log("❌ Logradouro vazio");
       }
-      if (!endereco.numero.trim()) {
-        novosErros.numero = "Número obrigatório";
+      // Número é OPCIONAL - pode ser "0", "S/N" ou qualquer valor
+      if (!endereco.numero || !endereco.numero.trim()) {
+        novosErros.numero = "Número obrigatório (ou marque 'Sem número')";
         console.log("❌ Número vazio");
       }
       if (!endereco.bairro.trim()) {
@@ -292,7 +307,7 @@ export const useRegisterTeacherModel = () => {
         role: "PROFESSOR",
         endereco: {
           rua: endereco.logradouro.trim(),
-          numero: endereco.numero.trim(),
+          numero: endereco.numero === "S/N" ? "0" : endereco.numero.trim(), // Converte S/N para 0
           bairro: endereco.bairro.trim(),
           cidade: endereco.cidade.trim(),
           estado: endereco.estado.trim(),

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Input from "../components/Input";
 import "./endereco.scss";
 
@@ -7,6 +8,15 @@ export default function EnderecoScreen({
   buscarCep,
   erros = {},
 }) {
+  const [semNumero, setSemNumero] = useState(false);
+
+  // Verifica se o número é "0" ou "S/N" para marcar o checkbox
+  useEffect(() => {
+    if (dados.numero === "0" || dados.numero === "S/N" || dados.numero === "s/n") {
+      setSemNumero(true);
+    }
+  }, [dados.numero]);
+
   const manipularCep = (valor) => {
     atualizar({ cep: valor });
 
@@ -14,6 +24,17 @@ export default function EnderecoScreen({
     if (valor.replace(/\D/g, "").length === 8) {
       console.log("🔍 Chamando buscarCep para:", valor);
       buscarCep(valor);
+    }
+  };
+
+  const toggleSemNumero = (checked) => {
+    setSemNumero(checked);
+    if (checked) {
+      console.log("✅ Sem número marcado - enviando '0'");
+      atualizar({ numero: "0" });
+    } else {
+      console.log("❌ Sem número desmarcado - limpando campo");
+      atualizar({ numero: "" });
     }
   };
 
@@ -40,14 +61,27 @@ export default function EnderecoScreen({
           erro={erros.logradouro}
         />
 
-        <Input
-          label="Número"
-          placeholder="539"
-          value={dados.numero}
-          onChange={(e) => atualizar({ numero: e.target.value })}
-          required
-          erro={erros.numero}
-        />
+        {/* Campo Número com Checkbox Sem Número */}
+        <div className="numero-wrapper">
+          <Input
+            label="Número"
+            placeholder="539"
+            value={semNumero ? "S/N" : dados.numero}
+            onChange={(e) => atualizar({ numero: e.target.value })}
+            required={!semNumero}
+            erro={erros.numero}
+            disabled={semNumero}
+          />
+          <div className="sem-numero-checkbox">
+            <input
+              type="checkbox"
+              id="semNumero"
+              checked={semNumero}
+              onChange={(e) => toggleSemNumero(e.target.checked)}
+            />
+            <label htmlFor="semNumero">Sem número</label>
+          </div>
+        </div>
 
         <Input
           label="Bairro"
@@ -74,6 +108,8 @@ export default function EnderecoScreen({
           onChange={(e) => atualizar({ estado: e.target.value })}
           required
           erro={erros.estado}
+          disabled
+          style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
         />
 
         <div className="select-wrapper">
@@ -83,41 +119,78 @@ export default function EnderecoScreen({
           <select
             className={`select-field ${erros.uf ? "select-error" : ""}`}
             value={dados.uf}
-            onChange={(e) => atualizar({ uf: e.target.value })}
+            onChange={(e) => {
+              console.log("🔄 UF alterado manualmente para:", e.target.value);
+              atualizar({ uf: e.target.value, estado: getEstadoNome(e.target.value) });
+            }}
             required
           >
             <option value="">Selecione</option>
-            <option value="AC">AC</option>
-            <option value="AL">AL</option>
-            <option value="AP">AP</option>
-            <option value="AM">AM</option>
-            <option value="BA">BA</option>
-            <option value="CE">CE</option>
-            <option value="DF">DF</option>
-            <option value="ES">ES</option>
-            <option value="GO">GO</option>
-            <option value="MA">MA</option>
-            <option value="MT">MT</option>
-            <option value="MS">MS</option>
-            <option value="MG">MG</option>
-            <option value="PA">PA</option>
-            <option value="PB">PB</option>
-            <option value="PR">PR</option>
-            <option value="PE">PE</option>
-            <option value="PI">PI</option>
-            <option value="RJ">RJ</option>
-            <option value="RN">RN</option>
-            <option value="RS">RS</option>
-            <option value="RO">RO</option>
-            <option value="RR">RR</option>
-            <option value="SC">SC</option>
-            <option value="SP">SP</option>
-            <option value="SE">SE</option>
-            <option value="TO">TO</option>
+            <option value="AC">AC - Acre</option>
+            <option value="AL">AL - Alagoas</option>
+            <option value="AP">AP - Amapá</option>
+            <option value="AM">AM - Amazonas</option>
+            <option value="BA">BA - Bahia</option>
+            <option value="CE">CE - Ceará</option>
+            <option value="DF">DF - Distrito Federal</option>
+            <option value="ES">ES - Espírito Santo</option>
+            <option value="GO">GO - Goiás</option>
+            <option value="MA">MA - Maranhão</option>
+            <option value="MT">MT - Mato Grosso</option>
+            <option value="MS">MS - Mato Grosso do Sul</option>
+            <option value="MG">MG - Minas Gerais</option>
+            <option value="PA">PA - Pará</option>
+            <option value="PB">PB - Paraíba</option>
+            <option value="PR">PR - Paraná</option>
+            <option value="PE">PE - Pernambuco</option>
+            <option value="PI">PI - Piauí</option>
+            <option value="RJ">RJ - Rio de Janeiro</option>
+            <option value="RN">RN - Rio Grande do Norte</option>
+            <option value="RS">RS - Rio Grande do Sul</option>
+            <option value="RO">RO - Rondônia</option>
+            <option value="RR">RR - Roraima</option>
+            <option value="SC">SC - Santa Catarina</option>
+            <option value="SP">SP - São Paulo</option>
+            <option value="SE">SE - Sergipe</option>
+            <option value="TO">TO - Tocantins</option>
           </select>
           {erros.uf && <span className="select-error-message">{erros.uf}</span>}
         </div>
       </div>
     </div>
   );
+}
+
+// Função helper para converter UF em nome do estado
+function getEstadoNome(uf) {
+  const estados = {
+    'AC': 'Acre',
+    'AL': 'Alagoas',
+    'AP': 'Amapá',
+    'AM': 'Amazonas',
+    'BA': 'Bahia',
+    'CE': 'Ceará',
+    'DF': 'Distrito Federal',
+    'ES': 'Espírito Santo',
+    'GO': 'Goiás',
+    'MA': 'Maranhão',
+    'MT': 'Mato Grosso',
+    'MS': 'Mato Grosso do Sul',
+    'MG': 'Minas Gerais',
+    'PA': 'Pará',
+    'PB': 'Paraíba',
+    'PR': 'Paraná',
+    'PE': 'Pernambuco',
+    'PI': 'Piauí',
+    'RJ': 'Rio de Janeiro',
+    'RN': 'Rio Grande do Norte',
+    'RS': 'Rio Grande do Sul',
+    'RO': 'Rondônia',
+    'RR': 'Roraima',
+    'SC': 'Santa Catarina',
+    'SP': 'São Paulo',
+    'SE': 'Sergipe',
+    'TO': 'Tocantins'
+  };
+  return estados[uf] || '';
 }
