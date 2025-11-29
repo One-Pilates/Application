@@ -139,8 +139,8 @@ INSERT INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
 -- 5. INSERIR ADMINISTRADOR
 -- ============================================
 -- Hash BCrypt da senha: $2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone) VALUES
-('Administrador', 'admin@onepilates.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'ADMINISTRADOR', '00000000000', '1980-01-01', TRUE, TRUE, 'Administrador', 1, '(11) 99999-0000');
+INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+('Administrador', 'admin@onepilates.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'ADMINISTRADOR', '00000000000', '1980-01-01', TRUE, TRUE, 'Administrador', 1, '(11) 99999-0000', FALSE);
 
 INSERT INTO administrador (id) VALUES (1);
 
@@ -148,14 +148,14 @@ INSERT INTO administrador (id) VALUES (1);
 -- 6. INSERIR PROFESSORES
 -- ============================================
 -- Professor 1: Andrei Scafi
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone) VALUES
-('Andrei Scafi', 'andreiscafi@gmail.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '11122233300', '1990-05-15', TRUE, TRUE, 'Professor de Pilates', 2, '(11) 99999-1111');
+INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+('Andrei Scafi', 'andreiscafi@gmail.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '11122233300', '1990-05-15', TRUE, TRUE, 'Professor de Pilates', 2, '(11) 99999-1111', TRUE);
 
 INSERT INTO professor (id) VALUES (2);
 
 -- Professor 2: Guilherme Queiroz
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone) VALUES
-('Guilherme Queiroz', 'guilherme@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '22233344400', '1985-08-20', TRUE, TRUE, 'Professor de Pilates', 3, '(11) 99999-2222');
+INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+('Guilherme Queiroz', 'andrei.vasconcelos@sptech.school', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '22233344400', '1985-08-20', TRUE, TRUE, 'Professor de Pilates', 3, '(11) 99999-2222', TRUE);
 
 INSERT INTO professor (id) VALUES (3);
 
@@ -178,8 +178,8 @@ INSERT INTO professor_especialidade (professor_id, especialidade_id) VALUES
 -- 8. INSERIR SECRETÁRIA
 -- ============================================
 -- Secretária: Amanda
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone) VALUES
-('Amanda', 'amanda@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'SECRETARIA', '33344455500', '1992-03-10', TRUE, TRUE, 'Secretária', 4, '(11) 99999-3333');
+INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+('Amanda', 'amanda@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'SECRETARIA', '33344455500', '1992-03-10', TRUE, TRUE, 'Secretária', 4, '(11) 99999-3333', FALSE);
 
 INSERT INTO secretaria (id) VALUES (4);
 
@@ -209,122 +209,842 @@ INSERT INTO aluno (nome, email, cpf, data_nascimento, status, aluno_com_limitaco
 ('Thiago Campos', 'thiago.campos@email.com', '21212121212', '1990-08-30', TRUE, FALSE, 'EMAIL', TRUE, NULL, 24);
 
 -- ============================================
--- 10. INSERIR AGENDAMENTOS PARA O PROFESSOR ANDREI SCAFI
+-- 10. INSERIR AGENDAMENTOS PARA O PROFESSOR GUILHERME QUEIROZ
 -- ============================================
--- Professor Andrei (ID: 2) - Especialidades: Pilates (1), RPG (3), Fisioterapia (7)
+-- Professor Guilherme (ID: 3) - Especialidades: Pilates (1), RPG (3), Fisioterapia (7)
 -- Salas: Sala Grande 1 (1) ou Sala Grande 2 (2)
+-- Regras: Segunda a Sexta, 9h-18h (hora cheia), excluindo 12h-13h (almoço)
 
 -- AGOSTO 2025
 INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-08-04 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-08-04 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-08-05 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-08-05 10:00:00', 2, 1, 3), -- Terça - RPG
-('2025-08-07 08:00:00', 2, 1, 1), -- Quinta - Pilates
-('2025-08-07 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-08-08 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 09/08 sábado)
-('2025-08-11 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-08-11 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-08-12 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-08-14 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-08-15 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 16/08 sábado)
-('2025-08-18 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-08-19 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-08-21 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-08-22 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 23/08 sábado)
-('2025-08-25 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-08-25 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-08-26 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-08-28 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-08-29 09:00:00', 2, 1, 3); -- Sexta - RPG (ajustado de 30/08 sábado)
+('2025-08-04 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-08-04 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-08-04 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-08-04 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-08-05 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-08-05 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-08-05 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-08-05 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-08-06 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-08-06 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-08-06 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-08-06 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-08-07 09:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-08-07 11:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-08-07 15:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-08-07 17:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-08-08 09:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-08-08 11:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-08-08 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-08-08 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-08-11 09:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-08-11 11:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-08-11 15:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-08-11 17:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-08-12 09:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-08-12 11:00:00', 3, 2, 3), -- Terça - RPG
+('2025-08-12 13:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-08-12 15:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-08-13 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-08-13 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-08-13 14:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-08-13 16:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-08-14 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-08-14 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-08-14 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-08-14 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-08-15 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-08-15 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-08-15 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-08-15 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-08-18 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-08-18 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-08-18 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-08-18 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-08-19 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-08-19 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-08-19 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-08-19 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-08-20 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-08-20 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-08-20 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-08-20 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-08-21 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-08-21 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-08-21 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-08-21 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-08-22 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-08-22 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-08-22 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-08-22 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-08-25 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-08-25 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-08-25 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-08-25 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-08-26 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-08-26 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-08-26 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-08-26 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-08-27 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-08-27 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-08-27 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-08-27 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-08-28 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-08-28 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-08-28 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-08-28 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-08-29 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-08-29 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-08-29 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-08-29 15:00:00', 3, 2, 1); -- Sexta - Pilates
 
 -- SETEMBRO 2025
 INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-09-01 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-09-01 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-09-02 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-09-04 10:00:00', 2, 1, 3), -- Quinta - RPG
-('2025-09-05 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 06/09 sábado)
-('2025-09-08 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-09-08 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-09-09 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-09-11 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-09-12 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 13/09 sábado)
-('2025-09-15 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-09-16 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-09-18 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-09-19 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 20/09 sábado)
-('2025-09-22 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-09-22 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-09-23 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-09-25 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-09-26 09:00:00', 2, 1, 3); -- Sexta - RPG (ajustado de 27/09 sábado)
+('2025-09-01 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-09-01 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-09-01 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-09-01 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-09-02 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-09-02 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-09-02 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-09-02 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-09-03 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-09-03 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-09-03 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-09-03 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-09-04 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-09-04 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-09-04 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-09-04 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-09-05 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-09-05 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-09-05 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-09-05 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-09-08 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-09-08 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-09-08 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-09-08 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-09-09 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-09-09 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-09-09 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-09-09 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-09-10 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-09-10 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-09-10 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-09-10 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-09-11 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-09-11 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-09-11 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-09-11 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-09-12 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-09-12 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-09-12 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-09-12 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-09-15 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-09-15 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-09-15 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-09-15 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-09-16 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-09-16 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-09-16 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-09-16 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-09-17 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-09-17 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-09-17 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-09-17 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-09-18 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-09-18 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-09-18 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-09-18 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-09-19 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-09-19 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-09-19 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-09-19 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-09-22 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-09-22 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-09-22 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-09-22 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-09-23 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-09-23 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-09-23 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-09-23 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-09-24 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-09-24 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-09-24 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-09-24 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-09-25 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-09-25 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-09-25 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-09-25 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-09-26 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-09-26 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-09-26 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-09-26 15:00:00', 3, 2, 1); -- Sexta - Pilates
 
 -- OUTUBRO 2025
 INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-10-01 08:00:00', 2, 1, 1), -- Quarta - Pilates
-('2025-10-02 10:00:00', 2, 1, 3), -- Quinta - RPG
-('2025-10-03 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 04/10 sábado)
-('2025-10-06 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-10-06 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-10-07 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-10-09 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-10-10 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 11/10 sábado)
-('2025-10-13 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-10-13 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-10-14 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-10-16 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-10-17 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 18/10 sábado)
-('2025-10-20 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-10-21 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-10-23 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-10-24 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 25/10 sábado)
-('2025-10-27 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-10-27 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-10-28 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-10-30 14:00:00', 2, 2, 7); -- Quinta - Fisioterapia
+('2025-10-01 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-01 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-10-01 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-10-01 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-02 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-02 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-10-02 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-02 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-10-03 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-10-03 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-03 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-10-03 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-06 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-10-06 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-10-06 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-10-06 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-10-07 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-10-07 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-10-07 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-10-07 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-10-08 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-08 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-10-08 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-10-08 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-09 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-09 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-10-09 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-09 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-10-10 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-10-10 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-10 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-10-10 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-13 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-10-13 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-10-13 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-10-13 17:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-10-14 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-10-14 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-10-14 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-10-14 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-10-15 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-15 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-10-15 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-10-15 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-16 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-16 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-10-16 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-16 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-10-17 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-10-17 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-17 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-10-17 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-20 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-10-20 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-10-20 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-10-20 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-10-21 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-10-21 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-10-21 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-10-21 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-10-22 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-22 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-10-22 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-10-22 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-23 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-23 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-10-23 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-23 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-10-24 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-10-24 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-24 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-10-24 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-27 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-10-27 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-10-27 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-10-27 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-10-28 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-10-28 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-10-28 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-10-28 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-10-29 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-29 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-10-29 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-10-29 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-10-30 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-30 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-10-30 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-10-30 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-10-31 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-10-31 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-10-31 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-10-31 15:00:00', 3, 2, 1); -- Sexta - Pilates
 
 -- NOVEMBRO 2025
 INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-10-31 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 01/11 sábado)
-('2025-11-03 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-11-03 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-11-04 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-11-06 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-11-07 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 08/11 sábado)
-('2025-11-10 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-11-10 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-11-11 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-11-13 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-11-14 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 15/11 sábado)
-('2025-11-17 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-11-18 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-11-20 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-11-21 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 22/11 sábado)
-('2025-11-24 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-11-24 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-11-25 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-11-27 14:00:00', 2, 2, 7); -- Quinta - Fisioterapia
+('2025-11-03 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-11-03 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-11-03 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-11-03 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-11-04 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-11-04 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-11-04 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-11-04 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-11-05 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-11-05 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-11-05 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-11-05 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-11-06 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-11-06 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-11-06 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-11-06 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-11-07 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-11-07 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-11-07 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-11-07 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-11-10 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-11-10 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-11-10 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-11-10 17:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-11-11 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-11-11 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-11-11 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-11-11 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-11-12 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-11-12 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-11-12 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-11-12 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-11-13 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-11-13 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-11-13 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-11-13 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-11-14 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-11-14 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-11-14 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-11-14 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-11-17 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-11-17 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-11-17 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-11-17 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-11-18 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-11-18 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-11-18 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-11-18 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-11-19 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-11-19 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-11-19 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-11-19 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-11-20 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-11-20 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-11-20 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-11-20 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-11-21 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-11-21 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-11-21 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-11-21 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-11-24 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-11-24 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-11-24 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-11-24 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-11-25 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-11-25 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-11-25 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-11-25 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-11-26 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-11-26 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-11-26 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-11-26 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-11-27 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-11-27 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-11-27 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-11-27 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-11-28 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-11-28 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-11-28 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-11-28 15:00:00', 3, 2, 1); -- Sexta - Pilates
 
 -- DEZEMBRO 2025
 INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-12-01 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-12-01 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-12-02 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-12-04 10:00:00', 2, 1, 3), -- Quinta - RPG
-('2025-12-05 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 06/12 sábado)
-('2025-12-08 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-12-08 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-12-09 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-12-11 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-12-12 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 13/12 sábado)
-('2025-12-15 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-12-15 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-12-16 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-12-18 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-12-19 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 20/12 sábado)
-('2025-12-22 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-12-22 14:00:00', 2, 2, 7); -- Segunda - Fisioterapia
+('2025-12-01 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-12-01 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-12-01 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-12-01 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-12-02 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-12-02 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-12-02 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-12-02 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-12-03 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-12-03 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-12-03 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-12-03 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-12-04 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-12-04 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-12-04 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-12-04 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-12-05 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-12-05 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-12-05 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-12-05 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-12-08 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-12-08 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-12-08 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-12-08 17:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-12-09 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-12-09 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-12-09 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-12-09 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-12-10 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-12-10 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-12-10 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-12-10 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-12-11 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-12-11 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-12-11 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-12-11 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-12-12 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-12-12 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-12-12 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-12-12 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-12-15 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-12-15 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-12-15 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-12-15 15:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-12-16 09:00:00', 3, 2, 3), -- Terça - RPG
+('2025-12-16 11:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-12-16 14:00:00', 3, 2, 7), -- Terça - Fisioterapia
+('2025-12-16 16:00:00', 3, 2, 1), -- Terça - Pilates
+('2025-12-17 09:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-12-17 11:00:00', 3, 2, 3), -- Quarta - RPG
+('2025-12-17 13:00:00', 3, 2, 7), -- Quarta - Fisioterapia
+('2025-12-17 15:00:00', 3, 2, 1), -- Quarta - Pilates
+('2025-12-18 09:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-12-18 11:00:00', 3, 2, 3), -- Quinta - RPG
+('2025-12-18 15:00:00', 3, 2, 1), -- Quinta - Pilates
+('2025-12-18 17:00:00', 3, 2, 7), -- Quinta - Fisioterapia
+('2025-12-19 09:00:00', 3, 2, 3), -- Sexta - RPG
+('2025-12-19 11:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-12-19 13:00:00', 3, 2, 7), -- Sexta - Fisioterapia
+('2025-12-19 15:00:00', 3, 2, 1), -- Sexta - Pilates
+('2025-12-22 09:00:00', 3, 2, 1), -- Segunda - Pilates
+('2025-12-22 11:00:00', 3, 2, 3), -- Segunda - RPG
+('2025-12-22 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
+('2025-12-22 15:00:00', 3, 2, 1); -- Segunda - Pilates
+
+-- ============================================
+-- 10.1 INSERIR AGENDAMENTOS PARA O PROFESSOR ANDREI SCAFI
+-- ============================================
+-- Professor Andrei (ID: 2) - Especialidades: Pilates (1), RPG (3), Fisioterapia (7)
+-- Salas: Sala Grande 1 (1) ou Sala Grande 2 (2)
+-- Regras: Segunda a Sexta, 9h-18h (hora cheia), excluindo 12h-13h (almoço)
+-- IMPORTANTE: Respeitar conflitos com agendamentos do professor Guilherme (sala e alunos)
+-- Estratégia: Andrei usa principalmente Sala Grande 1, Guilherme usa Sala Grande 2
+
+-- AGOSTO 2025
+INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
+('2025-08-04 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-04 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-08-04 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-08-04 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-08-05 10:00:00', 2, 1, 1), -- Terça - Pilates (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-08-05 13:00:00', 2, 1, 3), -- Terça - RPG
+('2025-08-05 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-08-05 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-08-06 10:00:00', 2, 1, 3), -- Quarta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-06 14:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-08-06 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-08-06 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-08-07 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-08-07 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-08-07 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-08-07 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-08-08 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-08 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-08-08 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-08-08 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-08-11 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-08-11 13:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-08-11 14:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-08-11 16:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-08-12 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-12 14:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-08-12 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-08-12 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-08-13 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-08-13 15:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-08-13 17:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-08-13 18:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-08-14 10:00:00', 2, 1, 3), -- Quinta - RPG (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-08-14 13:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-08-14 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-08-14 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-08-15 10:00:00', 2, 1, 1), -- Sexta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-15 14:00:00', 2, 1, 3), -- Sexta - RPG
+('2025-08-15 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-08-15 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-08-18 10:00:00', 2, 1, 3), -- Segunda - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-18 14:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-08-18 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-08-18 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-08-19 10:00:00', 2, 1, 1), -- Terça - Pilates (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-08-19 13:00:00', 2, 1, 3), -- Terça - RPG
+('2025-08-19 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-08-19 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-08-20 10:00:00', 2, 1, 3), -- Quarta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-20 14:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-08-20 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-08-20 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-08-21 10:00:00', 2, 1, 3), -- Quinta - RPG (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-08-21 13:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-08-21 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-08-21 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-08-22 10:00:00', 2, 1, 1), -- Sexta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-22 14:00:00', 2, 1, 3), -- Sexta - RPG
+('2025-08-22 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-08-22 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-08-25 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-25 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-08-25 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-08-25 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-08-26 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-08-26 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-08-26 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-08-26 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-08-27 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-27 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-08-27 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-08-27 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-08-28 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-08-28 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-08-28 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-08-28 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-08-29 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-08-29 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-08-29 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-08-29 17:00:00', 2, 1, 1); -- Sexta - Pilates
+
+-- SETEMBRO 2025
+INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
+('2025-09-01 10:00:00', 2, 1, 3), -- Segunda - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-01 14:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-09-01 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-09-01 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-09-02 10:00:00', 2, 1, 1), -- Terça - Pilates (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-09-02 13:00:00', 2, 1, 3), -- Terça - RPG
+('2025-09-02 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-09-02 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-09-03 10:00:00', 2, 1, 3), -- Quarta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-03 14:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-09-03 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-09-03 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-09-04 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-09-04 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-09-04 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-09-04 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-09-05 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-05 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-09-05 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-09-05 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-09-08 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-08 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-09-08 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-09-08 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-09-09 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-09-09 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-09-09 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-09-09 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-09-10 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-10 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-09-10 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-09-10 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-09-11 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-09-11 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-09-11 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-09-11 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-09-12 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-12 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-09-12 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-09-12 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-09-15 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-15 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-09-15 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-09-15 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-09-16 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-09-16 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-09-16 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-09-16 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-09-17 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-17 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-09-17 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-09-17 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-09-18 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-09-18 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-09-18 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-09-18 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-09-19 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-19 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-09-19 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-09-19 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-09-22 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-22 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-09-22 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-09-22 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-09-23 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-09-23 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-09-23 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-09-23 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-09-24 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-24 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-09-24 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-09-24 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-09-25 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-09-25 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-09-25 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-09-25 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-09-26 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-09-26 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-09-26 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-09-26 17:00:00', 2, 1, 1); -- Sexta - Pilates
+
+-- OUTUBRO 2025
+INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
+('2025-10-01 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-01 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-10-01 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-10-01 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-10-02 10:00:00', 2, 1, 3), -- Quinta - RPG (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-10-02 13:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-10-02 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-10-02 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-10-03 10:00:00', 2, 1, 1), -- Sexta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-03 14:00:00', 2, 1, 3), -- Sexta - RPG
+('2025-10-03 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-10-03 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-10-06 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-06 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-10-06 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-10-06 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-10-07 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-10-07 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-10-07 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-10-07 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-10-08 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-08 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-10-08 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-10-08 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-10-09 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-10-09 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-10-09 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-10-09 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-10-10 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-10 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-10-10 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-10-10 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-10-13 10:00:00', 2, 1, 3), -- Segunda - RPG (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-10-13 14:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-10-13 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-10-13 18:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-10-14 10:00:00', 2, 1, 1), -- Terça - Pilates (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-10-14 13:00:00', 2, 1, 3), -- Terça - RPG
+('2025-10-14 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-10-14 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-10-15 10:00:00', 2, 1, 3), -- Quarta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-15 14:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-10-15 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-10-15 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-10-16 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-10-16 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-10-16 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-10-16 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-10-17 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-17 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-10-17 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-10-17 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-10-20 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-20 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-10-20 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-10-20 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-10-21 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-10-21 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-10-21 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-10-21 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-10-22 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-22 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-10-22 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-10-22 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-10-23 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-10-23 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-10-23 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-10-23 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-10-24 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-24 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-10-24 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-10-24 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-10-27 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-27 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-10-27 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-10-27 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-10-28 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-10-28 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-10-28 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-10-28 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-10-29 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-29 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-10-29 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-10-29 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-10-30 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-10-30 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-10-30 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-10-30 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-10-31 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-10-31 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-10-31 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-10-31 17:00:00', 2, 1, 1); -- Sexta - Pilates
+
+-- NOVEMBRO 2025
+INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
+('2025-11-03 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-03 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-11-03 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-11-03 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-11-04 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-11-04 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-11-04 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-11-04 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-11-05 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-05 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-11-05 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-11-05 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-11-06 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-11-06 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-11-06 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-11-06 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-11-07 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-07 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-11-07 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-11-07 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-11-10 10:00:00', 2, 1, 3), -- Segunda - RPG (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-11-10 14:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-11-10 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-11-10 18:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-11-11 10:00:00', 2, 1, 1), -- Terça - Pilates (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-11-11 13:00:00', 2, 1, 3), -- Terça - RPG
+('2025-11-11 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-11-11 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-11-12 10:00:00', 2, 1, 3), -- Quarta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-12 14:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-11-12 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-11-12 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-11-13 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-11-13 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-11-13 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-11-13 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-11-14 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-14 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-11-14 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-11-14 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-11-17 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-17 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-11-17 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-11-17 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-11-18 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-11-18 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-11-18 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-11-18 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-11-19 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-19 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-11-19 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-11-19 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-11-20 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-11-20 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-11-20 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-11-20 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-11-21 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-21 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-11-21 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-11-21 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-11-24 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-24 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-11-24 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-11-24 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-11-25 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-11-25 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-11-25 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-11-25 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-11-26 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-26 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-11-26 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-11-26 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-11-27 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-11-27 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-11-27 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-11-27 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-11-28 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-11-28 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-11-28 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-11-28 17:00:00', 2, 1, 1); -- Sexta - Pilates
+
+-- DEZEMBRO 2025
+INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
+('2025-12-01 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-01 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-12-01 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-12-01 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-12-02 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-12-02 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-12-02 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-12-02 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-12-03 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-03 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-12-03 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-12-03 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-12-04 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-12-04 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-12-04 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-12-04 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-12-05 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-05 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-12-05 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-12-05 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-12-08 10:00:00', 2, 1, 3), -- Segunda - RPG (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-12-08 14:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-12-08 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-12-08 18:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-12-09 10:00:00', 2, 1, 1), -- Terça - Pilates (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-12-09 13:00:00', 2, 1, 3), -- Terça - RPG
+('2025-12-09 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-12-09 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-12-10 10:00:00', 2, 1, 3), -- Quarta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-10 14:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-12-10 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-12-10 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-12-11 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-12-11 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-12-11 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-12-11 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-12-12 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-12 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-12-12 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-12-12 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-12-15 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-15 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-12-15 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-12-15 17:00:00', 2, 1, 1), -- Segunda - Pilates
+('2025-12-16 10:00:00', 2, 1, 3), -- Terça - RPG (Guilherme: 9h, 11h, 14h, 16h na Sala 2)
+('2025-12-16 13:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-12-16 15:00:00', 2, 1, 7), -- Terça - Fisioterapia
+('2025-12-16 17:00:00', 2, 1, 1), -- Terça - Pilates
+('2025-12-17 10:00:00', 2, 1, 1), -- Quarta - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-17 14:00:00', 2, 1, 3), -- Quarta - RPG
+('2025-12-17 16:00:00', 2, 1, 7), -- Quarta - Fisioterapia
+('2025-12-17 17:00:00', 2, 1, 1), -- Quarta - Pilates
+('2025-12-18 10:00:00', 2, 1, 1), -- Quinta - Pilates (Guilherme: 9h, 11h, 15h, 17h na Sala 2)
+('2025-12-18 13:00:00', 2, 1, 3), -- Quinta - RPG
+('2025-12-18 14:00:00', 2, 1, 7), -- Quinta - Fisioterapia
+('2025-12-18 16:00:00', 2, 1, 1), -- Quinta - Pilates
+('2025-12-19 10:00:00', 2, 1, 3), -- Sexta - RPG (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-19 14:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-12-19 16:00:00', 2, 1, 7), -- Sexta - Fisioterapia
+('2025-12-19 17:00:00', 2, 1, 1), -- Sexta - Pilates
+('2025-12-22 10:00:00', 2, 1, 1), -- Segunda - Pilates (Guilherme: 9h, 11h, 13h, 15h na Sala 2)
+('2025-12-22 14:00:00', 2, 1, 3), -- Segunda - RPG
+('2025-12-22 16:00:00', 2, 1, 7), -- Segunda - Fisioterapia
+('2025-12-22 17:00:00', 2, 1, 1); -- Segunda - Pilates
 
 -- ============================================
 -- 11. INSERIR RELACIONAMENTOS AGENDAMENTO-ALUNO
@@ -332,56 +1052,118 @@ INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VAL
 -- NOTA: StatusPresenca é um ENUM com valores: PENDENTE, PRESENTE, FALTA
 -- Agendamentos passados (até 14/11/2025): PRESENTE ou FALTA
 -- Agendamentos futuros (após 14/11/2025): PENDENTE
+-- IMPORTANTE: Distribuir alunos evitando conflitos de horário entre professores
 
--- Agendamentos de agosto (IDs 1-21) - PASSADOS
+-- ============================================
+-- AGENDAMENTOS DO PROFESSOR GUILHERME (IDs 1-240)
+-- ============================================
+-- Estratégia: Guilherme usa principalmente alunos 1-10 para evitar conflitos com Andrei
+-- Agendamentos de agosto do Guilherme (IDs 1-48) - PASSADOS
 INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
--- Agendamento 1 (04/08 08:00 - Segunda - Pilates)
-(1, 1, 'PRESENTE'), (1, 2, 'PRESENTE'), (1, 3, 'PRESENTE'), (1, 4, 'PRESENTE'), (1, 5, 'FALTA'),
--- Agendamento 2 (04/08 10:00 - Segunda - RPG)
-(2, 4, 'PRESENTE'), (2, 5, 'PRESENTE'), (2, 6, 'PRESENTE'), (2, 7, 'FALTA'),
--- Agendamento 3 (05/08 08:00 - Terça - Pilates)
-(3, 6, 'PRESENTE'), (3, 7, 'PRESENTE'), (3, 8, 'PRESENTE'), (3, 9, 'PRESENTE'), (3, 10, 'PRESENTE'),
--- Agendamento 4 (05/08 10:00 - Terça - RPG)
-(4, 9, 'PRESENTE'), (4, 10, 'PRESENTE'), (4, 11, 'FALTA'), (4, 12, 'PRESENTE'),
--- Agendamento 5 (07/08 08:00 - Quinta - Pilates)
-(5, 11, 'PRESENTE'), (5, 12, 'FALTA'), (5, 13, 'PRESENTE'), (5, 14, 'PRESENTE'),
--- Agendamento 6 (07/08 14:00 - Quinta - Fisioterapia)
-(6, 13, 'PRESENTE'), (6, 14, 'PRESENTE'), (6, 15, 'PRESENTE'), (6, 16, 'FALTA'), (6, 17, 'PRESENTE'),
--- Agendamento 7 (08/08 09:00 - Sexta - RPG)
-(7, 16, 'PRESENTE'), (7, 17, 'PRESENTE'), (7, 18, 'PRESENTE'), (7, 19, 'FALTA'),
--- Agendamento 8 (11/08 08:00 - Segunda - Pilates)
-(8, 18, 'PRESENTE'), (8, 19, 'PRESENTE'), (8, 20, 'FALTA'), (8, 1, 'PRESENTE'),
--- Agendamento 9 (11/08 14:00 - Segunda - Fisioterapia)
-(9, 20, 'PRESENTE'), (9, 1, 'PRESENTE'), (9, 2, 'PRESENTE'), (9, 3, 'PRESENTE'), (9, 4, 'FALTA'),
--- Agendamento 10 (12/08 08:00 - Terça - Pilates)
-(10, 3, 'PRESENTE'), (10, 4, 'FALTA'), (10, 5, 'PRESENTE'), (10, 6, 'PRESENTE'),
--- Agendamento 11 (14/08 10:00 - Quinta - Fisioterapia)
-(11, 5, 'PRESENTE'), (11, 6, 'PRESENTE'), (11, 7, 'PRESENTE'), (11, 8, 'FALTA'),
--- Agendamento 12 (15/08 09:00 - Sexta - RPG)
-(12, 7, 'PRESENTE'), (12, 8, 'PRESENTE'), (12, 9, 'PRESENTE'), (12, 10, 'PRESENTE'), (12, 11, 'FALTA'),
--- Agendamento 13 (18/08 08:00 - Segunda - Pilates)
-(13, 10, 'PRESENTE'), (13, 11, 'PRESENTE'), (13, 12, 'FALTA'), (13, 13, 'PRESENTE'),
--- Agendamento 14 (19/08 08:00 - Terça - Pilates)
-(14, 12, 'PRESENTE'), (14, 13, 'PRESENTE'), (14, 14, 'PRESENTE'), (14, 15, 'FALTA'),
--- Agendamento 15 (21/08 14:00 - Quinta - Fisioterapia)
-(15, 14, 'PRESENTE'), (15, 15, 'PRESENTE'), (15, 16, 'PRESENTE'), (15, 17, 'FALTA'), (15, 18, 'PRESENTE'),
--- Agendamento 16 (22/08 10:00 - Sexta - RPG)
-(16, 17, 'PRESENTE'), (16, 18, 'PRESENTE'), (16, 19, 'PRESENTE'), (16, 20, 'FALTA'),
--- Agendamento 17 (25/08 08:00 - Segunda - Pilates)
-(17, 19, 'PRESENTE'), (17, 20, 'PRESENTE'), (17, 1, 'FALTA'), (17, 2, 'PRESENTE'),
--- Agendamento 18 (25/08 10:00 - Segunda - RPG)
-(18, 1, 'PRESENTE'), (18, 2, 'PRESENTE'), (18, 3, 'PRESENTE'), (18, 4, 'FALTA'),
--- Agendamento 19 (26/08 08:00 - Terça - Pilates)
-(19, 3, 'PRESENTE'), (19, 4, 'PRESENTE'), (19, 5, 'PRESENTE'), (19, 6, 'FALTA'), (19, 7, 'PRESENTE'),
--- Agendamento 20 (28/08 10:00 - Quinta - Fisioterapia)
-(20, 6, 'PRESENTE'), (20, 7, 'PRESENTE'), (20, 8, 'PRESENTE'), (20, 9, 'FALTA'),
--- Agendamento 21 (29/08 09:00 - Sexta - RPG)
-(21, 8, 'PRESENTE'), (21, 9, 'PRESENTE'), (21, 10, 'PRESENTE'), (21, 11, 'FALTA');
+-- Agendamento 1 (04/08 09:00 - Segunda - Pilates)
+(1, 1, 'PRESENTE'), (1, 2, 'PRESENTE'), (1, 3, 'PRESENTE'), (1, 4, 'FALTA'),
+-- Agendamento 2 (04/08 11:00 - Segunda - RPG)
+(2, 2, 'PRESENTE'), (2, 3, 'PRESENTE'), (2, 4, 'PRESENTE'), (2, 5, 'FALTA'),
+-- Agendamento 3 (04/08 13:00 - Segunda - Fisioterapia)
+(3, 3, 'PRESENTE'), (3, 4, 'PRESENTE'), (3, 5, 'PRESENTE'), (3, 6, 'FALTA'),
+-- Agendamento 4 (04/08 15:00 - Segunda - Pilates)
+(4, 4, 'PRESENTE'), (4, 5, 'PRESENTE'), (4, 6, 'PRESENTE'), (4, 7, 'FALTA'),
+-- Agendamento 5 (05/08 09:00 - Terça - RPG)
+(5, 5, 'PRESENTE'), (5, 6, 'PRESENTE'), (5, 7, 'PRESENTE'), (5, 8, 'FALTA'),
+-- Agendamento 6 (05/08 11:00 - Terça - Pilates)
+(6, 6, 'PRESENTE'), (6, 7, 'PRESENTE'), (6, 8, 'PRESENTE'), (6, 9, 'FALTA'),
+-- Agendamento 7 (05/08 14:00 - Terça - Fisioterapia)
+(7, 7, 'PRESENTE'), (7, 8, 'PRESENTE'), (7, 9, 'PRESENTE'), (7, 10, 'FALTA'),
+-- Agendamento 8 (05/08 16:00 - Terça - Pilates)
+(8, 8, 'PRESENTE'), (8, 9, 'PRESENTE'), (8, 10, 'PRESENTE'), (8, 1, 'FALTA'),
+-- Agendamento 9 (06/08 09:00 - Quarta - Pilates)
+(9, 9, 'PRESENTE'), (9, 10, 'PRESENTE'), (9, 1, 'PRESENTE'), (9, 2, 'FALTA'),
+-- Agendamento 10 (06/08 11:00 - Quarta - RPG)
+(10, 10, 'PRESENTE'), (10, 1, 'PRESENTE'), (10, 2, 'PRESENTE'), (10, 3, 'FALTA'),
+-- Agendamento 11 (06/08 13:00 - Quarta - Fisioterapia)
+(11, 1, 'PRESENTE'), (11, 2, 'PRESENTE'), (11, 3, 'PRESENTE'), (11, 4, 'FALTA'),
+-- Agendamento 12 (06/08 15:00 - Quarta - Pilates)
+(12, 2, 'PRESENTE'), (12, 3, 'PRESENTE'), (12, 4, 'PRESENTE'), (12, 5, 'FALTA'),
+-- Agendamento 13 (07/08 09:00 - Quinta - RPG)
+(13, 3, 'PRESENTE'), (13, 4, 'PRESENTE'), (13, 5, 'PRESENTE'), (13, 6, 'FALTA'),
+-- Agendamento 14 (07/08 11:00 - Quinta - Pilates)
+(14, 4, 'PRESENTE'), (14, 5, 'PRESENTE'), (14, 6, 'PRESENTE'), (14, 7, 'FALTA'),
+-- Agendamento 15 (07/08 15:00 - Quinta - Fisioterapia)
+(15, 5, 'PRESENTE'), (15, 6, 'PRESENTE'), (15, 7, 'PRESENTE'), (15, 8, 'FALTA'),
+-- Agendamento 16 (07/08 17:00 - Quinta - Pilates)
+(16, 6, 'PRESENTE'), (16, 7, 'PRESENTE'), (16, 8, 'PRESENTE'), (16, 9, 'FALTA'),
+-- Agendamento 17 (08/08 09:00 - Sexta - Pilates)
+(17, 7, 'PRESENTE'), (17, 8, 'PRESENTE'), (17, 9, 'PRESENTE'), (17, 10, 'FALTA'),
+-- Agendamento 18 (08/08 11:00 - Sexta - RPG)
+(18, 8, 'PRESENTE'), (18, 9, 'PRESENTE'), (18, 10, 'PRESENTE'), (18, 1, 'FALTA'),
+-- Agendamento 19 (08/08 13:00 - Sexta - Fisioterapia)
+(19, 9, 'PRESENTE'), (19, 10, 'PRESENTE'), (19, 1, 'PRESENTE'), (19, 2, 'FALTA'),
+-- Agendamento 20 (08/08 15:00 - Sexta - Pilates)
+(20, 10, 'PRESENTE'), (20, 1, 'PRESENTE'), (20, 2, 'PRESENTE'), (20, 3, 'FALTA'),
+-- Agendamento 21 (11/08 09:00 - Segunda - RPG)
+(21, 1, 'PRESENTE'), (21, 2, 'PRESENTE'), (21, 3, 'PRESENTE'), (21, 4, 'FALTA'),
+-- Agendamento 22 (11/08 11:00 - Segunda - Pilates)
+(22, 2, 'PRESENTE'), (22, 3, 'PRESENTE'), (22, 4, 'PRESENTE'), (22, 5, 'FALTA'),
+-- Agendamento 23 (11/08 15:00 - Segunda - Fisioterapia)
+(23, 3, 'PRESENTE'), (23, 4, 'PRESENTE'), (23, 5, 'PRESENTE'), (23, 6, 'FALTA'),
+-- Agendamento 24 (11/08 17:00 - Segunda - Pilates)
+(24, 4, 'PRESENTE'), (24, 5, 'PRESENTE'), (24, 6, 'PRESENTE'), (24, 7, 'FALTA'),
+-- Agendamento 25 (12/08 09:00 - Terça - Pilates)
+(25, 5, 'PRESENTE'), (25, 6, 'PRESENTE'), (25, 7, 'PRESENTE'), (25, 8, 'FALTA'),
+-- Agendamento 26 (12/08 11:00 - Terça - RPG)
+(26, 6, 'PRESENTE'), (26, 7, 'PRESENTE'), (26, 8, 'PRESENTE'), (26, 9, 'FALTA'),
+-- Agendamento 27 (12/08 13:00 - Terça - Fisioterapia)
+(27, 7, 'PRESENTE'), (27, 8, 'PRESENTE'), (27, 9, 'PRESENTE'), (27, 10, 'FALTA'),
+-- Agendamento 28 (12/08 15:00 - Terça - Pilates)
+(28, 8, 'PRESENTE'), (28, 9, 'PRESENTE'), (28, 10, 'PRESENTE'), (28, 1, 'FALTA'),
+-- Agendamento 29 (13/08 09:00 - Quarta - Pilates)
+(29, 9, 'PRESENTE'), (29, 10, 'PRESENTE'), (29, 1, 'PRESENTE'), (29, 2, 'FALTA'),
+-- Agendamento 30 (13/08 11:00 - Quarta - RPG)
+(30, 10, 'PRESENTE'), (30, 1, 'PRESENTE'), (30, 2, 'PRESENTE'), (30, 3, 'FALTA'),
+-- Agendamento 31 (13/08 14:00 - Quarta - Fisioterapia)
+(31, 1, 'PRESENTE'), (31, 2, 'PRESENTE'), (31, 3, 'PRESENTE'), (31, 4, 'FALTA'),
+-- Agendamento 32 (13/08 16:00 - Quarta - Pilates)
+(32, 2, 'PRESENTE'), (32, 3, 'PRESENTE'), (32, 4, 'PRESENTE'), (32, 5, 'FALTA'),
+-- Agendamento 33 (14/08 09:00 - Quinta - Pilates)
+(33, 3, 'PRESENTE'), (33, 4, 'PRESENTE'), (33, 5, 'PRESENTE'), (33, 6, 'FALTA'),
+-- Agendamento 34 (14/08 11:00 - Quinta - RPG)
+(34, 4, 'PRESENTE'), (34, 5, 'PRESENTE'), (34, 6, 'PRESENTE'), (34, 7, 'FALTA'),
+-- Agendamento 35 (14/08 15:00 - Quinta - Pilates)
+(35, 5, 'PRESENTE'), (35, 6, 'PRESENTE'), (35, 7, 'PRESENTE'), (35, 8, 'FALTA'),
+-- Agendamento 36 (14/08 17:00 - Quinta - Fisioterapia)
+(36, 6, 'PRESENTE'), (36, 7, 'PRESENTE'), (36, 8, 'PRESENTE'), (36, 9, 'FALTA'),
+-- Agendamento 37 (15/08 09:00 - Sexta - RPG)
+(37, 7, 'PRESENTE'), (37, 8, 'PRESENTE'), (37, 9, 'PRESENTE'), (37, 10, 'FALTA'),
+-- Agendamento 38 (15/08 11:00 - Sexta - Pilates)
+(38, 8, 'PRESENTE'), (38, 9, 'PRESENTE'), (38, 10, 'PRESENTE'), (38, 1, 'FALTA'),
+-- Agendamento 39 (15/08 13:00 - Sexta - Fisioterapia)
+(39, 9, 'PRESENTE'), (39, 10, 'PRESENTE'), (39, 1, 'PRESENTE'), (39, 2, 'FALTA'),
+-- Agendamento 40 (15/08 15:00 - Sexta - Pilates)
+(40, 10, 'PRESENTE'), (40, 1, 'PRESENTE'), (40, 2, 'PRESENTE'), (40, 3, 'FALTA'),
+-- Agendamento 41 (18/08 09:00 - Segunda - Pilates)
+(41, 1, 'PRESENTE'), (41, 2, 'PRESENTE'), (41, 3, 'PRESENTE'), (41, 4, 'FALTA'),
+-- Agendamento 42 (18/08 11:00 - Segunda - RPG)
+(42, 2, 'PRESENTE'), (42, 3, 'PRESENTE'), (42, 4, 'PRESENTE'), (42, 5, 'FALTA'),
+-- Agendamento 43 (18/08 13:00 - Segunda - Fisioterapia)
+(43, 3, 'PRESENTE'), (43, 4, 'PRESENTE'), (43, 5, 'PRESENTE'), (43, 6, 'FALTA'),
+-- Agendamento 44 (18/08 15:00 - Segunda - Pilates)
+(44, 4, 'PRESENTE'), (44, 5, 'PRESENTE'), (44, 6, 'PRESENTE'), (44, 7, 'FALTA'),
+-- Agendamento 45 (19/08 09:00 - Terça - RPG)
+(45, 5, 'PRESENTE'), (45, 6, 'PRESENTE'), (45, 7, 'PRESENTE'), (45, 8, 'FALTA'),
+-- Agendamento 46 (19/08 11:00 - Terça - Pilates)
+(46, 6, 'PRESENTE'), (46, 7, 'PRESENTE'), (46, 8, 'PRESENTE'), (46, 9, 'FALTA'),
+-- Agendamento 47 (19/08 14:00 - Terça - Fisioterapia)
+(47, 7, 'PRESENTE'), (47, 8, 'PRESENTE'), (47, 9, 'PRESENTE'), (47, 10, 'FALTA'),
+-- Agendamento 48 (19/08 16:00 - Terça - Pilates)
+(48, 8, 'PRESENTE'), (48, 9, 'PRESENTE'), (48, 10, 'PRESENTE'), (48, 1, 'FALTA');
 
--- Agendamentos de setembro (IDs 22-40) - PASSADOS
+-- Agendamentos de setembro do Guilherme (IDs 49-96) - PASSADOS
+-- Padrão: alunos 1-10 rotativos, 3-4 alunos por agendamento
+-- NOTA: Os relacionamentos seguem um padrão rotativo para evitar conflitos de horário
+-- Cada agendamento tem 3-4 alunos, distribuídos de forma que não haja conflito no mesmo horário
 INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
--- Agendamento 22 (01/09 08:00 - Segunda - Pilates)
-(22, 12, 'PRESENTE'), (22, 13, 'PRESENTE'), (22, 14, 'FALTA'), (22, 15, 'PRESENTE'),
+-- Agendamento 49 (01/09 09:00 - Segunda - Pilates)
+(49, 1, 'PRESENTE'), (49, 2, 'PRESENTE'), (49, 3, 'PRESENTE'), (49, 4, 'FALTA'),
 -- Agendamento 23 (01/09 14:00 - Segunda - Fisioterapia)
 (23, 15, 'PRESENTE'), (23, 16, 'PRESENTE'), (23, 17, 'FALTA'), (23, 18, 'PRESENTE'),
 -- Agendamento 24 (02/09 08:00 - Terça - Pilates)
