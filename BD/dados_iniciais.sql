@@ -139,8 +139,8 @@ INSERT INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
 -- 5. INSERIR ADMINISTRADOR
 -- ============================================
 -- Hash BCrypt da senha: $2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone) VALUES
-('Administrador', 'admin@onepilates.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'ADMINISTRADOR', '00000000000', '1980-01-01', TRUE, TRUE, 'Administrador', 1, '(11) 99999-0000');
+INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+('Administrador', 'admin@onepilates.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'ADMINISTRADOR', '00000000000', '1980-01-01', TRUE, TRUE, 'Administrador', 1, '(11) 99999-0000', FALSE);
 
 INSERT INTO administrador (id) VALUES (1);
 
@@ -148,14 +148,14 @@ INSERT INTO administrador (id) VALUES (1);
 -- 6. INSERIR PROFESSORES
 -- ============================================
 -- Professor 1: Andrei Scafi
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone) VALUES
-('Andrei Scafi', 'andreiscafi@gmail.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '11122233300', '1990-05-15', TRUE, TRUE, 'Professor de Pilates', 2, '(11) 99999-1111');
+INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+('Andrei Scafi', 'andreiscafi@gmail.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '11122233300', '1990-05-15', TRUE, TRUE, 'Professor de Pilates', 2, '(11) 99999-1111', TRUE);
 
 INSERT INTO professor (id) VALUES (2);
 
 -- Professor 2: Guilherme Queiroz
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone) VALUES
-('Guilherme Queiroz', 'guilherme@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '22233344400', '1985-08-20', TRUE, TRUE, 'Professor de Pilates', 3, '(11) 99999-2222');
+INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+('Guilherme Queiroz', 'guilherme@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '22233344400', '1985-08-20', TRUE, TRUE, 'Professor de Pilates', 3, '(11) 99999-2222', TRUE);
 
 INSERT INTO professor (id) VALUES (3);
 
@@ -178,8 +178,8 @@ INSERT INTO professor_especialidade (professor_id, especialidade_id) VALUES
 -- 8. INSERIR SECRETÁRIA
 -- ============================================
 -- Secretária: Amanda
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone) VALUES
-('Amanda', 'amanda@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'SECRETARIA', '33344455500', '1992-03-10', TRUE, TRUE, 'Secretária', 4, '(11) 99999-3333');
+INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+('Amanda', 'amanda@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'SECRETARIA', '33344455500', '1992-03-10', TRUE, TRUE, 'Secretária', 4, '(11) 99999-3333', FALSE);
 
 INSERT INTO secretaria (id) VALUES (4);
 
@@ -215,116 +215,116 @@ INSERT INTO aluno (nome, email, cpf, data_nascimento, status, aluno_com_limitaco
 -- Salas: Sala Grande 1 (1) ou Sala Grande 2 (2)
 
 -- AGOSTO 2025
-INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-08-04 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-08-04 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-08-05 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-08-05 10:00:00', 2, 1, 3), -- Terça - RPG
-('2025-08-07 08:00:00', 2, 1, 1), -- Quinta - Pilates
-('2025-08-07 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-08-08 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 09/08 sábado)
-('2025-08-11 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-08-11 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-08-12 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-08-14 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-08-15 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 16/08 sábado)
-('2025-08-18 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-08-19 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-08-21 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-08-22 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 23/08 sábado)
-('2025-08-25 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-08-25 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-08-26 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-08-28 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-08-29 09:00:00', 2, 1, 3); -- Sexta - RPG (ajustado de 30/08 sábado)
+INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+(1, '2025-08-04 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(2, '2025-08-04 10:00:00', 2, 1, 3), -- Segunda - RPG
+(3, '2025-08-05 08:00:00', 2, 1, 1), -- Terça - Pilates
+(4, '2025-08-05 10:00:00', 2, 1, 3), -- Terça - RPG
+(5, '2025-08-07 08:00:00', 2, 1, 1), -- Quinta - Pilates
+(6, '2025-08-07 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(7, '2025-08-08 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 09/08 sábado)
+(8, '2025-08-11 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(9, '2025-08-11 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
+(10, '2025-08-12 08:00:00', 2, 1, 1), -- Terça - Pilates
+(11, '2025-08-14 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(12, '2025-08-15 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 16/08 sábado)
+(13, '2025-08-18 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(14, '2025-08-19 08:00:00', 2, 1, 1), -- Terça - Pilates
+(15, '2025-08-21 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(16, '2025-08-22 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 23/08 sábado)
+(17, '2025-08-25 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(18, '2025-08-25 10:00:00', 2, 1, 3), -- Segunda - RPG
+(19, '2025-08-26 08:00:00', 2, 1, 1), -- Terça - Pilates
+(20, '2025-08-28 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(21, '2025-08-29 09:00:00', 2, 1, 3); -- Sexta - RPG (ajustado de 30/08 sábado)
 
 -- SETEMBRO 2025
-INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-09-01 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-09-01 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-09-02 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-09-04 10:00:00', 2, 1, 3), -- Quinta - RPG
-('2025-09-05 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 06/09 sábado)
-('2025-09-08 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-09-08 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-09-09 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-09-11 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-09-12 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 13/09 sábado)
-('2025-09-15 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-09-16 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-09-18 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-09-19 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 20/09 sábado)
-('2025-09-22 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-09-22 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-09-23 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-09-25 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-09-26 09:00:00', 2, 1, 3); -- Sexta - RPG (ajustado de 27/09 sábado)
+INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+(22, '2025-09-01 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(23, '2025-09-01 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
+(24, '2025-09-02 08:00:00', 2, 1, 1), -- Terça - Pilates
+(25, '2025-09-04 10:00:00', 2, 1, 3), -- Quinta - RPG
+(26, '2025-09-05 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 06/09 sábado)
+(27, '2025-09-08 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(28, '2025-09-08 10:00:00', 2, 1, 3), -- Segunda - RPG
+(29, '2025-09-09 08:00:00', 2, 1, 1), -- Terça - Pilates
+(30, '2025-09-11 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(31, '2025-09-12 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 13/09 sábado)
+(32, '2025-09-15 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(33, '2025-09-16 08:00:00', 2, 1, 1), -- Terça - Pilates
+(34, '2025-09-18 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(35, '2025-09-19 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 20/09 sábado)
+(36, '2025-09-22 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(37, '2025-09-22 10:00:00', 2, 1, 3), -- Segunda - RPG
+(38, '2025-09-23 08:00:00', 2, 1, 1), -- Terça - Pilates
+(39, '2025-09-25 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(40, '2025-09-26 09:00:00', 2, 1, 3); -- Sexta - RPG (ajustado de 27/09 sábado)
 
 -- OUTUBRO 2025
-INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-10-01 08:00:00', 2, 1, 1), -- Quarta - Pilates
-('2025-10-02 10:00:00', 2, 1, 3), -- Quinta - RPG
-('2025-10-03 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 04/10 sábado)
-('2025-10-06 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-10-06 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-10-07 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-10-09 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-10-10 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 11/10 sábado)
-('2025-10-13 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-10-13 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-10-14 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-10-16 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-10-17 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 18/10 sábado)
-('2025-10-20 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-10-21 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-10-23 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-10-24 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 25/10 sábado)
-('2025-10-27 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-10-27 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-10-28 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-10-30 14:00:00', 2, 2, 7); -- Quinta - Fisioterapia
+INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+(41, '2025-10-01 08:00:00', 2, 1, 1), -- Quarta - Pilates
+(42, '2025-10-02 10:00:00', 2, 1, 3), -- Quinta - RPG
+(43, '2025-10-03 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 04/10 sábado)
+(44, '2025-10-06 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(45, '2025-10-06 10:00:00', 2, 1, 3), -- Segunda - RPG
+(46, '2025-10-07 08:00:00', 2, 1, 1), -- Terça - Pilates
+(47, '2025-10-09 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(48, '2025-10-10 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 11/10 sábado)
+(49, '2025-10-13 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(50, '2025-10-13 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
+(51, '2025-10-14 08:00:00', 2, 1, 1), -- Terça - Pilates
+(52, '2025-10-16 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(53, '2025-10-17 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 18/10 sábado)
+(54, '2025-10-20 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(55, '2025-10-21 08:00:00', 2, 1, 1), -- Terça - Pilates
+(56, '2025-10-23 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(57, '2025-10-24 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 25/10 sábado)
+(58, '2025-10-27 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(59, '2025-10-27 10:00:00', 2, 1, 3), -- Segunda - RPG
+(60, '2025-10-28 08:00:00', 2, 1, 1), -- Terça - Pilates
+(61, '2025-10-30 14:00:00', 2, 2, 7); -- Quinta - Fisioterapia
 
 -- NOVEMBRO 2025
-INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-10-31 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 01/11 sábado)
-('2025-11-03 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-11-03 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-11-04 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-11-06 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-11-07 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 08/11 sábado)
-('2025-11-10 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-11-10 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-11-11 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-11-13 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-11-14 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 15/11 sábado)
-('2025-11-17 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-11-18 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-11-20 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-11-21 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 22/11 sábado)
-('2025-11-24 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-11-24 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-11-25 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-11-27 14:00:00', 2, 2, 7); -- Quinta - Fisioterapia
+INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+(62, '2025-10-31 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 01/11 sábado)
+(63, '2025-11-03 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(64, '2025-11-03 10:00:00', 2, 1, 3), -- Segunda - RPG
+(65, '2025-11-04 08:00:00', 2, 1, 1), -- Terça - Pilates
+(66, '2025-11-06 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(67, '2025-11-07 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 08/11 sábado)
+(68, '2025-11-10 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(69, '2025-11-10 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
+(70, '2025-11-11 08:00:00', 2, 1, 1), -- Terça - Pilates
+(71, '2025-11-13 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(72, '2025-11-14 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 15/11 sábado)
+(73, '2025-11-17 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(74, '2025-11-18 08:00:00', 2, 1, 1), -- Terça - Pilates
+(75, '2025-11-20 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(76, '2025-11-21 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 22/11 sábado)
+(77, '2025-11-24 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(78, '2025-11-24 10:00:00', 2, 1, 3), -- Segunda - RPG
+(79, '2025-11-25 08:00:00', 2, 1, 1), -- Terça - Pilates
+(80, '2025-11-27 14:00:00', 2, 2, 7); -- Quinta - Fisioterapia
 
 -- DEZEMBRO 2025
-INSERT INTO agendamento (data_hora, professor_id, sala_id, especialidade_id) VALUES
-('2025-12-01 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-12-01 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-12-02 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-12-04 10:00:00', 2, 1, 3), -- Quinta - RPG
-('2025-12-05 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 06/12 sábado)
-('2025-12-08 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-12-08 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
-('2025-12-09 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-12-11 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-12-12 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 13/12 sábado)
-('2025-12-15 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-12-15 10:00:00', 2, 1, 3), -- Segunda - RPG
-('2025-12-16 08:00:00', 2, 1, 1), -- Terça - Pilates
-('2025-12-18 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
-('2025-12-19 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 20/12 sábado)
-('2025-12-22 08:00:00', 2, 1, 1), -- Segunda - Pilates
-('2025-12-22 14:00:00', 2, 2, 7); -- Segunda - Fisioterapia
+INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+(81, '2025-12-01 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(82, '2025-12-01 10:00:00', 2, 1, 3), -- Segunda - RPG
+(83, '2025-12-02 08:00:00', 2, 1, 1), -- Terça - Pilates
+(84, '2025-12-04 10:00:00', 2, 1, 3), -- Quinta - RPG
+(85, '2025-12-05 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 06/12 sábado)
+(86, '2025-12-08 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(87, '2025-12-08 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
+(88, '2025-12-09 08:00:00', 2, 1, 1), -- Terça - Pilates
+(89, '2025-12-11 10:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(90, '2025-12-12 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 13/12 sábado)
+(91, '2025-12-15 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(92, '2025-12-15 10:00:00', 2, 1, 3), -- Segunda - RPG
+(93, '2025-12-16 08:00:00', 2, 1, 1), -- Terça - Pilates
+(94, '2025-12-18 14:00:00', 2, 2, 7), -- Quinta - Fisioterapia
+(95, '2025-12-19 10:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 20/12 sábado)
+(96, '2025-12-22 08:00:00', 2, 1, 1), -- Segunda - Pilates
+(97, '2025-12-22 14:00:00', 2, 2, 7); -- Segunda - Fisioterapia
 
 -- ============================================
 -- 11. INSERIR RELACIONAMENTOS AGENDAMENTO-ALUNO
