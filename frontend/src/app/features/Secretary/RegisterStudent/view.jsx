@@ -5,8 +5,8 @@ import DadosPessoaisScreen from "./screens/DadosPessoais";
 import EnderecoScreen from "./screens/Endereco";
 import InformacoesAlunoScreen from "./screens/InformacoesAlunos";
 import ConfirmacaoAlunoScreen from "./screens/Confirmacao";
-import './style.scss';
-import { useNavigate } from "react-router-dom"; 
+import "./style.scss";
+import { useNavigate } from "react-router-dom";
 
 const RegisterStudentView = ({
   etapaAtual,
@@ -25,9 +25,10 @@ const RegisterStudentView = ({
   finalizar,
   concluir,
   voltar,
+  cadastrarAluno,
+  cancelarCadastro,
 }) => {
-
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const renderEtapa = () => {
     switch (etapaAtual) {
@@ -62,6 +63,9 @@ const RegisterStudentView = ({
             dadosPessoais={dadosPessoais}
             endereco={endereco}
             informacoesAluno={informacoesAluno}
+            onVoltar={etapaAnterior}
+            onCancelar={cancelarCadastro}
+            onCadastrar={cadastrarAluno}
           />
         );
       default:
@@ -72,7 +76,10 @@ const RegisterStudentView = ({
   return (
     <div className="register-container">
       <div className="register-header">
-        <button className="back-button" onClick={() => navigate("/secretaria/alunos")}>
+        <button
+          className="back-button"
+          onClick={() => navigate("/secretaria/alunos")}
+        >
           <FaArrowLeft />
           <span>Voltar</span>
         </button>
@@ -81,8 +88,6 @@ const RegisterStudentView = ({
 
       <div className="register-content">
         <div className="register-card">
-         
-
           <StepIndicator
             steps={etapas}
             currentStep={etapaAtual}
@@ -106,16 +111,7 @@ const RegisterStudentView = ({
               </div>
             )}
 
-            {etapaAtual === 4 && (
-              <div className="button-group">
-                <Button
-                  variant="primary"
-                  onClick={() => navigate("/secretaria/alunos")}
-                >
-                  Voltar
-                </Button>
-              </div>
-            )}
+            {/* Buttons for etapa 4 are rendered inside the Confirmacao screen */}
           </form>
         </div>
       </div>

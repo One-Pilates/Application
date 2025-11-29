@@ -46,4 +46,19 @@
       transform: translateY(0);
     }
   }
+
+  &-tertiary {
+    background-color: #6b7280; // gray-500
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #4b5563; // gray-600
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(75, 85, 99, 0.2);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
 }

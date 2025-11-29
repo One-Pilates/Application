@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
+import api from "../../../../provider/api";
 
 // Função para validar CPF
 const validarCPF = (cpf) => {
@@ -155,7 +156,8 @@ export const useRegisterStudentModel = () => {
 
     if (etapaAtual === 2) {
       if (!endereco.cep.trim()) novosErros.cep = "CEP é obrigatório";
-      if (!endereco.logradouro.trim()) novosErros.logradouro = "Logradouro é obrigatório";
+      if (!endereco.logradouro.trim())
+        novosErros.logradouro = "Logradouro é obrigatório";
       if (!endereco.numero.trim()) novosErros.numero = "Número é obrigatório";
       if (!endereco.bairro.trim()) novosErros.bairro = "Bairro é obrigatório";
       if (!endereco.cidade.trim()) novosErros.cidade = "Cidade é obrigatória";
@@ -215,8 +217,71 @@ export const useRegisterStudentModel = () => {
   };
 
   const concluir = () => {
-    Swal.fire("Cadastro concluído!", "Aluno cadastrado com sucesso!", "success");
-    navigate("/secretary");
+    Swal.fire(
+      "Cadastro concluído!",
+      "Aluno cadastrado com sucesso!",
+      "success"
+    );
+    navigate("/secretaria/alunos");
+  };
+
+  const cancelarCadastro = () => {
+    // Resetar estados para os valores iniciais
+    setDadosPessoais({
+      fotoPerfil: "",
+      nomeCompleto: "",
+      email: "",
+      cpf: "",
+      dataNascimento: "",
+      telefone: "",
+    });
+
+    setEndereco({
+      cep: "",
+      logradouro: "",
+      numero: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
+    });
+
+    setInformacoesAluno({
+      problemasMobilidade: false,
+      observacoes: "",
+    });
+
+    navigate("/secretaria/alunos");
+  };
+
+  const cadastrarAluno = async () => {
+    const payload = {
+      nome: dadosPessoais.nomeCompleto || "",
+      email: dadosPessoais.email || "",
+      cpf: dadosPessoais.cpf || "",
+      dataNascimento: dadosPessoais.dataNascimento || "",
+      status: true,
+      alunoComLimitacoesFisicas: !!informacoesAluno.problemasMobilidade,
+      tipoContato: dadosPessoais.telefone || "",
+      notificacaoAtiva: true,
+      endereco: {
+        rua: endereco.logradouro || "",
+        numero: endereco.numero || "",
+        bairro: endereco.bairro || "",
+        cidade: endereco.cidade || "",
+        estado: endereco.estado || "",
+        cep: endereco.cep || "",
+        uf: endereco.estado || "",
+      },
+    };
+
+    try {
+      const res = await api.post("api/alunos", payload);
+      Swal.fire("Sucesso", "Aluno cadastrado com sucesso.", "success");
+      navigate("/secretaria/alunos");
+    } catch (error) {
+      console.error("Erro ao cadastrar aluno:", error);
+      Swal.fire("Erro", "Não foi possível cadastrar o aluno.", "error");
+    }
   };
 
   return {
@@ -239,5 +304,7 @@ export const useRegisterStudentModel = () => {
     finalizar,
     concluir,
     voltar,
+    cancelarCadastro,
+    cadastrarAluno,
   };
 };
