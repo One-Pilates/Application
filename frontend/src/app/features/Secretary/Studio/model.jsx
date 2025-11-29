@@ -1,17 +1,154 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../../../../provider/api";
+import Swal from "sweetalert2";
 
 export const useStudioModel = () => {
-  const [especialidades, setEspecialidades] = useState([
-    { id: 1, nome: 'Fisioterapia' },
-    { id: 2, nome: 'Massoterapia' },
-    { id: 3, nome: 'Acupuntura' }
-  ]);
-    const [salas, setSalas] = useState([
-    { id: 1, nome: 'Sala 1', capacidade: 8 },
-    { id: 2, nome: 'Sala VIP', capacidade: 4 },
-    { id: 3, nome: 'Sala Reformer', capacidade: 6 }
-  ]);
-  const [activeTab, setActiveTab] = useState('especialidades');
+  const [especialidades, setEspecialidades] = useState([]);
+  const [salas, setSalas] = useState([]);
+  const [activeTab, setActiveTab] = useState("especialidades");
+
+  // Modal States
+  const [showEspModal, setShowEspModal] = useState(false);
+  const [editingEsp, setEditingEsp] = useState(null);
+  const [formEsp, setFormEsp] = useState("");
+
+    useEffect(() => {
+    fetchData();
+  }, [activeTab]);
+
+  
+  // Funções Especialidades
+  const handleAddEsp = () => {
+    console.log("Adicionar Especialidade");
+    setEditingEsp(null);
+    setFormEsp('');
+    setShowEspModal(true);
+  };
+
+  const handleEditEsp = (esp) => {
+    setEditingEsp(esp);
+    setFormEsp(esp.nome);
+    setShowEspModal(true);
+  };
+
+  const handleSaveEsp = async() => {
+    if (!formEsp.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Atenção",
+        text: "O nome da especialidade não pode estar vazio.",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+    
+    if (editingEsp) {
+      try {
+        const response = await api.patch(`api/especialidades/${editingEsp.id}`, {
+          nome: formEsp
+        });
+        console.log("Especialidade atualizada:", response.data);
+         setEspecialidades(especialidades.map(e => 
+        e.id === editingEsp.id ? { ...e, nome: formEsp } : e
+      ));
+      Swal.fire({
+        icon: "success",
+        title: "Atualizado!",
+        text: "A especialidade foi atualizada com sucesso.",
+        confirmButtonText: "OK",
+      });
+      } catch (error) {
+        console.error("Erro ao atualizar especialidade:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: "Ocorreu um erro ao atualizar a especialidade.",
+          confirmButtonText: "OK",
+        });
+      }
+    } else {
+      try {
+        const response = await api.post(`api/especialidades`, {
+          nome: formEsp
+        });
+        console.log("Especialidade criada:", response.data);
+        Swal.fire({
+          icon: "success",
+          title: "Criado!",
+          text: "A especialidade foi criada com sucesso.",
+          confirmButtonText: "OK",
+        });
+        setEspecialidades([...especialidades, response.data]);
+      } catch (error) {
+        console.error("Erro ao criar especialidade:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: "Ocorreu um erro ao criar a especialidade.",
+          confirmButtonText: "OK",
+        });
+      }
+    }
+    setShowEspModal(false);
+  };
+
+  const deleteEspecialidade = async (id) => {
+     Swal.fire({
+          title: "Tem certeza?",
+          text: "Essa ação não poderá ser desfeita!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Sim, deletar!",
+          cancelButtonText: "Cancelar",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await api.delete(`api/especialidades/${id}`);
+              console.log("Especialidade deletada:", response.data);
+              setEspecialidades(especialidades.filter(esp => esp.id !== id));
+              Swal.fire({
+                icon: "success",
+                title: "Deletado!",
+                text: "A especialidade foi deletada com sucesso.",
+                confirmButtonText: "OK",
+              });
+              
+            } catch (error) {
+              console.error("Erro ao deletar especialidade:", error);
+              Swal.fire({
+                icon: "error",
+                title: "Erro",
+                text: "Ocorreu um erro ao deletar a especialidade.",
+                confirmButtonText: "OK",
+              });
+            }
+          }
+        });
+    };
+
+  const fetchData = async () => {
+    if (activeTab === "especialidades") {
+      try {
+        const response = await api.get(`api/especialidades`);
+        const data = response.data;
+        setEspecialidades(data);
+      } catch (error) {
+        console.error("Erro ao buscar especialidades:", error);
+      }
+      // } else if (activeTab === 'salas') {
+      //   try {
+      //     const response = await api.get(`api/salas`);
+      //     const data = response.data
+      //     setSalas(data)
+      //   } catch (error) {
+      //     console.error("Erro ao buscar salas:", error);
+      //   }
+      // }
+    }
+  };
+
 
   return {
     especialidades,
@@ -20,5 +157,15 @@ export const useStudioModel = () => {
     setSalas,
     activeTab,
     setActiveTab,
+    deleteEspecialidade,
+    showEspModal,
+    setShowEspModal,
+    editingEsp,
+    setEditingEsp,
+    formEsp,
+    setFormEsp,
+    handleAddEsp,
+    handleEditEsp,
+    handleSaveEsp,
   };
 };
