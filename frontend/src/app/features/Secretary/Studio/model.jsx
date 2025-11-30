@@ -193,14 +193,39 @@ export const useStudioModel = () => {
   };
 
   const handleSaveSala = async () => {
-    if (
-      !formSala.nome.trim() ||
-      !formSala.quantidadeMaximaAlunos ||
-      !formSala.quantidadeEquipamentosPCD ||
-      !formSala.especialidades ||
-      formSala.especialidades.length === 0
-    )
+    if (!formSala.nome.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Atenção",
+        text: "O nome da sala não pode estar vazio.",
+        confirmButtonText: "OK",
+      });
       return;
+    } else if (!formSala.quantidadeMaximaAlunos || isNaN(formSala.quantidadeMaximaAlunos)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Atenção",
+        text: "A quantidade máxima de alunos deve ser um número válido.",
+        confirmButtonText: "OK",
+      });
+      return;
+    } else if (!formSala.quantidadeEquipamentosPCD || isNaN(formSala.quantidadeEquipamentosPCD)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Atenção",
+        text: "A quantidade de equipamentos para PCD deve ser um número válido.",
+        confirmButtonText: "OK",
+      });
+      return;
+    } else if (formSala.especialidades.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Atenção",
+        text: "Selecione pelo menos uma especialidade.",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
 
     if (editingSala) {
       setSalas(
@@ -214,9 +239,9 @@ export const useStudioModel = () => {
       try {
         const newSala = {
           nome: formSala.nome,
-          quantidadeMaximaAlunos: (formSala.quantidadeMaximaAlunos),
-          quantidadeEquipamentosPCD: formSala.quantidadeEquipamentosPCD,
-          especialidadesIds: formSala.especialidadesIds,
+          especialidadeIds: formSala.especialidadesIds,
+          quantidadeMaximaAlunos: Number(formSala.quantidadeMaximaAlunos),
+          quantidadeEquipamentosPCD: Number(formSala.quantidadeEquipamentosPCD),
         };
         console.log("Novo objeto sala:", newSala);
 
