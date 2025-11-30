@@ -179,7 +179,7 @@ const ViewStudio = ({
       {/* Modal de Especialidade */}
       {showEspModal && (
         <div className="modal-overlay animate-slideUp">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 ">
+          <div className="bg-white rounded-lg max-w-md w-full py-6 px-8">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-gray-900">
                 {editingEsp ? "Editar Especialidade" : "Nova Especialidade"}
@@ -194,7 +194,7 @@ const ViewStudio = ({
 
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nome da Especialidade
+                Nome da Especialidade <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -219,7 +219,7 @@ const ViewStudio = ({
       {/*Modal de Sala */}
       {showSalaModal && (
         <div className="modal-overlay animate-slideUp">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-white rounded-lg max-w-lg w-full p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-gray-900">
                 {editingSala ? 'Editar Sala' : 'Nova Sala'}
@@ -232,7 +232,7 @@ const ViewStudio = ({
             <div className="space-y-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nome da Sala
+                  Nome da Sala <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -243,36 +243,85 @@ const ViewStudio = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Capacidade Máxima de Alunos
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={formSala.quantidadeMaximaAlunos}
-                  onChange={(e) => setFormSala({...formSala, quantidadeMaximaAlunos: e.target.value})}
-                  placeholder="Ex: 8"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Capacidade Máxima <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={formSala.quantidadeMaximaAlunos}
+                    onChange={(e) => setFormSala({...formSala, quantidadeMaximaAlunos: e.target.value})}
+                    placeholder="Ex: 8"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Equipamentos PCD <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formSala.quantidadeEquipamentosPCD}
+                    onChange={(e) => setFormSala({...formSala, quantidadeEquipamentosPCD: e.target.value})}
+                    placeholder="Ex: 2"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Quantidade de Equipamentos PCD
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Especialidades da Sala
                 </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={formSala.quantidadeEquipamentosPCD}
-                  onChange={(e) => setFormSala({...formSala, quantidadeEquipamentosPCD: e.target.value})}
-                  placeholder="Ex: 2"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="space-y-2 max-h-40 overflow-y-auto p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  {especialidades.map((esp) => (
+                    <label
+                      key={esp.id}
+                      className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formSala.especialidades?.includes(esp.nome) || formSala.especialidadesIds?.includes(esp.id) || false}
+                        onChange={(e) => {
+                          const currentNomes = formSala.especialidades || [];
+                          const currentIds = formSala.especialidadesIds || [];
+                          
+                          if (e.target.checked) {
+                            setFormSala({
+                              ...formSala,
+                              especialidades: [...currentNomes, esp.nome],
+                              especialidadesIds: [...currentIds, esp.id]
+                            });
+                          } else {
+                            setFormSala({
+                              ...formSala,
+                              especialidades: currentNomes.filter(nome => nome !== esp.nome),
+                              especialidadesIds: currentIds.filter(id => id !== esp.id)
+                            });
+                          }
+                        }}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-700">{esp.nome}</span>
+                    </label>
+                  ))}
+                  {especialidades.length === 0 && (
+                    <p className="text-sm text-gray-500 text-center py-2">
+                      Nenhuma especialidade cadastrada
+                    </p>
+                  )}
+                </div>
+                <p className="text-xs text-center text-orange-600 mt-2">
+                  Selecione as especialidades que podem ser praticadas nesta sala
+                </p>
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 justify-end pt-2">
               <Botao
                 onClick={() => setShowSalaModal(false)}
                 cor="bg-gray-500"

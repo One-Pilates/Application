@@ -7,28 +7,54 @@ export const useStudioModel = () => {
 
   // Especialidades States
   const [especialidades, setEspecialidades] = useState([]);
-    // Modal Especialidades States
+  // Modal Especialidades States
   const [showEspModal, setShowEspModal] = useState(false);
   const [editingEsp, setEditingEsp] = useState(null);
   const [formEsp, setFormEsp] = useState("");
-  
+
   // Salas States
   const [salas, setSalas] = useState([]);
-    // Modal Salas States
+  // Modal Salas States
   const [showSalaModal, setShowSalaModal] = useState(false);
   const [editingSala, setEditingSala] = useState(null);
-  const [formSala, setFormSala] = useState({ nome: '', quantidadeMaximaAlunos: '', quantidadeEquipamentosPCD: '' });
+  const [formSala, setFormSala] = useState({
+    nome: "",
+    quantidadeMaximaAlunos: "",
+    quantidadeEquipamentosPCD: "",
+    especialidades: [],
+    especialidadesIds: [],
+  });
 
-    useEffect(() => {
+  useEffect(() => {
     fetchData();
   }, [activeTab]);
 
-  
+  // Função para buscar dados conforme a aba ativa
+  const fetchData = async () => {
+    if (activeTab === "especialidades") {
+      try {
+        const response = await api.get(`api/especialidades`);
+        const data = response.data;
+        setEspecialidades(data);
+      } catch (error) {
+        console.error("Erro ao buscar especialidades:", error);
+      }
+    } else if (activeTab === "salas") {
+      try {
+        const response = await api.get(`api/salas`);
+        const data = response.data;
+        setSalas(data);
+      } catch (error) {
+        console.error("Erro ao buscar salas:", error);
+      }
+    }
+  };
+
   // Funções Especialidades
   const handleAddEsp = () => {
     console.log("Adicionar Especialidade");
     setEditingEsp(null);
-    setFormEsp('');
+    setFormEsp("");
     setShowEspModal(true);
   };
 
@@ -38,7 +64,7 @@ export const useStudioModel = () => {
     setShowEspModal(true);
   };
 
-  const handleSaveEsp = async() => {
+  const handleSaveEsp = async () => {
     if (!formEsp.trim()) {
       Swal.fire({
         icon: "warning",
@@ -48,22 +74,28 @@ export const useStudioModel = () => {
       });
       return;
     }
-    
+
     if (editingEsp) {
       try {
-        const response = await api.patch(`api/especialidades/${editingEsp.id}`, {
-          nome: formEsp
-        });
+        const newName = {
+          nome: formEsp,
+        };
+        const response = await api.patch(
+          `api/especialidades/${editingEsp.id}`,
+          newName
+        );
         console.log("Especialidade atualizada:", response.data);
-         setEspecialidades(especialidades.map(e => 
-        e.id === editingEsp.id ? { ...e, nome: formEsp } : e
-      ));
-      Swal.fire({
-        icon: "success",
-        title: "Atualizado!",
-        text: "A especialidade foi atualizada com sucesso.",
-        confirmButtonText: "OK",
-      });
+        setEspecialidades(
+          especialidades.map((e) =>
+            e.id === editingEsp.id ? { ...e, nome: formEsp } : e
+          )
+        );
+        Swal.fire({
+          icon: "success",
+          title: "Atualizado!",
+          text: "A especialidade foi atualizada com sucesso.",
+          confirmButtonText: "OK",
+        });
       } catch (error) {
         console.error("Erro ao atualizar especialidade:", error);
         Swal.fire({
@@ -75,9 +107,10 @@ export const useStudioModel = () => {
       }
     } else {
       try {
-        const response = await api.post(`api/especialidades`, {
-          nome: formEsp
-        });
+        const newName = {
+          nome: formEsp,
+        };
+        const response = await api.post(`api/especialidades`, newName);
         console.log("Especialidade criada:", response.data);
         Swal.fire({
           icon: "success",
@@ -100,123 +133,149 @@ export const useStudioModel = () => {
   };
 
   const handleDeleteEspecialidade = async (id) => {
-     Swal.fire({
-          title: "Tem certeza?",
-          text: "Essa ação não poderá ser desfeita!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "Sim, deletar!",
-          cancelButtonText: "Cancelar",
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            try {
-              const response = await api.delete(`api/especialidades/${id}`);
-              console.log("Especialidade deletada:", response.data);
-              setEspecialidades(especialidades.filter(esp => esp.id !== id));
-              Swal.fire({
-                icon: "success",
-                title: "Deletado!",
-                text: "A especialidade foi deletada com sucesso.",
-                confirmButtonText: "OK",
-              });
-              
-            } catch (error) {
-              console.error("Erro ao deletar especialidade:", error);
-              Swal.fire({
-                icon: "error",
-                title: "Erro",
-                text: "Ocorreu um erro ao deletar a especialidade.",
-                confirmButtonText: "OK",
-              });
-            }
-          }
-        });
-    };
+    Swal.fire({
+      title: "Tem certeza?",
+      text: "Essa ação não poderá ser desfeita!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sim, deletar!",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await api.delete(`api/especialidades/${id}`);
+          console.log("Especialidade deletada:", response.data);
+          setEspecialidades(especialidades.filter((esp) => esp.id !== id));
+          Swal.fire({
+            icon: "success",
+            title: "Deletado!",
+            text: "A especialidade foi deletada com sucesso.",
+            confirmButtonText: "OK",
+          });
+        } catch (error) {
+          console.error("Erro ao deletar especialidade:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: "Ocorreu um erro ao deletar a especialidade.",
+            confirmButtonText: "OK",
+          });
+        }
+      }
+    });
+  };
 
   // Funções Salas
   const handleAddSala = () => {
     setEditingSala(null);
-    setFormSala({ nome: '', quantidadeMaximaAlunos: '', quantidadeEquipamentosPCD: '' });
+    setFormSala({
+      nome: "",
+      quantidadeMaximaAlunos: "",
+      quantidadeEquipamentosPCD: "",
+      especialidades: [],
+      especialidadesIds: [],
+    });
     setShowSalaModal(true);
   };
 
   const handleEditSala = (sala) => {
     setEditingSala(sala);
-    setFormSala({ nome: sala.nome, quantidadeMaximaAlunos: sala.quantidadeMaximaAlunos, quantidadeEquipamentosPCD: sala.quantidadeEquipamentosPCD });
+    setFormSala({
+      nome: sala.nome,
+      quantidadeMaximaAlunos: sala.quantidadeMaximaAlunos,
+      quantidadeEquipamentosPCD: sala.quantidadeEquipamentosPCD,
+      especialidades: sala.especialidades || [],
+      especialidadesIds: sala.especialidadesIds || [],
+    });
     setShowSalaModal(true);
   };
 
-  const handleSaveSala = () => {
-    if (!formSala.nome.trim() || !formSala.quantidadeMaximaAlunos || !formSala.quantidadeEquipamentosPCD) return;
-    
+  const handleSaveSala = async () => {
+    if (
+      !formSala.nome.trim() ||
+      !formSala.quantidadeMaximaAlunos ||
+      !formSala.quantidadeEquipamentosPCD ||
+      !formSala.especialidades ||
+      formSala.especialidades.length === 0
+    )
+      return;
+
     if (editingSala) {
-      setSalas(salas.map(s => 
-        s.id === editingSala.id ? { ...s, ...formSala, capacidade: Number(formSala.capacidade) } : s
-      ));
+      setSalas(
+        salas.map((s) =>
+          s.id === editingSala.id
+            ? { ...s, ...formSala, capacidade: Number(formSala.capacidade) }
+            : s
+        )
+      );
     } else {
-      setSalas([...salas, { id: Date.now(), ...formSala, capacidade: Number(formSala.capacidade) }]);
+      try {
+        const newSala = {
+          nome: formSala.nome,
+          quantidadeMaximaAlunos: (formSala.quantidadeMaximaAlunos),
+          quantidadeEquipamentosPCD: formSala.quantidadeEquipamentosPCD,
+          especialidadesIds: formSala.especialidadesIds,
+        };
+        console.log("Novo objeto sala:", newSala);
+
+        const response = await api.post("api/salas", newSala);
+        console.log("Sala criada:", response.data);
+        Swal.fire({
+          icon: "success",
+          title: "Criado!",
+          text: "A sala foi criada com sucesso.",
+          confirmButtonText: "OK",
+        });
+        setSalas([...salas, response.data]);
+      } catch (error) {
+        console.error("Erro ao criar sala:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: "Ocorreu um erro ao criar a sala.",
+          confirmButtonText: "OK",
+        });
+      }
     }
     setShowSalaModal(false);
   };
 
   const handleDeleteSala = (id) => {
     Swal.fire({
-          title: "Tem certeza?",
-          text: "Essa ação não poderá ser desfeita!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "Sim, deletar!",
-          cancelButtonText: "Cancelar",
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            try {
-              const response = await api.delete(`api/salas/${id}`);
-              console.log("Sala deletada:", response.data);
-              setSalas(salas.filter(s => s.id !== id));
-              Swal.fire({
-                icon: "success",
-                title: "Deletado!",
-                text: "A sala foi deletada com sucesso.",
-                confirmButtonText: "OK",
-              });
-              
-            } catch (error) {
-              console.error("Erro ao deletar sala:", error);
-              Swal.fire({
-                icon: "error",
-                title: "Erro",
-                text: "Ocorreu um erro ao deletar a sala.",
-                confirmButtonText: "OK",
-              });
-            }
-          }
-        });
-  };
-
-  const fetchData = async () => {
-    if (activeTab === "especialidades") {
-      try {
-        const response = await api.get(`api/especialidades`);
-        const data = response.data;
-        setEspecialidades(data);
-      } catch (error) {
-        console.error("Erro ao buscar especialidades:", error);
-      }
-      } else if (activeTab === 'salas') {
+      title: "Tem certeza?",
+      text: "Essa ação não poderá ser desfeita!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sim, deletar!",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
         try {
-          const response = await api.get(`api/salas`);
-          const data = response.data
-          setSalas(data)
+          const response = await api.delete(`api/salas/${id}`);
+          console.log("Sala deletada:", response.data);
+          setSalas(salas.filter((s) => s.id !== id));
+          Swal.fire({
+            icon: "success",
+            title: "Deletado!",
+            text: "A sala foi deletada com sucesso.",
+            confirmButtonText: "OK",
+          });
         } catch (error) {
-          console.error("Erro ao buscar salas:", error);
+          console.error("Erro ao deletar sala:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: "Ocorreu um erro ao deletar a sala.",
+            confirmButtonText: "OK",
+          });
         }
-    }
+      }
+    });
   };
-
 
   return {
     especialidades,
