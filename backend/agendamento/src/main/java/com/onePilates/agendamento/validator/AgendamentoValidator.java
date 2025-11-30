@@ -49,7 +49,20 @@ public class AgendamentoValidator {
      * @throws BusinessException se alguma validação falhar
      */
     public void validar(AgendamentoDTO dto) {
-        logger.debug("Iniciando validação de agendamento para data/hora: {}", dto.getDataHora());
+        validar(dto, null);
+    }
+
+    /**
+     * Valida todas as regras de negócio para um agendamento, excluindo um agendamento específico das verificações de conflito.
+     * Este método é usado na atualização de agendamentos para evitar que o próprio agendamento seja considerado como conflito.
+     * 
+     * @param dto DTO contendo os dados do agendamento a ser validado
+     * @param agendamentoIdExcluir ID do agendamento a ser excluído das verificações de conflito (null para criação)
+     * @throws BusinessException se alguma validação falhar
+     */
+    public void validar(AgendamentoDTO dto, Long agendamentoIdExcluir) {
+        logger.debug("Iniciando validação de agendamento para data/hora: {} (excluindo ID: {})", 
+                dto.getDataHora(), agendamentoIdExcluir);
 
         LocalDateTime dataHora = dto.getDataHora();
 
@@ -149,9 +162,9 @@ public class AgendamentoValidator {
             throw new ConflitoHorarioException(mensagem);
         }
 
-        // Validar conflito de alunos
+        // Validar conflito de alunos, excluindo o agendamento atual se fornecido
         List<String> nomesIndisponiveis = alunos.stream()
-                .filter(aluno -> !agendamentoRepository.findAgendamentosByAlunoAndDataHora(aluno, dataHora).isEmpty())
+                .filter(aluno -> !agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(aluno, dataHora, agendamentoIdExcluir).isEmpty())
                 .map(Aluno::getNome)
                 .toList();
 
@@ -296,7 +309,7 @@ public class AgendamentoValidator {
             .anyMatch(esp -> esp.getId().equals(especialidade.getId()));
 
         if (!professorLecionaEspecialidade) {
-            logger.warn("Tentativa de agendar especialidade {} com professor {} que não a leciona", 
+            logger.warn("Tentativa de agendar especialidade {} com professora {} que não a atende", 
                     especialidade.getNome(), professor.getNome());
             
             String especialidadesDisponiveis = professor.getEspecialidades().stream()

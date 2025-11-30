@@ -318,6 +318,10 @@ public class AgendamentoService {
         try {
             Agendamento agendamento = buscarPorId(agendamentoId);
             
+            // Guardar professor antigo para detectar troca
+            Professor professorAntigo = agendamento.getProfessor();
+            Long professorIdAntigo = professorAntigo.getId();
+            
             // Criar DTO temporário com dados do agendamento existente para validação
             AgendamentoDTO dtoValidacao = new AgendamentoDTO();
             LocalDateTime dataHoraValidacao = dto.getDataHora() != null ? dto.getDataHora() : agendamento.getDataHora();
@@ -334,8 +338,8 @@ public class AgendamentoService {
                     .map(aa -> aa.getAluno().getId())
                     .collect(Collectors.toSet()));
             
-            // Validar com os novos dados usando o validator
-            agendamentoValidator.validar(dtoValidacao);
+            // Validar com os novos dados usando o validator, excluindo o agendamento atual das verificações de conflito
+            agendamentoValidator.validar(dtoValidacao, agendamentoId);
             
             if (dto.getDataHora() != null) {
                 agendamento.setDataHora(normalizarDataHora(dto.getDataHora()));
@@ -345,9 +349,16 @@ public class AgendamentoService {
             boolean professorFoiTrocado = false;
             
             if (dto.getProfessorId() != null) {
-                Professor professor = professorRepository.findById(dto.getProfessorId())
+                professorNovo = professorRepository.findById(dto.getProfessorId())
                         .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
-                agendamento.setProfessor(professor);
+                
+                // Verificar se houve troca de professor
+                if (!professorIdAntigo.equals(professorNovo.getId())) {
+                    professorFoiTrocado = true;
+                    agendamento.setProfessor(professorNovo);
+                }
+            } else {
+                professorNovo = professorAntigo; // Mantém o mesmo professor
             }
             if (dto.getSalaId() != null) {
                 Sala sala = salaRepository.findById(dto.getSalaId())
@@ -440,7 +451,7 @@ public class AgendamentoService {
                 }
             }
             
-            AgendamentoResponseDTO response = toResponseDTO(agendamentoRepository.save(agendamento));
+            AgendamentoResponseDTO response = toResponseDTO(agendamentoSalvo);
             logger.info("Agendamento atualizado com sucesso. ID: {}", agendamentoId);
             return response;
         } catch (BusinessException e) {
