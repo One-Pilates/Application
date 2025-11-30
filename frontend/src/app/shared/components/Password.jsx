@@ -254,13 +254,13 @@ export default function RedefinirSenha() {
     <div className="min-h-[calc(100vh-120px)] flex items-center justify-center p-8 bg-orange-50/30">
       <button
         onClick={() => navigate(-1)}
-        className="absolute top-8 left-8 flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-5 rounded-lg shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-md hover:-translate-x-1"
+        className="absolute top-8 left-8 flex items-center gap-2 bg-white dark:bg-dark-secondary hover:bg-gray-100 dark:hover:bg-dark-component dark:bg-dark-secondary text-gray-700 dark:text-fontMain font-medium py-2.5 px-5 rounded-lg shadow-sm border border-gray-200 dark:border-dark-component transition-all duration-300 hover:shadow-md hover:-translate-x-1"
       >
         <BiArrowBack size={20} />
         Voltar
       </button>
 
-      <div className="bg-white rounded-2xl shadow-lg p-10 w-full max-w-2xl">
+      <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-lg p-10 w-full max-w-2xl">
         <div className="mb-12">
           <StepIndicator
             steps={steps}
@@ -275,14 +275,14 @@ export default function RedefinirSenha() {
               <h1 className="text-3xl font-bold text-gray-800 mb-3">
                 Redefinir Senha
               </h1>
-              <p className="text-base text-gray-600 leading-relaxed">
+              <p className="text-base text-gray-600 dark:text-fontSec leading-relaxed">
                 Informe seu email para receber o código de verificação
               </p>
             </div>
 
             <form className="flex flex-col gap-6" onSubmit={handleEnviarEmail}>
               <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-[15px] font-semibold text-gray-700">
+                <label htmlFor="email" className="text-[15px] font-semibold text-gray-700 dark:text-fontMain">
                   Email
                 </label>
                 <input
@@ -290,7 +290,7 @@ export default function RedefinirSenha() {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full py-3.5 px-4 text-base border-2 border-gray-300 rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                  className="w-full py-3.5 px-4 text-base border-2 border-gray-300 dark:border-dark-component rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                   placeholder="seuemail@exemplo.com"
                   required
                 />
@@ -319,7 +319,7 @@ export default function RedefinirSenha() {
               <h1 className="text-3xl font-bold text-gray-800 mb-3">
                 Código de Verificação
               </h1>
-              <p className="text-base text-gray-600 leading-relaxed">
+              <p className="text-base text-gray-600 dark:text-fontSec leading-relaxed">
                 Confira sua caixa de entrada e informe o código recebido
               </p>
             </div>
@@ -339,7 +339,7 @@ export default function RedefinirSenha() {
                   ref={(el) => (inputsRef.current[index] = el)}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-xl outline-none transition-all duration-300 uppercase font-mono focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 [&:not(:placeholder-shown)]:border-green-500 [&:not(:placeholder-shown)]:bg-green-50"
+                  className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 dark:border-dark-component rounded-xl outline-none transition-all duration-300 uppercase font-mono focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 [&:not(:placeholder-shown)]:border-green-500 [&:not(:placeholder-shown)]:bg-green-50"
                 />
               ))}
             </div>
@@ -370,14 +370,14 @@ export default function RedefinirSenha() {
               <h1 className="text-3xl font-bold text-gray-800 mb-3">
                 Criar Nova Senha
               </h1>
-              <p className="text-base text-gray-600 leading-relaxed">
+              <p className="text-base text-gray-600 dark:text-fontSec leading-relaxed">
                 Por favor, crie uma nova senha segura para sua conta
               </p>
             </div>
 
             <form className="flex flex-col gap-6" onSubmit={handleRedefinirSenha}>
               <div className="flex flex-col gap-2">
-                <label htmlFor="password1" className="text-[15px] font-semibold text-gray-700">
+                <label htmlFor="password1" className="text-[15px] font-semibold text-gray-700 dark:text-fontMain">
                   Nova Senha
                 </label>
                 <div className="relative flex items-center">
@@ -386,13 +386,13 @@ export default function RedefinirSenha() {
                     id="password1"
                     value={password1}
                     onChange={(e) => setPassword1(e.target.value)}
-                    className="w-full py-3.5 px-4 pr-12 text-base border-2 border-gray-300 rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                    className="w-full py-3.5 px-4 pr-12 text-base border-2 border-gray-300 dark:border-dark-component rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                     required
                     placeholder="********"
                   />
                   <button
                     type="button"
-                    className="absolute right-4 bg-transparent border-none text-gray-500 cursor-pointer p-2 flex items-center justify-center transition-colors hover:text-gray-700"
+                    className="absolute right-4 bg-transparent border-none text-gray-500 cursor-pointer p-2 flex items-center justify-center transition-colors hover:text-gray-700 dark:text-fontMain"
                     onClick={() => setShowPassword1(!showPassword1)}
                     aria-label={showPassword1 ? "Ocultar senha" : "Mostrar senha"}
                   >
@@ -406,7 +406,7 @@ export default function RedefinirSenha() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="password2" className="text-[15px] font-semibold text-gray-700">
+                <label htmlFor="password2" className="text-[15px] font-semibold text-gray-700 dark:text-fontMain">
                   Confirmar Nova Senha
                 </label>
                 <div className="relative flex items-center">
@@ -415,13 +415,13 @@ export default function RedefinirSenha() {
                     id="password2"
                     value={password2}
                     onChange={(e) => setPassword2(e.target.value)}
-                    className="w-full py-3.5 px-4 pr-12 text-base border-2 border-gray-300 rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                    className="w-full py-3.5 px-4 pr-12 text-base border-2 border-gray-300 dark:border-dark-component rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                     required
                     placeholder="********"
                   />
                   <button
                     type="button"
-                    className="absolute right-4 bg-transparent border-none text-gray-500 cursor-pointer p-2 flex items-center justify-center transition-colors hover:text-gray-700"
+                    className="absolute right-4 bg-transparent border-none text-gray-500 cursor-pointer p-2 flex items-center justify-center transition-colors hover:text-gray-700 dark:text-fontMain"
                     onClick={() => setShowPassword2(!showPassword2)}
                     aria-label={showPassword2 ? "Ocultar senha" : "Mostrar senha"}
                   >
@@ -434,8 +434,8 @@ export default function RedefinirSenha() {
                 </div>
               </div>
 
-              <div className="p-5 bg-gray-50 rounded-xl border border-gray-300">
-                <h4 className="text-sm font-bold text-gray-700 mb-4">
+              <div className="p-5 bg-gray-50 dark:bg-dark-secondary rounded-xl border border-gray-300 dark:border-dark-component">
+                <h4 className="text-sm font-bold text-gray-700 dark:text-fontMain mb-4">
                   A senha deve conter:
                 </h4>
                 <ul className="list-none p-0 m-0 flex flex-col gap-2.5">
@@ -485,3 +485,4 @@ export default function RedefinirSenha() {
     </div>
   );
 }
+

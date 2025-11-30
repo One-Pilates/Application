@@ -45,18 +45,18 @@ export default function WhatsAppButton() {
       {/* Modal de confirmação */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-[90%] text-center animate-scale-in">
+          <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-2xl p-6 max-w-sm w-[90%] text-center animate-scale-in">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
               Deseja conversar com a secretaria?
             </h2>
-            <p className="text-gray-600 mb-6 text-sm">
+            <p className="text-gray-600 dark:text-fontSec mb-6 text-sm">
               Você será redirecionado para o WhatsApp da nossa secretaria
               para agendar sua aula experimental.
             </p>
             <div className="flex justify-center gap-3">
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-dark-component text-gray-700 dark:text-fontMain hover:bg-white dark:bg-dark transition"
               >
                 Cancelar
               </button>
@@ -73,3 +73,5 @@ export default function WhatsAppButton() {
     </>
   );
 }
+
+

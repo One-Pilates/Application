@@ -21,7 +21,7 @@
   gap: 0.5rem;
   background: none;
   border: none;
-  color: #6b7280;
+  color: var(--text-cinza);
   font-size: 0.875rem;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -29,14 +29,14 @@
   left: 0;
 
   &:hover {
-    color: #1f2937;
+    color: var(--text-escuro);
   }
 }
 
 .main-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--text-cinza);
   text-align: center;
   width: 100%;
 }
@@ -50,7 +50,7 @@
 
 .subtitle {
   text-align: center;
-  color: #6b7280;
+  color: var(--text-cinza);
   font-size: 0.875rem;
   margin-bottom: 2rem;
 }
@@ -77,15 +77,15 @@
 .dados-pessoais-screen,
 .endereco-screen,
 .informacoes-profissionais-screen {
-  background: #fafafa;
+  background: var(--branco);
   padding: 2.5rem 3rem;
   border-radius: 1rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--cor-borda);
   min-height: 400px;
 }
 
 .swal2-confirm {
-  background-color: #ff7043 !important;
+  background-color: #F77433 !important;
   color: white !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
@@ -100,7 +100,7 @@
 
 .swal2-cancel {
   background-color: #b0b0b0 !important;
-  color: #fff !important;
+  color: var(--branco) !important;
   border-radius: 8px !important;
   padding: 10px 22px !important;
 }
@@ -173,3 +173,4 @@
     padding: 3rem 4rem;
   }
 }
+

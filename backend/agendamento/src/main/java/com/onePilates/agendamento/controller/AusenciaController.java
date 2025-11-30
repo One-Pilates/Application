@@ -4,7 +4,6 @@ import com.onePilates.agendamento.dto.AusenciaDTO;
 import com.onePilates.agendamento.dto.response.AusenciaResponseDTO;
 import com.onePilates.agendamento.service.AusenciaService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,8 +18,11 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class AusenciaController {
 
-    @Autowired
-    private AusenciaService ausenciaService;
+    private final AusenciaService ausenciaService;
+
+    public AusenciaController(AusenciaService ausenciaService) {
+        this.ausenciaService = ausenciaService;
+    }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")

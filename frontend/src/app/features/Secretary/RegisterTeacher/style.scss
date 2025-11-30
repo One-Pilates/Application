@@ -21,7 +21,7 @@
   gap: 0.5rem;
   background: none;
   border: none;
-  color: #6b7280;
+  color: var(--text-cinza);
   font-size: 0.875rem;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -29,14 +29,14 @@
   left: 0;
 
   &:hover {
-    color: #1f2937;
+    color: var(--text-escuro);
   }
 }
 
 .main-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--text-cinza);
   text-align: center;
   width: 100%;
 }
@@ -50,7 +50,7 @@
 
 .subtitle {
   text-align: center;
-  color: #6b7280;
+  color: var(--text-cinza);
   font-size: 0.875rem;
   margin-bottom: 2rem;
 }
@@ -144,3 +144,4 @@
     padding: 3rem 4rem;
   }
 }
+

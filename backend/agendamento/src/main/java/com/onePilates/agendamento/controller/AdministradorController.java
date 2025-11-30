@@ -3,7 +3,6 @@ package com.onePilates.agendamento.controller;
 import com.onePilates.agendamento.dto.AdministradorDTO;
 import com.onePilates.agendamento.dto.response.AdministradorResponseDTO;
 import com.onePilates.agendamento.service.AdministradorService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +15,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class AdministradorController {
 
-    @Autowired
-    private AdministradorService administradorService;
+    private final AdministradorService administradorService;
+
+    public AdministradorController(AdministradorService administradorService) {
+        this.administradorService = administradorService;
+    }
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMINISTRADOR')")

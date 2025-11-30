@@ -10,7 +10,7 @@ const ViewProfile = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-lg text-gray-600">Carregando perfil...</div>
+        <div className="text-lg text-gray-600 dark:text-fontSec">Carregando perfil...</div>
       </div>
     );
   }
@@ -158,3 +158,4 @@ const ViewProfile = () => {
 };
 
 export default ViewProfile;
+

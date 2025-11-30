@@ -24,14 +24,21 @@ const GerenciamentoProfessorView = ({
 
         <div className="relative w-80">
           <FiSearch
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2"
             size={20}
+            style={{ color: 'var(--laranja-principal)' }}
           />
           <input
             type="text"
             placeholder="Buscar por nome"
             onChange={filterByNome}
-            className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            className="w-full pl-10 pr-8 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            style={{
+              borderColor: 'var(--cor-borda)',
+              borderWidth: '1px',
+              backgroundColor: 'var(--branco)',
+              color: 'var(--text-escuro)'
+            }}
           />
         </div>
 
@@ -41,7 +48,12 @@ const GerenciamentoProfessorView = ({
             professores.map((professor) => (
               <div 
                 key={professor.id}
-                className="flex flex-col bg-white mb-6 rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+                className="flex flex-col mb-6 rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+                style={{
+                  backgroundColor: 'var(--branco)',
+                  borderColor: 'var(--cor-borda)',
+                  borderWidth: '1px'
+                }}
               >
             
                 {/* ===== PARTE SUPERIOR DO CARD ===== */}
@@ -55,7 +67,11 @@ const GerenciamentoProfessorView = ({
                       <img
                         src={professor.foto ? `${api.defaults.baseURL}/api/imagens/${professor.foto}` : userIconImg}
                         alt={professor.nome}
-                        className="w-24 h-24 rounded-full object-cover ring-4 ring-orange-200 group-hover:ring-orange-400 transition-all duration-300"
+                        className="w-24 h-24 rounded-full object-cover transition-all duration-300"
+                        style={{
+                          outline: '4px solid var(--cor-borda)',
+                          outlineOffset: '2px'
+                        }}
                       />
                     </button>
                 
@@ -64,7 +80,7 @@ const GerenciamentoProfessorView = ({
                   
                       {/* Linha superior: Nome + Badge de Status */}
                       <div className="flex flex-row items-center gap-3">
-                        <h2 className="text-3xl font-bold text-orange-600">
+                        <h2 className="text-3xl font-bold" style={{ color: 'var(--laranja-principal)' }}>
                           {professor.nome}
                         </h2>
                         <span className={`px-3 py-1 ${professor.status ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} rounded-full text-sm font-semibold`}>
@@ -73,30 +89,36 @@ const GerenciamentoProfessorView = ({
                       </div>
                   
                       {/* Cargo/Especialidade */}
-                      <p className="text-gray-600 text-base">{professor.cargo || 'Professor'}</p>
+                      <p className="text-base" style={{ color: 'var(--text-cinza)' }}>{professor.cargo || 'Professor'}</p>
                     </div>
                 
                   </div>
                   {/* ===== SEÇÃO DIREITA: Botão de Ação ===== */}
-                  <button className="group flex items-center gap-2 px-5 py-3 bg-orange-500 text-white rounded-xl font-semibold transition-all ease-in-out shadow-sm hover:bg-white hover:text-orange-500 hover:shadow-md">
+                  <button 
+                    className="group flex items-center gap-2 px-5 py-3 text-white rounded-xl font-semibold transition-all ease-in-out shadow-sm"
+                    style={{ backgroundColor: 'var(--laranja-principal)' }}
+                  >
                     <span onClick={()=> navigate("/secretaria/agenda", {state:  {idProfessor: professor.id}})}>Ver agenda</span>
-                    <FiCalendar className="group-hover:text-orange-500" size={18} />
+                    <FiCalendar size={18} />
                   </button>
                 </div>
 
                 {/* ===== PARTE INFERIOR DO CARD ===== */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                <div 
+                  className="flex items-center justify-between pt-4 border-t"
+                  style={{ borderTopColor: 'var(--cor-borda)' }}
+                >
               
                   {/* Coluna Esquerda: Contato e Especialidades */}
                   <div className="flex flex-col gap-3">
                     {/* Contato: Telefone e Email */}
                     <div className="flex items-center gap-6">
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <FiPhone className="text-orange-500" size={18} />
+                      <div className="flex items-center gap-2" style={{ color: 'var(--text-escuro)' }}>
+                        <FiPhone size={18} style={{ color: 'var(--laranja-principal)' }} />
                         <span className="text-sm">{professor.telefone || 'Sem telefone'}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <FiMail className="text-orange-500" size={18} />
+                      <div className="flex items-center gap-2" style={{ color: 'var(--text-escuro)' }}>
+                        <FiMail size={18} style={{ color: 'var(--laranja-principal)' }} />
                         <span className="text-sm">{professor.email}</span>
                       </div>
                     </div>
@@ -107,13 +129,17 @@ const GerenciamentoProfessorView = ({
                         professor.especialidades.map((esp) => (
                           <span 
                             key={esp.id}
-                            className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium"
+                            className="px-3 py-1 rounded-full text-sm font-medium"
+                            style={{
+                              backgroundColor: 'var(--cor-borda)',
+                              color: 'var(--text-escuro)'
+                            }}
                           >
                             {esp.nome}
                           </span>
                         ))
                       ) : (
-                        <span className="text-sm text-gray-500">Sem especialidades</span>
+                        <span className="text-sm" style={{ color: 'var(--text-cinza)' }}>Sem especialidades</span>
                       )}
                     </div>
                   </div>
@@ -128,7 +154,7 @@ const GerenciamentoProfessorView = ({
               </div>
             ))
           ) : (
-            <div className="flex items-center justify-center h-40 text-gray-500">
+            <div className="flex items-center justify-center h-40" style={{ color: 'var(--text-cinza)' }}>
               Nenhum professor encontrado
             </div>
           )}
@@ -139,3 +165,4 @@ const GerenciamentoProfessorView = ({
 };
 
 export default GerenciamentoProfessorView;
+

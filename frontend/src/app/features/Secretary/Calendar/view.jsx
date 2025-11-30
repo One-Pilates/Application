@@ -107,13 +107,8 @@ const SecretariaCalendarView = ({
           </div>
         )}
 
-        {errorMessage && (
-          <div className="aviso-erro">
-            <span>{errorMessage}</span>
-          </div>
-        )}
 
-        {jaBuscou && !hasAgendamentos && !isLoading && !errorMessage && (
+        {jaBuscou && !hasAgendamentos && !isLoading && (
           <div className="aviso-vazio">
             <p>Nenhum agendamento encontrado para os filtros selecionados.</p>
           </div>

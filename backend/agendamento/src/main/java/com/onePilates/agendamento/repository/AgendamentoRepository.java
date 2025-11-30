@@ -138,4 +138,33 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
     List<Agendamento> findAgendamentosByAlunoAndDataHora(@Param("aluno") com.onePilates.agendamento.model.Aluno aluno,
                                                          @Param("dataHora") LocalDateTime dataHora);
 
+    // Métodos para validação excluindo o agendamento atual (usado na atualização)
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Agendamento a WHERE a.sala.id = :salaId AND a.dataHora = :dataHora AND (:excludeId IS NULL OR a.id != :excludeId)")
+    boolean existsBySalaIdAndDataHoraExcludingId(@Param("salaId") Long salaId, 
+                                                  @Param("dataHora") LocalDateTime dataHora,
+                                                  @Param("excludeId") Long excludeId);
+
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Agendamento a WHERE a.professor.id = :professorId AND a.dataHora = :dataHora AND (:excludeId IS NULL OR a.id != :excludeId)")
+    boolean existsByProfessorIdAndDataHoraExcludingId(@Param("professorId") Long professorId,
+                                                        @Param("dataHora") LocalDateTime dataHora,
+                                                        @Param("excludeId") Long excludeId);
+
+    @Query("SELECT DISTINCT a FROM Agendamento a JOIN FETCH a.agendamentoAlunos aa JOIN FETCH aa.aluno WHERE aa.aluno = :aluno AND a.dataHora = :dataHora AND (:excludeId IS NULL OR a.id != :excludeId)")
+    List<Agendamento> findAgendamentosByAlunoAndDataHoraExcludingId(@Param("aluno") com.onePilates.agendamento.model.Aluno aluno,
+                                                                     @Param("dataHora") LocalDateTime dataHora,
+                                                                     @Param("excludeId") Long excludeId);
+
+    // Métodos para buscar agendamentos conflitantes exatos (para mensagens de erro detalhadas)
+    @EntityGraph(attributePaths = {"professor", "sala", "especialidade"})
+    @Query("SELECT a FROM Agendamento a WHERE a.professor.id = :professorId AND a.dataHora = :dataHora AND (:excludeId IS NULL OR a.id != :excludeId)")
+    java.util.Optional<Agendamento> findByProfessorIdAndDataHoraExcludingId(@Param("professorId") Long professorId,
+                                                                             @Param("dataHora") LocalDateTime dataHora,
+                                                                             @Param("excludeId") Long excludeId);
+
+    @EntityGraph(attributePaths = {"professor", "sala", "especialidade"})
+    @Query("SELECT a FROM Agendamento a WHERE a.sala.id = :salaId AND a.dataHora = :dataHora AND (:excludeId IS NULL OR a.id != :excludeId)")
+    java.util.Optional<Agendamento> findBySalaIdAndDataHoraExcludingId(@Param("salaId") Long salaId,
+                                                                        @Param("dataHora") LocalDateTime dataHora,
+                                                                        @Param("excludeId") Long excludeId);
+
 }

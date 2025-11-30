@@ -120,12 +120,20 @@ public class AlunoService {
         aluno.setTipoContato(dto.getTipoContato());
         aluno.setNotificacaoAtiva(dto.getNotificacaoAtiva());
 
+        System.out.println(dto.getEndereco().getBairro());
+
         EnderecoDTO enderecoDTO = dto.getEndereco();
         Endereco endereco = new Endereco();
         endereco.setRua(enderecoDTO.getRua());
         endereco.setCidade(enderecoDTO.getCidade());
         endereco.setEstado(enderecoDTO.getEstado());
         endereco.setCep(enderecoDTO.getCep());
+        endereco.setBairro(enderecoDTO.getBairro());
+        endereco.setUf(enderecoDTO.getUf());
+        endereco.setNumero(enderecoDTO.getNumero());
+        endereco.setBairro(enderecoDTO.getBairro());
+        endereco.setUf(enderecoDTO.getUf());
+        endereco.setNumero(enderecoDTO.getNumero());
         aluno.setEndereco(endereco);
 
         return aluno;
@@ -148,6 +156,9 @@ public class AlunoService {
         enderecoDTO.setCidade(aluno.getEndereco().getCidade());
         enderecoDTO.setEstado(aluno.getEndereco().getEstado());
         enderecoDTO.setCep(aluno.getEndereco().getCep());
+        enderecoDTO.setBairro(aluno.getEndereco().getBairro());
+        enderecoDTO.setUf(aluno.getEndereco().getUf());
+        enderecoDTO.setNumero(aluno.getEndereco().getNumero());
         dto.setEndereco(enderecoDTO);
 
         return dto;
