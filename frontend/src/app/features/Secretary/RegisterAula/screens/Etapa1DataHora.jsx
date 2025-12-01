@@ -12,8 +12,19 @@ export default function Etapa1DataHora(props) {
   };
 
   const handleHorarioChange = (e) => {
-    setDataHora((prev) => ({ ...prev, horario: e.target.value }));
+    const valor = e.target.value;
+    if (valor) {
+      const [hora] = valor.split(":");
+      setDataHora((prev) => ({ ...prev, horario: `${hora}:00` }));
+    } else {
+      setDataHora((prev) => ({ ...prev, horario: "" }));
+    }
   };
+
+  const horasDisponiveis = Array.from({ length: 15 }, (_, i) => {
+    const hora = String(i + 7).padStart(2, "0");
+    return `${hora}:00`;
+  });
 
   return (
     <div className="etapa-content">
@@ -33,13 +44,19 @@ export default function Etapa1DataHora(props) {
 
       <div className="form-group">
         <label htmlFor="horario">Horário *</label>
-        <input
-          type="time"
+        <select
           id="horario"
           value={dataHora.horario}
           onChange={handleHorarioChange}
           className={erros.horario ? "input-error" : ""}
-        />
+        >
+          <option value="">Selecione um horário</option>
+          {horasDisponiveis.map((hora) => (
+            <option key={hora} value={hora}>
+              {hora}
+            </option>
+          ))}
+        </select>
         {erros.horario && <span className="error-message">{erros.horario}</span>}
       </div>
     </div>

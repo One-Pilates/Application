@@ -9,7 +9,6 @@ export const useRegisterAulaModel = () => {
   const [carregando, setCarregando] = useState(false);
   const [erros, setErros] = useState({});
 
-  // Estados para os dados da aula
   const [dataHora, setDataHora] = useState({
     data: "",
     horario: "",
@@ -22,7 +21,6 @@ export const useRegisterAulaModel = () => {
   const [alunos, setAlunos] = useState([]);
   const [searchAluno, setSearchAluno] = useState("");
 
-  // Listas para selects
   const [professores, setProfessores] = useState([]);
   const [salas, setSalas] = useState([]);
   const [especialidades, setEspecialidades] = useState([]);
@@ -36,7 +34,6 @@ export const useRegisterAulaModel = () => {
     { label: "Confirmação" },
   ];
 
-  // Carregar dados das APIs
   useEffect(() => {
     const carregarDados = async () => {
       try {
@@ -64,12 +61,10 @@ export const useRegisterAulaModel = () => {
     carregarDados();
   }, []);
 
-  // Resetar sala e professor quando especialidade muda
   useEffect(() => {
     if (especialidade) {
       setSala("");
       setProfessor("");
-      // Carregar salas filtradas por especialidade
       api.get(`/api/especialidades/salas/${especialidade}`)
         .then(res => setSalas(res.data || []))
         .catch(err => console.error("Erro ao carregar salas:", err));
@@ -78,11 +73,9 @@ export const useRegisterAulaModel = () => {
     }
   }, [especialidade]);
 
-  // Resetar professor quando sala muda e carregar professores filtrados
   useEffect(() => {
     if (sala && especialidade) {
       setProfessor("");
-      // Carregar professores filtrados por especialidade
       api.get(`/api/especialidades/professores/${especialidade}`)
         .then(res => setProfessores(res.data || []))
         .catch(err => console.error("Erro ao carregar professores:", err));
@@ -91,7 +84,6 @@ export const useRegisterAulaModel = () => {
     }
   }, [sala, especialidade]);
 
-  // Validar etapa atual
   const validarEtapa = () => {
     const novosErros = {};
 
@@ -126,7 +118,6 @@ export const useRegisterAulaModel = () => {
     return Object.keys(novosErros).length === 0;
   };
 
-  // Adicionar aluno
   const handleAdicionarAluno = (aluno) => {
     if (aluno && !alunos.find((a) => a.id === aluno.id)) {
       setAlunos([...alunos, aluno]);
@@ -135,17 +126,14 @@ export const useRegisterAulaModel = () => {
     }
   };
 
-  // Remover aluno
   const handleRemoverAluno = (alunoId) => {
     setAlunos(alunos.filter((a) => a.id !== alunoId));
   };
 
-  // Alunos disponíveis (não selecionados)
   const alunosDisponiveis = todosAlunos.filter(
     (aluno) => !alunos.find((a) => a.id === aluno.id)
   );
 
-  // Próxima etapa
   const proximaEtapa = () => {
     if (validarEtapa()) {
       if (etapaAtual === 3) {
@@ -162,26 +150,22 @@ export const useRegisterAulaModel = () => {
     }
   };
 
-  // Etapa anterior
   const etapaAnterior = () => {
     if (etapaAtual > 1) {
       setEtapaAtual(etapaAtual - 1);
     }
   };
 
-  // Ir para etapa específica
   const irParaEtapa = (numeroEtapa) => {
     if (numeroEtapa <= etapaAtual && numeroEtapa >= 1) {
       setEtapaAtual(numeroEtapa);
     }
   };
 
-  // Finalizar e ir para confirmação
   const finalizar = () => {
     setEtapaAtual(4);
   };
 
-  // Criar aula
   const criarAula = async () => {
     setCarregando(true);
 
@@ -201,7 +185,6 @@ export const useRegisterAulaModel = () => {
 
       Swal.fire("Sucesso!", "Aula criada com sucesso!", "success");
       
-      // Passar os filtros (professor e sala) pro calendário carregar automaticamente
       navigate("/secretaria/agendamento", {
         state: {
           idProfessor: parseInt(professor),
@@ -233,7 +216,6 @@ export const useRegisterAulaModel = () => {
     }
   };
 
-  // Cancelar
   const cancelar = () => {
     Swal.fire({
       title: "Cancelar cadastro?",
