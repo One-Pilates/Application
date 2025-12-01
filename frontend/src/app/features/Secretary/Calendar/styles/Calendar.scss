@@ -6,12 +6,60 @@
   flex-direction: column;
   padding: 1.5rem;
   backgroundColor: 'var(--bg-claro)';
+}
+
+.calendar-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 
   h1 {
     font-size: 2rem;
     font-weight: 600;
-    margin-bottom: 1rem;
     color: var(--text-escuro);
+    margin: 0;
+    flex: 1;
+  }
+
+  .btn-criar-aula {
+    padding: 0.75rem 1.5rem;
+    background: $laranja-principal;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.938rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+    white-space: nowrap;
+
+    &:hover {
+      background: #e85f2d;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    h1 {
+      order: 1;
+    }
+
+    .btn-criar-aula {
+      order: 2;
+      width: 100%;
+    }
   }
 }
 

@@ -273,9 +273,16 @@
     cursor: pointer;
     transition: all 0.2s;
 
-    &:hover {
+    &:hover:not(:disabled) {
         background: var(--cor-borda);
         border-color: #d0d0d0;
+    }
+
+    &:disabled {
+        background: #f5f5f5;
+        color: #999;
+        border-color: #ddd;
+        cursor: not-allowed;
     }
 }
 
@@ -291,10 +298,18 @@
     transition: all 0.2s;
     box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
 
-    &:hover {
+    &:hover:not(:disabled) {
         background: #e85f2d;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    }
+
+    &:disabled {
+        background: #ccc;
+        color: #666;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
     }
 }
 
@@ -541,4 +556,78 @@
         justify-content: center;
     }
 }
+
+// Estilos para o search de alunos
+.search-container {
+    position: relative;
+    flex: 1;
+}
+
+.aluno-search {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid var(--cor-borda);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    background: var(--branco);
+    color: var(--text-escuro);
+    transition: all 0.2s;
+
+    &:focus {
+        outline: none;
+        border-color: $laranja-principal;
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+
+    &::placeholder {
+        color: var(--text-cinza);
+    }
+}
+
+.search-results {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--branco);
+    border: 2px solid var(--cor-borda);
+    border-radius: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1001;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.search-result-item {
+    padding: 12px 12px;
+    border-bottom: 1px solid var(--cor-borda);
+    cursor: pointer;
+    color: var(--text-escuro);
+    font-size: 0.875rem;
+    transition: all 0.2s;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background: rgba(247, 116, 51, 0.1);
+        color: $laranja-principal;
+        padding-left: 16px;
+    }
+
+    &.empty {
+        text-align: center;
+        color: var(--text-cinza);
+        cursor: default;
+        padding: 1rem;
+
+        &:hover {
+            background: transparent;
+            padding-left: 12px;
+        }
+    }
+}
+
 

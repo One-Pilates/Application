@@ -14,6 +14,9 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
   const [todosAlunos, setTodosAlunos] = useState([]);
   const [alunosSelecionados, setAlunosSelecionados] = useState([]);
   const [alunoParaAdicionar, setAlunoParaAdicionar] = useState("");
+  const [searchAluno, setSearchAluno] = useState("");
+  const [mostrarListaAlunos, setMostrarListaAlunos] = useState(false);
+  const [carregando, setCarregando] = useState(false);
 
   useEffect(() => {
     if (editFields.professor !== undefined) {
@@ -58,20 +61,19 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
       id: a.id || 0,
       nome: a.nome
     })) || []);
-    setAlunoParaAdicionar("");
+    setSearchAluno("");
+    setMostrarListaAlunos(false);
     onClose();
   };
 
-  const handleAdicionarAluno = () => {
-    if (!alunoParaAdicionar) return;
-
-    const aluno = todosAlunos.find(a => a.id.toString() === alunoParaAdicionar);
+  const handleAdicionarAluno = (aluno) => {
     if (aluno && !alunosSelecionados.find(a => a.id === aluno.id)) {
       setAlunosSelecionados([...alunosSelecionados, { 
         id: aluno.id, 
         nome: aluno.nome
       }]);
-      setAlunoParaAdicionar("");
+      setSearchAluno("");
+      setMostrarListaAlunos(false);
     }
   };
 
@@ -93,26 +95,41 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
     if (result.isConfirmed) {
       let patchData = {};
 
+      // Sempre enviar todos os campos necessários para validação
+      // (data/hora, sala, professor, especialidade e alunos)
+      
       if (editFields.horario !== undefined) {
         const dataAtual = new Date(agendamento.dataHora);
         const [horas, minutos] = editFields.horario.split(":");
         dataAtual.setHours(parseInt(horas), parseInt(minutos));
         patchData.dataHora = dataAtual.toISOString();
+      } else {
+        // Se não está editando horário, enviar o horário original
+        patchData.dataHora = agendamento.dataHora;
       }
 
       if (editFields.professor !== undefined) {
         const prof = professores.find((p) => p.nome === editFields.professor);
         if (prof) patchData.professorId = prof.id;
+      } else {
+        // Se não está editando professor, enviar o ID original
+        patchData.professorId = agendamento.professorId;
       }
 
       if (editFields.sala !== undefined) {
         const sala = salas.find((s) => s.nome === editFields.sala);
         if (sala) patchData.salaId = sala.id;
+      } else {
+        // Se não está editando sala, enviar o ID original
+        patchData.salaId = agendamento.salaId;
       }
 
       if (editFields.especialidade !== undefined) {
         const esp = especialidades.find((e) => e.nome === editFields.especialidade);
         if (esp) patchData.especialidadeId = esp.id;
+      } else {
+        // Se não está editando especialidade, enviar o ID original
+        patchData.especialidadeId = agendamento.especialidadeId;
       }
 
       if (editFields.observacoes !== undefined) {
@@ -128,16 +145,21 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
 
       if (alunosMudaram) {
         patchData.alunoIds = alunosSelecionados.map(a => a.id);
+      } else {
+        // Se alunos não mudaram, enviar os IDs originais
+        patchData.alunoIds = alunosOriginais;
       }
 
       console.log('PATCH enviado para o backend:', patchData);
 
       try {
-        await api.patch(`/api/agendamento/${agendamento.id}`, patchData);
+        setCarregando(true);
+        await api.patch(`/api/agendamentos/${agendamento.id}`, patchData);
         setEditFields({});
         Swal.fire('Alteração salva!', '', 'success');
         window.location.reload(); 
       } catch (e) {
+        setCarregando(false);
         console.error('Erro ao salvar:', e);
         if (e.response) {
           console.error('Resposta do backend:', e.response);
@@ -158,7 +180,8 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
       id: a.id || 0,
       nome: a.nome
     })) || []);
-    setAlunoParaAdicionar("");
+    setSearchAluno("");
+    setMostrarListaAlunos(false);
   };
 
   const alunosDisponiveis = todosAlunos.filter(
@@ -348,11 +371,11 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
 
               {temMudancas && (
                 <div className="edit-actions">
-                  <button className="btn-cancel" onClick={handleCancel}>
+                  <button className="btn-cancel" onClick={handleCancel} disabled={carregando}>
                     Cancelar
                   </button>
-                  <button className="btn-save" onClick={handleSave}>
-                    Salvar Alteração
+                  <button className="btn-save" onClick={handleSave} disabled={carregando}>
+                    {carregando ? '⏳ Salvando...' : 'Salvar Alteração'}
                   </button>
                 </div>
               )}
@@ -364,25 +387,48 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
               <div className="adicionar-aluno-box">
                 <div className="adicionar-aluno-label">Adicionar Aluno</div>
                 <div className="adicionar-aluno-form">
-                  <select
-                    className="aluno-select"
-                    value={alunoParaAdicionar}
-                    onChange={(e) => setAlunoParaAdicionar(e.target.value)}
-                  >
-                    <option value="">Selecione um aluno</option>
-                    {alunosDisponiveis.map((aluno) => (
-                      <option key={aluno.id} value={aluno.id}>
-                        {aluno.nome}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    className="btn-adicionar-aluno"
-                    onClick={handleAdicionarAluno}
-                    disabled={!alunoParaAdicionar}
-                  >
-                    <FiPlus size={16} /> Adicionar
-                  </button>
+                  <div className="search-container">
+                    <input
+                      type="text"
+                      className="aluno-search"
+                      placeholder="Pesquisar aluno..."
+                      value={searchAluno}
+                      onChange={(e) => {
+                        setSearchAluno(e.target.value);
+                        setMostrarListaAlunos(true);
+                      }}
+                      onFocus={() => setMostrarListaAlunos(true)}
+                    />
+                    {mostrarListaAlunos && (
+                      <div className="search-results">
+                        {alunosDisponiveis
+                          .filter((aluno) =>
+                            aluno.nome
+                              .toLowerCase()
+                              .includes(searchAluno.toLowerCase())
+                          )
+                          .slice(0, 10)
+                          .map((aluno) => (
+                            <div
+                              key={aluno.id}
+                              className="search-result-item"
+                              onClick={() => handleAdicionarAluno(aluno)}
+                            >
+                              {aluno.nome}
+                            </div>
+                          ))}
+                        {alunosDisponiveis.filter((aluno) =>
+                          aluno.nome
+                            .toLowerCase()
+                            .includes(searchAluno.toLowerCase())
+                        ).length === 0 && searchAluno && (
+                          <div className="search-result-item empty">
+                            Nenhum aluno encontrado
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -412,11 +458,11 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
 
               {alunosMudaram && (
                 <div className="edit-actions">
-                  <button className="btn-cancel" onClick={handleCancel}>
+                  <button className="btn-cancel" onClick={handleCancel} disabled={carregando}>
                     Cancelar
                   </button>
-                  <button className="btn-save" onClick={handleSave}>
-                    Salvar Alteração
+                  <button className="btn-save" onClick={handleSave} disabled={carregando}>
+                    {carregando ? '⏳ Salvando...' : 'Salvar Alteração'}
                   </button>
                 </div>
               )}

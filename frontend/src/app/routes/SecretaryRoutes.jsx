@@ -5,6 +5,7 @@ import Profile from '../features/Teacher/Profile';
 import Calendar from '../features/Secretary/Calendar';
 import RegisterTeacher from '../features/Secretary/RegisterTeacher';
 import RegisterStudent from '../features/Secretary/RegisterStudent';
+import RegisterAula from '../features/Secretary/RegisterAula';
 import NotFound from './NotFound';
 import GerenciamentoProfessor from '../features/Secretary/GerenciamentoProfessor';
 import GerenciamentoAluno from '../features/Secretary/GerenciamentoAluno';
@@ -21,6 +22,8 @@ export default function SecretaryRoutes() {
         <Route path="perfil/professor/:id" element={<ViewProfile/>} />
         <Route path="perfil/aluno/:id" element={<ViewProfile/>} />
         <Route path="agenda" element={<Calendar/>} />
+        <Route path="agendamento" element={<Calendar/>} />
+        <Route path="agendamento/criar" element={<RegisterAula/>} />
         <Route path="professor" element={<GerenciamentoProfessor/>} />
         <Route path="professor/cadastrar" element={<RegisterTeacher/>} />
         <Route path="aluno/cadastrar" element={<RegisterStudent/>} />

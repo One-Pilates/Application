@@ -26,13 +26,16 @@ export const useCalendarSecretaryModel = () => {
     if (location.state?.idProfessor) {
       setIdProfessor(location.state.idProfessor);
     }
+    if (location.state?.idSala) {
+      setIdSala(location.state.idSala);
+    }
   }, [location.state]);
 
   useEffect(() => {
-    if (idProfessor && location.state?.idProfessor === idProfessor) {
+    if ((idProfessor || idSala) && location.state?.autoCarregar) {
       fetchAgendamentosFiltro();
     }
-  }, [idProfessor]);
+  }, [idProfessor, idSala, location.state?.autoCarregar]);
 
   const especialidadeCores = {
     Pilates: "#ff6600",

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from './Components/Button';
 import LoadingSpinner from '../../../shared/components/LoadingSpinner';
 import AgendamentoModal from './Components/AulaModal';
@@ -24,6 +25,7 @@ const SecretariaCalendarView = ({
   setModalOpen,
   agendamentoSelecionado,
 }) => {
+  const navigate = useNavigate();
   const [activeView, setActiveView] = useState('timeGridWeek');
   const [showLoading, setShowLoading] = useState(false);
 
@@ -53,7 +55,16 @@ const SecretariaCalendarView = ({
 
   return (
     <div className="calendar-container">
-      <h1>Agenda</h1>
+      <div className="calendar-header-top">
+        <h1>Agenda</h1>
+        <button 
+          className="btn-criar-aula"
+          onClick={() => navigate('/secretaria/agendamento/criar')}
+          title="Criar nova aula"
+        >
+          + Criar Aula
+        </button>
+      </div>
 
       <main className="calendar-main">
         <div className="calendar-header-info">
