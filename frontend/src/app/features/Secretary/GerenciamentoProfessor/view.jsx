@@ -97,8 +97,9 @@ const GerenciamentoProfessorView = ({
                   <button 
                     className="group flex items-center gap-2 px-5 py-3 text-white rounded-xl font-semibold transition-all ease-in-out shadow-sm"
                     style={{ backgroundColor: 'var(--laranja-principal)' }}
+                    onClick={()=> navigate("/secretaria/agenda", {state:  {idProfessor: professor.id, autoCarregar: true}})}
                   >
-                    <span onClick={()=> navigate("/secretaria/agenda", {state:  {idProfessor: professor.id}})}>Ver agenda</span>
+                    <span>Ver agenda</span>
                     <FiCalendar size={18} />
                   </button>
                 </div>

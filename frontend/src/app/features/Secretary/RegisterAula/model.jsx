@@ -64,6 +64,33 @@ export const useRegisterAulaModel = () => {
     carregarDados();
   }, []);
 
+  // Resetar sala e professor quando especialidade muda
+  useEffect(() => {
+    if (especialidade) {
+      setSala("");
+      setProfessor("");
+      // Carregar salas filtradas por especialidade
+      api.get(`/api/especialidades/salas/${especialidade}`)
+        .then(res => setSalas(res.data || []))
+        .catch(err => console.error("Erro ao carregar salas:", err));
+    } else {
+      setSalas([]);
+    }
+  }, [especialidade]);
+
+  // Resetar professor quando sala muda e carregar professores filtrados
+  useEffect(() => {
+    if (sala && especialidade) {
+      setProfessor("");
+      // Carregar professores filtrados por especialidade
+      api.get(`/api/especialidades/professores/${especialidade}`)
+        .then(res => setProfessores(res.data || []))
+        .catch(err => console.error("Erro ao carregar professores:", err));
+    } else if (!especialidade) {
+      setProfessores([]);
+    }
+  }, [sala, especialidade]);
+
   // Validar etapa atual
   const validarEtapa = () => {
     const novosErros = {};
@@ -118,17 +145,6 @@ export const useRegisterAulaModel = () => {
     (aluno) => !alunos.find((a) => a.id === aluno.id)
   );
 
-  // Especialidades disponíveis para o professor selecionado
-  const especialidadesDisponiveis = professor
-    ? professores
-        .find((p) => p.id === parseInt(professor))
-        ?.especialidades?.map((esp) => esp.id) || []
-    : [];
-
-  const especialidadesFiltradas = especialidades.filter((esp) =>
-    especialidadesDisponiveis.includes(esp.id)
-  );
-
   // Próxima etapa
   const proximaEtapa = () => {
     if (validarEtapa()) {
@@ -170,11 +186,10 @@ export const useRegisterAulaModel = () => {
     setCarregando(true);
 
     try {
-      // Combinar data e horário
-      const dataCompleta = new Date(`${dataHora.data}T${dataHora.horario}`);
+      const dataHoraString = `${dataHora.data}T${dataHora.horario}:00`;
 
       const payload = {
-        dataHora: dataCompleta.toISOString(),
+        dataHora: dataHoraString,
         professorId: parseInt(professor),
         salaId: parseInt(sala),
         especialidadeId: parseInt(especialidade),
@@ -260,7 +275,6 @@ export const useRegisterAulaModel = () => {
     professores,
     salas,
     especialidades,
-    especialidadesFiltradas,
     alunosDisponiveis,
 
     proximaEtapa,
