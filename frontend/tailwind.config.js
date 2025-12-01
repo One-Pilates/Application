@@ -15,6 +15,19 @@ export default {
         component: "#1B1F26",
         fontSec: "#C9D1D9",
       },
+      animation: {
+        fadeIn: 'fadeIn 0.2s ease-in-out',
+        slideUp: 'slideUp 0.3s ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
       backgroundColor: {
         'light': '#ffffff',
         'dark': '#0D1117',
@@ -30,3 +43,4 @@ export default {
   },
   plugins: [],
 }
+};

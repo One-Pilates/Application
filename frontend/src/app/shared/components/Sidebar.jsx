@@ -1,5 +1,5 @@
 import React from "react";
-import { FaChartBar, FaUser, FaCalendarAlt, FaSignOutAlt, FaChalkboardTeacher, FaUsers } from "react-icons/fa";
+import { FaChartBar, FaUser, FaCalendarAlt, FaSignOutAlt, FaChalkboardTeacher, FaUsers, FaSlidersH } from "react-icons/fa";
 import ItemSidebar from "./ItemSidebar";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
@@ -7,9 +7,8 @@ import { useAuth } from "../../../hooks/useAuth";
 
 export default function SidebarTeacher({ navAberta}) {
   const navigate = useNavigate();
-  const {logout} = useAuth();
   const location = useLocation();
-
+  const {logout} = useAuth();
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -32,21 +31,21 @@ export default function SidebarTeacher({ navAberta}) {
 
         <nav className="mt-6">
           <ItemSidebar
-            Icon={FaCalendarAlt}
+            icon={FaCalendarAlt}
             texto="Agenda"
             navAberta={navAberta}
             ativo={isActive("/professora/agenda")}
             onClick={() => navigate("/professora/agenda")}
           />
           <ItemSidebar
-            Icon={FaChartBar}
+            icon={FaChartBar}
             texto="Dashboard"
             navAberta={navAberta}
             ativo={isActive("/professora/dashboard")}
             onClick={() => navigate("/professora/dashboard")}
           />
           <ItemSidebar
-            Icon={FaUser}
+            icon={FaUser}
             texto="Perfil"
             navAberta={navAberta}
             ativo={isActive("/professora/perfil")}
@@ -72,7 +71,7 @@ export default function SidebarTeacher({ navAberta}) {
 
 export function SidebarSecretary({ navAberta }) {
   const navigate = useNavigate();
-  const {logout} = useAuth();
+  const {user, logout} = useAuth();
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -96,40 +95,50 @@ export function SidebarSecretary({ navAberta }) {
         </div>
         <nav className="mt-6">
           <ItemSidebar
-            Icon={FaChartBar}
+            icon={FaChartBar}
             texto="Dashboard"
             navAberta={navAberta}
             ativo={isActive("/secretaria/dashboard")}
             onClick={() => navigate("/secretaria/dashboard")}
           />
           <ItemSidebar
-            Icon={FaUser}
+            icon={FaUser}
             texto="Perfil"
             navAberta={navAberta}
             ativo={isActive("/secretaria/perfil")}
             onClick={() => navigate("/secretaria/perfil")}
           />
           <ItemSidebar
-            Icon={FaCalendarAlt}
+            icon={FaCalendarAlt}
             texto="Agenda"
             navAberta={navAberta}
             ativo={isActive("/secretaria/agenda")}
             onClick={() => navigate("/secretaria/agenda")}
           />
           <ItemSidebar
-            Icon={FaChalkboardTeacher}
+            icon={FaChalkboardTeacher}
             texto="Professor"
             navAberta={navAberta}
             ativo={isActive("/secretaria/professor")}
             onClick={() => navigate("/secretaria/professor")}
           />
           <ItemSidebar
-            Icon={FaUsers}
+            icon={FaUsers}
             texto="Alunos"
             navAberta={navAberta}
             ativo={isActive("/secretaria/alunos")}
             onClick={() => navigate("/secretaria/alunos")}
           />
+          {user.role === "ADMINISTRADOR" && (
+            <ItemSidebar
+            icon={FaSlidersH}
+            texto="Studio"
+            navAberta={navAberta}
+            ativo={isActive("/secretaria/studio")}
+            onClick={() => navigate("/secretaria/studio")}
+          />
+          )
+          }
         </nav>
       </div>
 

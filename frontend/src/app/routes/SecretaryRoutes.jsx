@@ -10,6 +10,7 @@ import NotFound from './NotFound';
 import GerenciamentoProfessor from '../features/Secretary/GerenciamentoProfessor';
 import GerenciamentoAluno from '../features/Secretary/GerenciamentoAluno';
 import ViewProfile from '../features/Secretary/ProfileView';
+import StudioView from '../features/Secretary/Studio';
 
 
 export default function SecretaryRoutes() {
@@ -28,6 +29,7 @@ export default function SecretaryRoutes() {
         <Route path="professor/cadastrar" element={<RegisterTeacher/>} />
         <Route path="aluno/cadastrar" element={<RegisterStudent/>} />
         <Route path="alunos" element={<GerenciamentoAluno/>} />
+        <Route path="studio" element={<StudioView />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
