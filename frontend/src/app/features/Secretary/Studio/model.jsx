@@ -181,13 +181,21 @@ export const useStudioModel = () => {
   };
 
   const handleEditSala = (sala) => {
+    // Converte os nomes das especialidades para IDs
+    const especialidadesIds = (sala.especialidades || [])
+      .map((nomeEsp) => {
+        const esp = especialidades.find((e) => e.nome === nomeEsp);
+        return esp ? esp.id : null;
+      })
+      .filter((id) => id !== null);
+
     setEditingSala(sala);
     setFormSala({
       nome: sala.nome,
       quantidadeMaximaAlunos: sala.quantidadeMaximaAlunos,
       quantidadeEquipamentosPCD: sala.quantidadeEquipamentosPCD,
       especialidades: sala.especialidades || [],
-      especialidadesIds: sala.especialidadesIds || [],
+      especialidadesIds: especialidadesIds,
     });
     setShowSalaModal(true);
   };
@@ -201,7 +209,10 @@ export const useStudioModel = () => {
         confirmButtonText: "OK",
       });
       return;
-    } else if (!formSala.quantidadeMaximaAlunos || isNaN(formSala.quantidadeMaximaAlunos)) {
+    } else if (
+      !formSala.quantidadeMaximaAlunos ||
+      isNaN(formSala.quantidadeMaximaAlunos)
+    ) {
       Swal.fire({
         icon: "warning",
         title: "Atenção",
@@ -209,7 +220,10 @@ export const useStudioModel = () => {
         confirmButtonText: "OK",
       });
       return;
-    } else if (!formSala.quantidadeEquipamentosPCD || isNaN(formSala.quantidadeEquipamentosPCD)) {
+    } else if (
+      !formSala.quantidadeEquipamentosPCD ||
+      isNaN(formSala.quantidadeEquipamentosPCD)
+    ) {
       Swal.fire({
         icon: "warning",
         title: "Atenção",
@@ -228,13 +242,45 @@ export const useStudioModel = () => {
     }
 
     if (editingSala) {
-      setSalas(
-        salas.map((s) =>
-          s.id === editingSala.id
-            ? { ...s, ...formSala, capacidade: Number(formSala.capacidade) }
-            : s
-        )
-      );
+      const salaEdit = {
+        nome: formSala.nome,
+        especialidadeIds: formSala.especialidadesIds,
+        quantidadeMaximaAlunos: Number(formSala.quantidadeMaximaAlunos),
+        quantidadeEquipamentosPCD: Number(formSala.quantidadeEquipamentosPCD),
+      };
+      console.log("Novo objeto sala:", salaEdit);
+
+      try {
+        const response = await api.patch(
+          `api/salas/${editingSala.id}`,
+          salaEdit
+        );
+        const data = response.data;
+        console.log("sala edidata:", data);
+        Swal.fire({
+          icon: "success",
+          title: "Atualizado!",
+          text: "A sala foi atualizada com sucesso.",
+          confirmButtonText: "OK",
+        });
+        setSalas(
+          salas.map((s) => (s.id === editingSala.id ? { ...s, ...data } : s))
+        );
+        Swal.fire({
+          icon: "success",
+          title: "Atualizado!",
+          text: "A sala foi atualizada com sucesso.",
+          confirmButtonText: "OK",
+        });
+      } catch (error) {
+        console.error("Erro ao atualizar sala:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: "Ocorreu um erro ao atualizar a sala.",
+          confirmButtonText: "OK",
+        });
+      }
     } else {
       try {
         const newSala = {
