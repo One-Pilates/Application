@@ -5,7 +5,7 @@ import api from "../../../../../provider/api";
 import Swal from 'sweetalert2';
 import "../Styles/Modal.scss";
 
-const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
+const AgendamentoModal = ({ isOpen, agendamento, onClose, onDelete }) => {
   const [activeTab, setActiveTab] = useState("informacoes");
   const [editFields, setEditFields] = useState({});
   const [professores, setProfessores] = useState([]);
@@ -201,9 +201,18 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
           <h2>
             {agendamento.especialidade} - {formatTime(agendamento.dataHora)}h
           </h2>
-          <button className="modal-close" onClick={handleClose}>
-            <FiX size={24} />
-          </button>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button 
+              className="btn-delete-aula" 
+              onClick={() => onDelete && onDelete(agendamento.id)}
+              title="Deletar aula"
+            >
+              <FiTrash2 size={20} />
+            </button>
+            <button className="modal-close" onClick={handleClose}>
+              <FiX size={24} />
+            </button>
+          </div>
         </div>
 
         <div className="modal-tabs">
@@ -225,7 +234,7 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
           {activeTab === "informacoes" && (
             <div className="info-section">
               <div className="info-group">
-                
+
                 <div className="info-item">
                   <span className="info-label">Professor:</span>
                   <div className="info-content">
@@ -338,35 +347,6 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
                   </div>
                 </div>
 
-                <div className="info-item">
-                  <span className="info-label">Observações:</span>
-                  <div className="info-content">
-                    {editFields.observacoes !== undefined ? (
-                      <textarea
-                        className="info-edit-input"
-                        value={editFields.observacoes}
-                        onChange={e => setEditFields(fields => ({ ...fields, observacoes: e.target.value }))}
-                        rows={3}
-                      />
-                    ) : (
-                      <>
-                        <span className="info-value">
-                          {agendamento.observacoes && agendamento.observacoes.trim() !== ''
-                            ? agendamento.observacoes
-                            : 'Essa aula não possui observações.'}
-                        </span>
-                        <button
-                          className="icon-btn"
-                          onClick={() => setEditFields(fields => ({ ...fields, observacoes: agendamento.observacoes || "" }))}
-                          title="Editar Observações"
-                        >
-                          <FiEdit2 size={16} />
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
               </div>
 
               {temMudancas && (
@@ -456,7 +436,37 @@ const AgendamentoModal = ({ isOpen, agendamento, onClose }) => {
                 </p>
               )}
 
-              {alunosMudaram && (
+              <div className="info-item" style={{ marginTop: '1.5rem' }}>
+                <span className="info-label">Observações sobre a aula:</span>
+                <div className="info-content">
+                  {editFields.observacoes !== undefined ? (
+                    <textarea
+                      className="info-edit-input"
+                      value={editFields.observacoes}
+                      onChange={e => setEditFields(fields => ({ ...fields, observacoes: e.target.value }))}
+                      rows={3}
+                      placeholder="Ex: Aluno com problemas de mobilidade no joelho direito..."
+                    />
+                  ) : (
+                    <>
+                      <span className="info-value">
+                        {agendamento.observacoes && agendamento.observacoes.trim() !== ''
+                          ? agendamento.observacoes
+                          : 'Nenhuma observação registrada.'}
+                      </span>
+                      <button
+                        className="icon-btn"
+                        onClick={() => setEditFields(fields => ({ ...fields, observacoes: agendamento.observacoes || "" }))}
+                        title="Editar Observações"
+                      >
+                        <FiEdit2 size={16} />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {(alunosMudaram || editFields.observacoes !== undefined) && (
                 <div className="edit-actions">
                   <button className="btn-cancel" onClick={handleCancel} disabled={carregando}>
                     Cancelar

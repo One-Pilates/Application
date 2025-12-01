@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef} from "react";
 import api from "../../../../provider/api";
 import { useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export const useCalendarSecretaryModel = () => {
   const [salas, setSalas] = useState([]);
@@ -218,6 +219,33 @@ export const useCalendarSecretaryModel = () => {
     }
   }, [agendamentos]);
 
+  async function deletarAgendamento(id) {
+    const result = await Swal.fire({
+      title: 'Deletar aula?',
+      text: 'Tem certeza que deseja deletar esta aula? Esta ação não pode ser desfeita.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, deletar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      reverseButtons: true
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/api/agendamentos/${id}`);
+        Swal.fire('Deletado!', 'A aula foi deletada com sucesso.', 'success');
+        setModalOpen(false);
+        setAgendamentoSelecionado(null);
+        fetchAgendamentosFiltro();
+      } catch (error) {
+        console.error('Erro ao deletar aula:', error);
+        Swal.fire('Erro!', 'Não foi possível deletar a aula. Tente novamente.', 'error');
+      }
+    }
+  }
+
   return {
     salas,
     professores,
@@ -236,5 +264,6 @@ export const useCalendarSecretaryModel = () => {
     modalOpen,
     setModalOpen,
     agendamentoSelecionado,
+    deletarAgendamento,
   };
 };

@@ -24,6 +24,7 @@ const SecretariaCalendarView = ({
   modalOpen,
   setModalOpen,
   agendamentoSelecionado,
+  deletarAgendamento,
 }) => {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('timeGridWeek');
@@ -138,6 +139,7 @@ const SecretariaCalendarView = ({
           isOpen={modalOpen}
           agendamento={agendamentoSelecionado}
           onClose={() => setModalOpen(false)}
+          onDelete={deletarAgendamento}
         />
       </main>
     </div>

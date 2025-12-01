@@ -1,14 +1,17 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { BiArrowBack } from "react-icons/bi";
 import api from "../../../provider/api";
 import StepIndicator from "../../features/Secretary/RegisterStudent/components/StepIndicator";
+import { useAuth } from "../../../hooks/useAuth";
 
 export default function RedefinirSenha() {
+  const { user } = useAuth() || {};
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState("");
+  const [usarOutroEmail, setUsarOutroEmail] = useState(false);
   const [codigo, setCodigo] = useState(["", "", "", "", ""]);
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
@@ -18,6 +21,12 @@ export default function RedefinirSenha() {
   
   const inputsRef = useRef([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.email && !usarOutroEmail) {
+      setEmail(user.email);
+    }
+  }, [user, usarOutroEmail]);
 
   const steps = [
     { label: "Email" },
@@ -71,9 +80,9 @@ export default function RedefinirSenha() {
     });
 
     try {
-      await api.post("auth/criarCodigoVerificacao", { email });
+      await api.post("/auth/criarCodigoVerificacao", { email });
 
-      Swal.fire({
+      await Swal.fire({
         icon: "success",
         title: "Código enviado!",
         text: "Verifique sua caixa de entrada.",
@@ -81,15 +90,14 @@ export default function RedefinirSenha() {
         showConfirmButton: false,
       });
 
-      setTimeout(() => {
-        setCurrentStep(2);
-      }, 2000);
+      setCurrentStep(2);
     } catch (error) {
       console.error("Erro ao enviar email:", error);
+      const errorMessage = error.response?.data?.message || error.response?.data?.erro || "Não foi possível enviar o código. Verifique o email e tente novamente.";
       Swal.fire({
         icon: "error",
         title: "Erro ao enviar",
-        text: "Não foi possível enviar o código. Verifique o email e tente novamente.",
+        text: errorMessage,
       });
     }
   };
@@ -135,9 +143,9 @@ export default function RedefinirSenha() {
     });
 
     try {
-      await api.post("auth/validarCodigo", { email, codigo: codigoFinal });
+      await api.post("/auth/validarCodigo", { email, codigo: codigoFinal });
 
-      Swal.fire({
+      await Swal.fire({
         icon: "success",
         title: "Código válido!",
         text: "Agora você pode redefinir sua senha.",
@@ -145,9 +153,7 @@ export default function RedefinirSenha() {
         timer: 2000,
       });
 
-      setTimeout(() => {
-        setCurrentStep(3);
-      }, 2000);
+      setCurrentStep(3);
     } catch (error) {
       console.error("Erro ao validar código:", error);
       Swal.fire({
@@ -162,7 +168,7 @@ export default function RedefinirSenha() {
     setIsResending(true);
 
     try {
-      await api.post("auth/criarCodigoVerificacao", { email });
+      await api.post("/auth/criarCodigoVerificacao", { email });
 
       setCodigo(["", "", "", "", ""]);
       inputsRef.current[0]?.focus();
@@ -218,12 +224,12 @@ export default function RedefinirSenha() {
     });
 
     try {
-      await api.post("auth/alterarSenha", {
+      await api.post("/auth/alterarSenha", {
         senha: password1,
         email: email,
       });
 
-      Swal.fire({
+      await Swal.fire({
         icon: "success",
         title: "Senha alterada!",
         text: "Sua nova senha foi cadastrada com sucesso",
@@ -231,15 +237,14 @@ export default function RedefinirSenha() {
         timer: 2000,
       });
 
-      setTimeout(() => {
-        navigate(-1);
-      }, 2000);
+      navigate(-1);
     } catch (error) {
       console.error("Erro ao redefinir senha:", error);
+      const errorMessage = error.response?.data?.message || error.response?.data?.erro || error.response?.data || "Não foi possível atualizar sua senha. Tente novamente.";
       Swal.fire({
         icon: "error",
         title: "Erro ao redefinir",
-        text: "Não foi possível atualizar sua senha. Tente novamente.",
+        text: typeof errorMessage === 'string' ? errorMessage : "Não foi possível atualizar sua senha. Tente novamente.",
       });
     }
   };
@@ -251,16 +256,16 @@ export default function RedefinirSenha() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-120px)] flex items-center justify-center p-8 bg-orange-50/30">
+    <div className="min-h-screen w-full flex items-center justify-center p-8 bg-orange-50/30 relative">
       <button
         onClick={() => navigate(-1)}
-        className="absolute top-8 left-8 flex items-center gap-2 bg-white dark:bg-dark-secondary hover:bg-gray-100 dark:hover:bg-dark-component dark:bg-dark-secondary text-gray-700 dark:text-fontMain font-medium py-2.5 px-5 rounded-lg shadow-sm border border-gray-200 dark:border-dark-component transition-all duration-300 hover:shadow-md hover:-translate-x-1"
+        className="absolute top-8 left-8 flex items-center gap-2 bg-white dark:bg-dark-secondary hover:bg-gray-100 dark:hover:bg-dark-component text-gray-700 dark:text-fontMain font-medium py-2.5 px-5 rounded-lg shadow-sm border border-gray-200 dark:border-dark-component transition-all duration-300 hover:shadow-md hover:-translate-x-1"
       >
         <BiArrowBack size={20} />
         Voltar
       </button>
 
-      <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-lg p-10 w-full max-w-2xl">
+      <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-lg p-10 w-full max-w-2xl mx-auto">
         <div className="mb-12">
           <StepIndicator
             steps={steps}
@@ -290,10 +295,35 @@ export default function RedefinirSenha() {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full py-3.5 px-4 text-base border-2 border-gray-300 dark:border-dark-component rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                  disabled={user?.email && !usarOutroEmail}
+                  className="w-full py-3.5 px-4 text-base border-2 border-gray-300 dark:border-dark-component rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 disabled:bg-gray-100 disabled:cursor-not-allowed dark:disabled:bg-dark-component"
                   placeholder="seuemail@exemplo.com"
                   required
                 />
+                {user?.email && !usarOutroEmail && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsarOutroEmail(true);
+                      setEmail("");
+                    }}
+                    className="text-sm text-blue-500 hover:text-blue-600 hover:underline self-start mt-1 transition-all"
+                  >
+                    Deseja usar outro email?
+                  </button>
+                )}
+                {usarOutroEmail && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsarOutroEmail(false);
+                      setEmail(user?.email || "");
+                    }}
+                    className="text-sm text-blue-500 hover:text-blue-600 hover:underline self-start mt-1 transition-all"
+                  >
+                    Voltar para email cadastrado
+                  </button>
+                )}
               </div>
 
               <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-500 rounded-xl text-blue-900">
