@@ -50,17 +50,39 @@
 
     .btn-aplicar,
     .btn-limpar {
-      padding: 8px 20px;
-      font-size: 0.95rem;
+      padding: 9px 20px;
+      font-size: 0.9rem;
       min-width: auto;
       height: 38px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .btn-aplicar {
+      &:hover:not(:disabled) {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(247, 116, 51, 0.3);
+      }
+      
+      &:active:not(:disabled) {
+        transform: scale(0.98);
+      }
     }
 
     .btn-limpar {
       background-color: #6c757d;
 
-      &:hover {
+      &:hover:not(:disabled) {
         background-color: #5a6268;
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+      }
+      
+      &:active:not(:disabled) {
+        transform: scale(0.98);
       }
     }
   }

@@ -47,7 +47,7 @@ const CalendarView = ({
   return (
     <>
     <div className="calendar-container"> 
-    <h1>Agenda</h1>
+    <h1 className="text-2xl md:text-3xl font-semibold mb-4">Agenda</h1>
       <main className="calendar-main">
         <div className="calendar-header-info">
           <div className="calendar-view-buttons">
@@ -55,24 +55,28 @@ const CalendarView = ({
               className={`filter-button ${activeView === 'dayGridMonth' ? 'active' : ''}`}
               onClick={() => handleChangeView('dayGridMonth')}
             >
-              Mês
+              <span className="hidden sm:inline">Mês</span>
+              <span className="sm:hidden">M</span>
             </button>
             <button
               className={`filter-button ${activeView === 'timeGridWeek' ? 'active' : ''}`}
               onClick={() => handleChangeView('timeGridWeek')}
             >
-              Semana
+              <span className="hidden sm:inline">Semana</span>
+              <span className="sm:hidden">S</span>
             </button>
             <button
               className={`filter-button ${activeView === 'timeGridDay' ? 'active' : ''}`}
               onClick={() => handleChangeView('timeGridDay')}
             >
-              Dia
+              <span className="hidden sm:inline">Dia</span>
+              <span className="sm:hidden">D</span>
             </button>
           </div>
 
           <Button onClick={() => setIsAusenciaModalOpen(true)} disabled={isLoading}>
-            Definir Ausência
+            <span className="hidden sm:inline">Definir Ausência</span>
+            <span className="sm:hidden">Ausência</span>
           </Button>
         </div>
 
