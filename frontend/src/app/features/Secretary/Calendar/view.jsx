@@ -57,13 +57,14 @@ const SecretariaCalendarView = ({
   return (
     <div className="calendar-container">
       <div className="calendar-header-top">
-        <h1>Agenda</h1>
+        <h1 className="text-2xl md:text-3xl">Agenda</h1>
         <button 
           className="btn-criar-aula"
           onClick={() => navigate('/secretaria/agendamento/criar')}
           title="Criar nova aula"
         >
-          + Criar Aula
+          <span className="hidden sm:inline">+ Criar Aula</span>
+          <span className="sm:hidden">+ Aula</span>
         </button>
       </div>
 
@@ -71,16 +72,25 @@ const SecretariaCalendarView = ({
         <div className="calendar-header-info">
           <div className="calendar-view-buttons">
             <button className={`filter-button ${activeView === 'dayGridMonth' ? 'active' : ''}`}
-                    onClick={() => handleChangeView('dayGridMonth')}>Mês</button>
+                    onClick={() => handleChangeView('dayGridMonth')}>
+              <span className="hidden sm:inline">Mês</span>
+              <span className="sm:hidden">M</span>
+            </button>
             <button className={`filter-button ${activeView === 'timeGridWeek' ? 'active' : ''}`}
-                    onClick={() => handleChangeView('timeGridWeek')}>Semana</button>
+                    onClick={() => handleChangeView('timeGridWeek')}>
+              <span className="hidden sm:inline">Semana</span>
+              <span className="sm:hidden">S</span>
+            </button>
             <button className={`filter-button ${activeView === 'timeGridDay' ? 'active' : ''}`}
-                    onClick={() => handleChangeView('timeGridDay')}>Dia</button>
+                    onClick={() => handleChangeView('timeGridDay')}>
+              <span className="hidden sm:inline">Dia</span>
+              <span className="sm:hidden">D</span>
+            </button>
           </div>
 
           <div className="filtros-inline">
             <div className="filtro-item">
-              <label htmlFor="filtro-sala">Sala:</label>
+              <label htmlFor="filtro-sala" className="hidden md:inline">Sala:</label>
               <select id="filtro-sala" value={idSala} onChange={(e) => setIdSala(e.target.value)}
                       className="filtro-select-inline" disabled={isLoading}>
                 <option value="">Todas</option>
@@ -91,7 +101,7 @@ const SecretariaCalendarView = ({
             </div>
 
             <div className="filtro-item">
-              <label htmlFor="filtro-professor">Professor:</label>
+              <label htmlFor="filtro-professor" className="hidden md:inline">Professor:</label>
               <select id="filtro-professor" value={idProfessor} onChange={(e) => setIdProfessor(e.target.value)}
                       className="filtro-select-inline" disabled={isLoading}>
                 <option value="0">Todos</option>
@@ -115,14 +125,14 @@ const SecretariaCalendarView = ({
 
         {!isFiltroValido && !jaBuscou && (
           <div className="aviso-info">
-            <span>Selecione pelo menos uma sala ou um professor</span>
+            <span className="text-sm md:text-base">Selecione pelo menos uma sala ou um professor</span>
           </div>
         )}
 
 
         {jaBuscou && !hasAgendamentos && !isLoading && (
           <div className="aviso-vazio">
-            <p>Nenhum agendamento encontrado para os filtros selecionados.</p>
+            <p className="text-sm md:text-base">Nenhum agendamento encontrado para os filtros selecionados.</p>
           </div>
         )}
 

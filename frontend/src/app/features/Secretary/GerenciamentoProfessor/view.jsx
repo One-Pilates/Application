@@ -13,16 +13,16 @@ const GerenciamentoProfessorView = ({
 }) => {
   return (
     <>
-      <div className="flex flex-col gap-6 py-6 px-16  h-full mx-auto ml-auto">
+      <div className="flex flex-col gap-6 py-4 md:py-6 px-4 md:px-8 lg:px-16 h-full mx-auto ml-auto">
         {/* Titulo mais botão criar professor */}
-        <div className="flex flex-row w-full justify-between items-center">
-          <h1 className="text-3xl font-bold">Gerenciamento de Professor</h1>
+        <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold">Gerenciamento de Professor</h1>
           {user && user.role === 'ADMINISTRADOR' && 
             <Botao  onClick={()=> navigate("/secretaria/professor/cadastrar")} cor="bg-blue-500" texto={"Adicionar Professor"}></Botao>
           }
         </div>
 
-        <div className="relative w-80">
+        <div className="relative w-full sm:w-80">
           <FiSearch
             className="absolute left-3 top-1/2 transform -translate-y-1/2"
             size={20}
@@ -32,7 +32,7 @@ const GerenciamentoProfessorView = ({
             type="text"
             placeholder="Buscar por nome"
             onChange={filterByNome}
-            className="w-full pl-10 pr-8 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            className="w-full pl-10 pr-8 py-2.5 md:py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-shadow"
             style={{
               borderColor: 'var(--cor-borda)',
               borderWidth: '1px',
@@ -43,12 +43,12 @@ const GerenciamentoProfessorView = ({
         </div>
 
         {/* Container de cards de professores - Área scrollável */}
-        <div className=" mt-2 w-full h-auto max-h-90 overflow-y-auto pb-4">
+        <div className="mt-2 w-full h-auto max-h-90 overflow-y-auto pb-4">
           {professores && professores.length > 0 ? (
             professores.map((professor) => (
               <div 
                 key={professor.id}
-                className="flex flex-col mb-6 rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+                className="flex flex-col mb-6 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-md hover:shadow-xl transition-all duration-300"
                 style={{
                   backgroundColor: 'var(--branco)',
                   borderColor: 'var(--cor-borda)',
@@ -57,9 +57,9 @@ const GerenciamentoProfessorView = ({
               >
             
                 {/* ===== PARTE SUPERIOR DO CARD ===== */}
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex flex-col sm:flex-row items-start justify-between mb-4 gap-4">
                   {/* ===== SEÇÃO ESQUERDA: Informações do Professor ===== */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
                 
                     <button 
                     onClick={() => navigate(`/secretaria/perfil/professor/${professor.id}`)}
@@ -67,60 +67,60 @@ const GerenciamentoProfessorView = ({
                       <img
                         src={professor.foto ? `${api.defaults.baseURL}/api/imagens/${professor.foto}` : userIconImg}
                         alt={professor.nome}
-                        className="w-24 h-24 rounded-full object-cover transition-all duration-300"
+                        className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full object-cover transition-all duration-300 hover:scale-105"
                         style={{
-                          outline: '4px solid var(--cor-borda)',
+                          outline: '3px solid var(--cor-borda)',
                           outlineOffset: '2px'
                         }}
                       />
                     </button>
                 
                     {/* Container de textos (nome, status, cargo) */}
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1.5 md:gap-2 flex-1">
                   
                       {/* Linha superior: Nome + Badge de Status */}
-                      <div className="flex flex-row items-center gap-3">
-                        <h2 className="text-3xl font-bold" style={{ color: 'var(--laranja-principal)' }}>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-3">
+                        <h2 className="text-xl md:text-2xl lg:text-3xl font-bold break-words" style={{ color: 'var(--laranja-principal)' }}>
                           {professor.nome}
                         </h2>
-                        <span className={`px-3 py-1 ${professor.status ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} rounded-full text-sm font-semibold`}>
+                        <span className={`px-2.5 md:px-3 py-1 ${professor.status ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} rounded-full text-xs md:text-sm font-semibold self-start`}>
                           {professor.status ? 'Ativo' : 'Inativo'}
                         </span>
                       </div>
                   
                       {/* Cargo/Especialidade */}
-                      <p className="text-base" style={{ color: 'var(--text-cinza)' }}>{professor.cargo || 'Professor'}</p>
+                      <p className="text-sm md:text-base" style={{ color: 'var(--text-cinza)' }}>{professor.cargo || 'Professor'}</p>
                     </div>
                 
                   </div>
                   {/* ===== SEÇÃO DIREITA: Botão de Ação ===== */}
                   <button 
-                    className="group flex items-center gap-2 px-5 py-3 text-white rounded-xl font-semibold transition-all ease-in-out shadow-sm"
+                    className="group flex items-center justify-center gap-2 px-4 md:px-5 py-2.5 md:py-3 text-white rounded-lg md:rounded-xl font-semibold transition-all ease-in-out shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
                     style={{ backgroundColor: 'var(--laranja-principal)' }}
                     onClick={()=> navigate("/secretaria/agenda", {state:  {idProfessor: professor.id, autoCarregar: true}})}
                   >
-                    <span>Ver agenda</span>
-                    <FiCalendar size={18} />
+                    <span className="text-sm md:text-base">Ver agenda</span>
+                    <FiCalendar size={18} className="md:w-5 md:h-5" />
                   </button>
                 </div>
 
                 {/* ===== PARTE INFERIOR DO CARD ===== */}
                 <div 
-                  className="flex items-center justify-between pt-4 border-t"
+                  className="flex flex-col lg:flex-row items-start lg:items-center justify-between pt-4 border-t gap-4"
                   style={{ borderTopColor: 'var(--cor-borda)' }}
                 >
               
                   {/* Coluna Esquerda: Contato e Especialidades */}
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-3 w-full lg:w-auto">
                     {/* Contato: Telefone e Email */}
-                    <div className="flex items-center gap-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 flex-wrap">
                       <div className="flex items-center gap-2" style={{ color: 'var(--text-escuro)' }}>
-                        <FiPhone size={18} style={{ color: 'var(--laranja-principal)' }} />
-                        <span className="text-sm">{professor.telefone || 'Sem telefone'}</span>
+                        <FiPhone size={16} className="md:w-[18px] md:h-[18px] flex-shrink-0" style={{ color: 'var(--laranja-principal)' }} />
+                        <span className="text-xs md:text-sm break-all">{professor.telefone || 'Sem telefone'}</span>
                       </div>
                       <div className="flex items-center gap-2" style={{ color: 'var(--text-escuro)' }}>
-                        <FiMail size={18} style={{ color: 'var(--laranja-principal)' }} />
-                        <span className="text-sm">{professor.email}</span>
+                        <FiMail size={16} className="md:w-[18px] md:h-[18px] flex-shrink-0" style={{ color: 'var(--laranja-principal)' }} />
+                        <span className="text-xs md:text-sm break-all">{professor.email}</span>
                       </div>
                     </div>
 
@@ -130,7 +130,7 @@ const GerenciamentoProfessorView = ({
                         professor.especialidades.map((esp) => (
                           <span 
                             key={esp.id}
-                            className="px-3 py-1 rounded-full text-sm font-medium"
+                            className="px-2.5 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium"
                             style={{
                               backgroundColor: 'var(--cor-borda)',
                               color: 'var(--text-escuro)'
@@ -140,15 +140,15 @@ const GerenciamentoProfessorView = ({
                           </span>
                         ))
                       ) : (
-                        <span className="text-sm" style={{ color: 'var(--text-cinza)' }}>Sem especialidades</span>
+                        <span className="text-xs md:text-sm" style={{ color: 'var(--text-cinza)' }}>Sem especialidades</span>
                       )}
                     </div>
                   </div>
 
                   {/* Botão Deletar */}
                   {user && user.role === 'ADMINISTRADOR' && 
-                  <button onClick={()=> deletarProfessor(professor.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                    <FiTrash2 size={24} />
+                  <button onClick={()=> deletarProfessor(professor.id)} className="p-2 md:p-2.5 text-red-500 hover:bg-red-50 rounded-lg transition-all hover:scale-110 active:scale-95 self-end lg:self-auto">
+                    <FiTrash2 size={20} className="md:w-6 md:h-6" />
                   </button>
                   } 
                 </div>

@@ -16,7 +16,7 @@ const DashboardSecretaryView = ({
   return (
     <div className="overview-teacher">
       <div className="overview-header">
-        <h1>Visão Geral</h1>
+        <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--text-escuro)' }}>Visão Geral</h1>
         <Filter value={selectedPeriod} onChange={onFilterChange} />
       </div>
 
