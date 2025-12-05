@@ -1,56 +1,48 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-import LandingPage from './pages/landing/LandingPage';
-import Login from './pages/login/Login';
-import Register from './pages/register/Register';
+import PrivateRoutes from './app/routes/PrivateRoutes';
+import PublicRoutes from './app/routes/PublicRoutes';
+import TeacherRoutes from './app/routes/TeacherRoutes';
+import SecretaryRoutes from './app/routes/SecretaryRoutes';
 
-import DashboardTeacher from './pages/dashboardTeacher/DashboardTeacher';
-import ProfileTeacher from './pages/dashboardTeacher/ProfileTeacher';
-import AgendaTeacher from './pages/dashboardTeacher/CalendarTeacher';
-
-import DashboardSecretary from './pages/dashboardSecretary/DashboardSecretary';
-import ProfileSecretary from './pages/dashboardSecretary/ProfileSecretary';
-import CalendarSecretary from './pages/dashboardSecretary/CalendarSecretary';
-import RegisterTeacher from './pages/dashboardSecretary/RegisterTeacher';
-import RegisterStudent from './pages/dashboardSecretary/RegisterStudent';
-
-import NotFound from './pages/notfound/notfound';
-
-import Teacher from './pages/dashboardTeacher/layout/Teacher';
-import Secretary from './pages/dashboardSecretary/Layout/Secretary';
-
-import './styles/App.scss';
-
+import './app/shared/styles/App.scss';
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
+  const location = useLocation();
+  const isPublicRoute = location.pathname === '/' || location.pathname.startsWith('/login');
   
-        <Route path="/professora" element={<Teacher />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardTeacher />} />
-          <Route path="perfil" element={<ProfileTeacher />} />
-          <Route path="agenda" element={<AgendaTeacher />} />
-        </Route>
-    
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return false; // Padrão sempre modo claro
+  });
 
-       <Route path="/secretaria" element={<Secretary />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardSecretary />} />
-          <Route path="perfil" element={<ProfileSecretary />} />
-          <Route path="agenda" element={<CalendarSecretary />} />
-          <Route path="professor" element={<RegisterTeacher />} />
-          <Route path="alunos" element={<RegisterStudent />} />
-        </Route>
+  useEffect(() => {
+    // Forçar modo claro em rotas públicas (login e landing)
+    if (isPublicRoute) {
+      document.documentElement.classList.remove('dark');
+    } else {
+      // Aplicar preferência do usuário apenas em rotas privadas
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [isDark, isPublicRoute]);
 
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+  return (
+    <Routes>
+      {/* Rotas privadas */}
+      <Route element={<PrivateRoutes />}>
+        <Route path="/professora/*" element={<TeacherRoutes />} />
+        <Route path="/secretaria/*" element={<SecretaryRoutes />} />
+      </Route>
+      
+      {/* Rotas públicas */}
+      <Route path="/*" element={<PublicRoutes />} />
+    </Routes>
   );
 }
 
