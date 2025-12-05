@@ -14,7 +14,6 @@ export const useDashboardSecretaryModel = (period) => {
 
   const { user } = useAuth();
 
-  // helper: KPIs vazios (usado para limpar)
   const emptyKpis = [
     {
       title: "Sessões Realizadas",
@@ -35,7 +34,7 @@ export const useDashboardSecretaryModel = (period) => {
       icon: <FiUserCheck size={24} color="#fff" />,
     },
     {
-      title: "Professor Mais Atendido",
+      title: "Professor com mais atendimentos",
       value: "",
       iconBgColor: "#fef08a",
       icon: <FiUsers size={24} color="#fff" />,
@@ -56,8 +55,8 @@ export const useDashboardSecretaryModel = (period) => {
 
         const graficoDias = data.agendamentosPorDias || [];
         const graficoProf = data.qtdSessoesPorProfessor || [];
-
-        // Se não vier nenhum dado — limpar tudo e sair
+        const qtdAlunos = data.qtdDeAlunosAtendidos || 0; 
+       
         const hasAnyData = graficoDias.length > 0 || graficoProf.length > 0;
         if (!hasAnyData) {
           setPie([]);
@@ -69,24 +68,24 @@ export const useDashboardSecretaryModel = (period) => {
           return;
         }
 
-        // ============ FREQUÊNCIA ==============
+
         setFrequencia(graficoDias);
 
-        // ============ GRÁFICO DE BARRAS (pie state) ==============
+
         const pieData = graficoProf.map((p) => ({
           name: p.nomeProfessor,
           y: p.totalAgendamentosPorProfessor,
         }));
         setPie(pieData);
 
-        // ============ TOTAL ==============
+       
         const total = graficoProf.reduce(
           (sum, item) => sum + item.totalAgendamentosPorProfessor,
           0
         );
         setTotalAulas(total);
 
-        // ============ DIA COM MAIOR ATENDIMENTO (traduz) ==============
+     
         let diaComMaiorAtendimento =
           graficoDias.length > 0
             ? graficoDias.reduce((a, b) =>
@@ -104,11 +103,9 @@ export const useDashboardSecretaryModel = (period) => {
           sunday: "Domingo",
         };
 
-        // normaliza para lowercase antes de mapear
         diaComMaiorAtendimento = (diaComMaiorAtendimento || "").toLowerCase();
         diaComMaiorAtendimento = diasPT[diaComMaiorAtendimento] || "";
 
-        // ============ PROFESSOR MAIS ATENDIDO ==============
         const professorMaisAtendido =
           graficoProf.length > 0
             ? graficoProf.reduce((a, b) =>
@@ -119,7 +116,7 @@ export const useDashboardSecretaryModel = (period) => {
               ).nomeProfessor
             : "";
 
-        // ============ NOVOS KPIs ==============
+
         const newKpis = [
           {
             title: "Sessões Realizadas",
@@ -129,7 +126,7 @@ export const useDashboardSecretaryModel = (period) => {
           },
           {
             title: "Alunos Atendidos",
-            value: total ? total.toString() : "",
+            value: qtdAlunos ? qtdAlunos.toString() : "", // << CORRIGIDO
             iconBgColor: "#fdba74",
             icon: <FiUserX size={24} color="#fff" />,
           },
@@ -140,7 +137,7 @@ export const useDashboardSecretaryModel = (period) => {
             icon: <FiUserCheck size={24} color="#fff" />,
           },
           {
-            title: "Professor Mais Atendido",
+            title: "Professor com mais atendimentos",
             value: professorMaisAtendido || "",
             iconBgColor: "#fef08a",
             icon: <FiUsers size={24} color="#fff" />,
@@ -149,7 +146,7 @@ export const useDashboardSecretaryModel = (period) => {
 
         setKpis(newKpis);
 
-        // ============ TOP 3 ==============
+   
         const top = [...graficoProf]
           .sort(
             (a, b) =>
@@ -159,14 +156,17 @@ export const useDashboardSecretaryModel = (period) => {
           .map((item) => ({
             professor: item.nomeProfessor,
             total: item.totalAgendamentosPorProfessor,
-            percentual: total ? Math.round((item.totalAgendamentosPorProfessor / total) * 100) : 0,
+            percentual: total
+              ? Math.round(
+                  (item.totalAgendamentosPorProfessor / total) * 100
+                )
+              : 0,
           }));
 
         setTop3(top);
         setHasData(true);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
-        // Em caso de erro, limpamos
         setPie([]);
         setFrequencia([]);
         setTotalAulas(0);

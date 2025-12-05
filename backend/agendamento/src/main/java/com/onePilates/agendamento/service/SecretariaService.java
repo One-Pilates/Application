@@ -7,10 +7,7 @@ import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
 import com.onePilates.agendamento.dto.response.ResponsDashSecretariaAdmDTO;
 import com.onePilates.agendamento.dto.response.SecretariaResponseDTO;
 import com.onePilates.agendamento.exception.*;
-import com.onePilates.agendamento.model.Agendamento;
-import com.onePilates.agendamento.model.Endereco;
-import com.onePilates.agendamento.model.Role;
-import com.onePilates.agendamento.model.Secretaria;
+import com.onePilates.agendamento.model.*;
 import com.onePilates.agendamento.repository.AgendamentoRepository;
 import com.onePilates.agendamento.repository.EnderecoRepository;
 import com.onePilates.agendamento.repository.SecretariaRepository;
@@ -23,9 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -335,6 +330,24 @@ public class SecretariaService {
             }
         }
 
+        Set<Long> idsUnicos = new HashSet<>();
+        List<Aluno> alunosUnicos = new ArrayList<>();
+
+        for (Agendamento agendamento : agendamentos) {
+            if (agendamento.getAgendamentoAlunos() != null) {
+                for (AgendamentoAluno aa : agendamento.getAgendamentoAlunos()) {
+                    Aluno aluno = aa.getAluno();
+                    if (aluno != null && idsUnicos.add(aluno.getId())) {
+                        alunosUnicos.add(aluno);
+                    }
+                }
+            }
+        }
+
+        Integer qtdAlunosAtendidos = alunosUnicos.size();
+
+
+
 
         professoresObservados.add(professorObservadoAtual);
 
@@ -342,6 +355,7 @@ public class SecretariaService {
         ResponsDashSecretariaAdmDTO resposta = new ResponsDashSecretariaAdmDTO();
         resposta.setAgendamentosPorDias(grafico1);
         resposta.setQtdSessoesPorProfessor(professoresObservados);
+        resposta.setQtdDeAlunosAtendidos(qtdAlunosAtendidos);
 
         return resposta;
     }

@@ -9,6 +9,7 @@ public class ResponsDashSecretariaAdmDTO {
 
     private List<AgendamentoPorDiaDTO> agendamentosPorDias;
     private List<AgendamentosPorProfessorDTO> qtdSessoesPorProfessor;
+    private Integer qtdDeAlunosAtendidos;
 
 
     public ResponsDashSecretariaAdmDTO() {
@@ -30,4 +31,11 @@ public class ResponsDashSecretariaAdmDTO {
         this.qtdSessoesPorProfessor = qtdSessoesPorProfessor;
     }
 
+    public Integer getQtdDeAlunosAtendidos() {
+        return qtdDeAlunosAtendidos;
+    }
+
+    public void setQtdDeAlunosAtendidos(Integer qtdDeAlunosAtendidos) {
+        this.qtdDeAlunosAtendidos = qtdDeAlunosAtendidos;
+    }
 }
