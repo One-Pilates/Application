@@ -60,7 +60,7 @@ export const useProfileUserModel = () => {
       nome: user?.nome || "",
       cargo: user?.cargo || "",
       role: user?.role || "",
-      foto: user?.foto ? `${api.defaults.baseURL}/api/imagens/${user.foto}` : userIconImg,
+      foto: user?.foto ? `${api.defaults.baseURL}/api/imagens/${user.foto}?token=${localStorage.getItem('token')}` : userIconImg,
       email: user?.email || "",
       dataNascimento: user?.idade || user?.dataNascimento || "",
       telefone: user?.telefone || "",
@@ -242,7 +242,7 @@ export const useProfileUserModel = () => {
 
       const updatedData = {
         ...userData,
-        foto: `${api.defaults.baseURL}/api/imagens/${imageName}`
+        foto: `${api.defaults.baseURL}/api/imagens/${imageName}?token=${localStorage.getItem('token')}`
       };
 
       setUserData(updatedData);

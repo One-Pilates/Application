@@ -65,7 +65,7 @@ const GerenciamentoProfessorView = ({
                     onClick={() => navigate(`/secretaria/perfil/professor/${professor.id}`)}
                     className="group relative flex-shrink-0">
                       <img
-                        src={professor.foto ? `${api.defaults.baseURL}/api/imagens/${professor.foto}` : userIconImg}
+                        src={professor.foto ? `${api.defaults.baseURL}/api/imagens/${professor.foto}?token=${localStorage.getItem('token')}` : userIconImg}
                         alt={professor.nome}
                         className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full object-cover transition-all duration-300 hover:scale-105"
                         style={{

@@ -54,7 +54,7 @@ function Account() {
       >
         {user && user.foto ? (
           <img
-            src={`${api.defaults.baseURL}/api/imagens/${user.foto}`}
+            src={`${api.defaults.baseURL}/api/imagens/${user.foto}?token=${localStorage.getItem('token')}`}
             alt={nome}
             className="w-10 h-10 rounded-full object-cover"
             style={{ outline: '2px solid var(--laranja-principal)' }}
@@ -97,7 +97,7 @@ function Account() {
             <div className="p-4" style={{ background: `linear-gradient(to right, var(--laranja-principal), #E85D25)` }}>
               <div className="flex items-center gap-3">
                 <img
-                  src={user?.foto ? `${api.defaults.baseURL}/api/imagens/${user.foto}` : userIconImg}
+                  src={user?.foto ? `${api.defaults.baseURL}/api/imagens/${user.foto}?token=${localStorage.getItem('token')}` : userIconImg}
                   alt={nome}
                   className="w-14 h-14 rounded-full ring-2 ring-white object-cover"
                 />
