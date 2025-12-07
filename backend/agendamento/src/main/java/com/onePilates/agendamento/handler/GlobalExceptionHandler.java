@@ -4,6 +4,7 @@ import com.onePilates.agendamento.exception.BusinessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,6 +47,12 @@ public class GlobalExceptionHandler {
         erro.put("erro", ex.getMessage());
         erro.put("codigoErro", ex.getCodigoErro());
         return new ResponseEntity<>(erro, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDenied(AccessDeniedException ex) {
+        String msg = ex.getMessage() == null ? "Access Denied" : ex.getMessage();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(msg);
     }
 
     @ExceptionHandler(RuntimeException.class)

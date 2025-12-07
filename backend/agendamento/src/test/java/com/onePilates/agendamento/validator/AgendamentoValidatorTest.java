@@ -201,5 +201,465 @@ class AgendamentoValidatorTest {
 
         assertThrows(ConflitoHorarioException.class, () -> validator.validar(dto));
     }
+
+    @Test
+    void validar_DeveLancarOperacaoInvalidaException_QuandoDataHoraNoPassado() {
+        dto.setDataHora(LocalDateTime.now().minusHours(1));
+
+        assertThrows(OperacaoInvalidaException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarOperacaoInvalidaException_QuandoDataHoraMuitoNoFuturo() {
+        dto.setDataHora(LocalDateTime.now().plusYears(2));
+
+        assertThrows(OperacaoInvalidaException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarOperacaoInvalidaException_QuandoHorarioAntesDas8h() {
+        dto.setDataHora(LocalDateTime.now().plusDays(1).withHour(7).withMinute(0));
+
+        assertThrows(OperacaoInvalidaException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarOperacaoInvalidaException_QuandoHorarioDepoisDas20h() {
+        dto.setDataHora(LocalDateTime.now().plusDays(1).withHour(20).withMinute(0));
+
+        assertThrows(OperacaoInvalidaException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarEntidadeNaoEncontradaException_QuandoProfessorNaoExiste() {
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(EntidadeNaoEncontradaException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarEntidadeNaoEncontradaException_QuandoEspecialidadeNaoExiste() {
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(EntidadeNaoEncontradaException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarEntidadeNaoEncontradaException_QuandoAlunoNaoExiste() {
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(Collections.singletonList(alunos.get(0)));
+
+        assertThrows(EntidadeNaoEncontradaException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarAlunoInativoException_QuandoAlunoEstaInativo() {
+        alunos.get(0).setStatus(false);
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+
+        assertThrows(AlunoInativoException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarProfessorInativoException_QuandoProfessorEstaInativo() {
+        professor.setStatus(false);
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+
+        assertThrows(ProfessorInativoException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarEspecialidadeIncompativelException_QuandoSalaNaoSuportaEspecialidade() {
+        Especialidade outraEspecialidade = new Especialidade();
+        outraEspecialidade.setId(2L);
+        outraEspecialidade.setNome("Outra Especialidade");
+        sala.setEspecialidades(Set.of(outraEspecialidade));
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+
+        assertThrows(EspecialidadeIncompativelException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarEspecialidadeIncompativelException_QuandoProfessorNaoAtendeEspecialidade() {
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+
+        Especialidade outraEspecialidade = new Especialidade();
+        outraEspecialidade.setId(2L);
+        professor.setEspecialidades(Set.of(outraEspecialidade));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+
+        assertThrows(EspecialidadeIncompativelException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarProfessorAusenteException_QuandoProfessorEstaAusentePorData() {
+        Ausencia ausencia = new Ausencia();
+        ausencia.setDataInicio(dto.getDataHora().minusHours(1));
+        ausencia.setDataFim(dto.getDataHora().plusHours(1));
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.singletonList(ausencia));
+
+        assertThrows(ProfessorAusenteException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarConflitoHorarioException_QuandoProfessorJaTemAgendamento() {
+        Agendamento agendamentoConflitante = new Agendamento();
+        agendamentoConflitante.setProfessor(professor);
+        agendamentoConflitante.setSala(sala);
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(true);
+        when(agendamentoRepository.findByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(Optional.of(agendamentoConflitante));
+
+        assertThrows(ConflitoHorarioException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarConflitoHorarioException_QuandoAlunoJaTemAgendamento() {
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        Agendamento agendamentoAluno = new Agendamento();
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), any())).thenReturn(Collections.singletonList(agendamentoAluno));
+
+        assertThrows(ConflitoHorarioException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DevePassar_QuandoAgendamentoIdExcluirEVAlido() {
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), eq(1L))).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), eq(1L))).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), eq(1L))).thenReturn(Collections.emptyList());
+
+        assertDoesNotThrow(() -> validator.validar(dto, 1L));
+    }
+
+    @Test
+    void validar_DeveAceitarHorarioExatoDe8h() {
+        dto.setDataHora(LocalDateTime.now().plusDays(1).withHour(8).withMinute(0));
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), any())).thenReturn(Collections.emptyList());
+
+        assertDoesNotThrow(() -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveAceitarHorarioExatoDe19h59() {
+        dto.setDataHora(LocalDateTime.now().plusDays(1).withHour(19).withMinute(59));
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), any())).thenReturn(Collections.emptyList());
+
+        assertDoesNotThrow(() -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarProfessorAusenteException_QuandoProfessorEstaAusentePorDiaSemana() {
+        // Criar data para segunda-feira
+        LocalDateTime segundaFeira = LocalDateTime.now().plusDays(1);
+        while (segundaFeira.getDayOfWeek() != java.time.DayOfWeek.MONDAY) {
+            segundaFeira = segundaFeira.plusDays(1);
+        }
+        dto.setDataHora(segundaFeira.withHour(14).withMinute(0));
+
+        Ausencia ausencia = new Ausencia();
+        ausencia.setDiaSemanaInicio(DiaSemana.SEGUNDA);
+        ausencia.setDiaSemanaFim(DiaSemana.SEXTA);
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.singletonList(ausencia));
+
+        assertThrows(ProfessorAusenteException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DevePassar_QuandoProfessorNaoEstaAusentePorDiaSemana() {
+        // Criar data para domingo (fora do intervalo de segunda a sexta)
+        LocalDateTime domingo = LocalDateTime.now().plusDays(1);
+        while (domingo.getDayOfWeek() != java.time.DayOfWeek.SUNDAY) {
+            domingo = domingo.plusDays(1);
+        }
+        dto.setDataHora(domingo.withHour(14).withMinute(0));
+
+        Ausencia ausencia = new Ausencia();
+        ausencia.setDiaSemanaInicio(DiaSemana.SEGUNDA);
+        ausencia.setDiaSemanaFim(DiaSemana.SEXTA);
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.singletonList(ausencia));
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), any())).thenReturn(Collections.emptyList());
+
+        assertDoesNotThrow(() -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DevePassar_QuandoAusenciaNaoTemDatasNemDiasSemana() {
+        Ausencia ausencia = new Ausencia();
+        // Sem dataInicio, dataFim, diaSemanaInicio, diaSemanaFim
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.singletonList(ausencia));
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), any())).thenReturn(Collections.emptyList());
+
+        assertDoesNotThrow(() -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarProfessorAusenteException_QuandoDataHoraIgualAoInicio() {
+        Ausencia ausencia = new Ausencia();
+        LocalDateTime dataHora = dto.getDataHora();
+        ausencia.setDataInicio(dataHora);
+        ausencia.setDataFim(dataHora.plusHours(2));
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.singletonList(ausencia));
+
+        assertThrows(ProfessorAusenteException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarProfessorAusenteException_QuandoDataHoraIgualAoFim() {
+        Ausencia ausencia = new Ausencia();
+        LocalDateTime dataHora = dto.getDataHora();
+        ausencia.setDataInicio(dataHora.minusHours(2));
+        ausencia.setDataFim(dataHora);
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.singletonList(ausencia));
+
+        assertThrows(ProfessorAusenteException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DevePassar_QuandoDataHoraAntesDoInicio() {
+        Ausencia ausencia = new Ausencia();
+        LocalDateTime dataHora = dto.getDataHora();
+        ausencia.setDataInicio(dataHora.plusHours(1));
+        ausencia.setDataFim(dataHora.plusHours(3));
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.singletonList(ausencia));
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), any())).thenReturn(Collections.emptyList());
+
+        assertDoesNotThrow(() -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DevePassar_QuandoDataHoraDepoisDoFim() {
+        Ausencia ausencia = new Ausencia();
+        LocalDateTime dataHora = dto.getDataHora();
+        ausencia.setDataInicio(dataHora.minusHours(3));
+        ausencia.setDataFim(dataHora.minusHours(1));
+
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.singletonList(ausencia));
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHoraExcludingId(any(), any(), any())).thenReturn(Collections.emptyList());
+
+        assertDoesNotThrow(() -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarConflitoHorarioException_QuandoConflitoSalaSemMensagem() {
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(true);
+        when(agendamentoRepository.findBySalaIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(Optional.empty());
+
+        assertThrows(ConflitoHorarioException.class, () -> validator.validar(dto));
+    }
+
+    @Test
+    void validar_DeveLancarConflitoHorarioException_QuandoConflitoProfessorSemMensagem() {
+        Especialidade esp = new Especialidade();
+        esp.setId(1L);
+        sala.setEspecialidades(Set.of(esp));
+        professor.setEspecialidades(Set.of(esp));
+
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(ausenciaRepository.findByProfessorId(any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(true);
+        when(agendamentoRepository.findByProfessorIdAndDataHoraExcludingId(any(), any(), any())).thenReturn(Optional.empty());
+
+        assertThrows(ConflitoHorarioException.class, () -> validator.validar(dto));
+    }
 }
 
