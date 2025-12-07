@@ -276,8 +276,8 @@ Swal.fire({
 
 try {
 
-  const senhaGerada = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-4) + "A1!";
-  console.log("🔐 Senha gerada:", senhaGerada);
+  const senhaGerada = Math.floor(100000 + Math.random() * 900000).toString();
+  console.log("🔐 Senha gerada (6 dígitos):", senhaGerada);
   
 
   const payload = {
