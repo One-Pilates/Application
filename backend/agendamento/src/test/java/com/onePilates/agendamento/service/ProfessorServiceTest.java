@@ -20,9 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -345,5 +348,149 @@ class ProfessorServiceTest {
         assertNotNull(result.getEspecialidades());
         assertNotNull(result.getEndereco());
     }
+
+    @Test
+    void criarProfessor_DeveCriarComRoleDefault_QuandoRoleNaoInformada() {
+        dto.setRole(null);
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(passwordEncoder.encode("senha123")).thenReturn("encodedPassword");
+        when(professorRepository.save(any(Professor.class))).thenReturn(professor);
+        when(emailService.envioEmailPrimeiroAcesso(anyString(), anyString(), anyString())).thenReturn("Email enviado");
+
+        ProfessorResponseDTO result = professorService.criarProfessor(dto);
+
+        assertNotNull(result);
+        verify(professorRepository, atLeastOnce()).save(any(Professor.class));
+    }
+
+    @Test
+    void criarProfessor_DeveProcessarImagem_QuandoImagemFornecida() throws Exception {
+        MultipartFile imagem = mock(MultipartFile.class);
+        dto.setImagem(imagem);
+
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(passwordEncoder.encode("senha123")).thenReturn("encodedPassword");
+        when(professorRepository.save(any(Professor.class))).thenReturn(professor);
+        when(imageService.salvarImagem(anyLong(), any(MultipartFile.class), eq("professor"))).thenReturn("foto.jpg");
+        when(emailService.envioEmailPrimeiroAcesso(anyString(), anyString(), anyString())).thenReturn("Email enviado");
+
+        professorService.criarProfessor(dto);
+
+        verify(imageService).salvarImagem(anyLong(), any(MultipartFile.class), eq("professor"));
+    }
+
+    @Test
+    void atualizarProfessor_DeveMantemDadosAnteriores_QuandoCamposNaoInformados() {
+        ProfessorDTO dtoAtualizacao = new ProfessorDTO();
+
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(professorRepository.save(any(Professor.class))).thenReturn(professor);
+
+        ProfessorResponseDTO result = professorService.atualizarProfessor(1L, dtoAtualizacao);
+
+        assertNotNull(result);
+        verify(professorRepository).save(any(Professor.class));
+    }
+
+    @Test
+    void atualizarProfessor_DeveCriarEndereco_QuandoNaoExistir() {
+        professor.setEndereco(null);
+        EnderecoDTO enderecoDTO = new EnderecoDTO();
+        enderecoDTO.setRua("Nova Rua");
+        dto.setEndereco(enderecoDTO);
+        // Não atualizar especialidades neste teste, então seta como null
+        dto.setEspecialidadeIds(null);
+
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(professorRepository.save(any(Professor.class))).thenReturn(professor);
+
+        professorService.atualizarProfessor(1L, dto);
+
+        verify(professorRepository).save(any(Professor.class));
+    }
+
+    @Test
+    void respostaDashProfessora_DeveRetornarKPIsCorretos_QuandoHaAgendamentos() {
+        when(professorRepository.existsById(1L)).thenReturn(true);
+        when(agendamentoRepository.countByProfessorIdAndPeriod(any(), any(), any())).thenReturn(10L);
+        
+        Object[] linha1 = new Object[]{"Monday", 5L};
+        Object[] linha2 = new Object[]{"Wednesday", 3L};
+        List<Object[]> dadosDiaSemana = new ArrayList<>();
+        dadosDiaSemana.add(linha1);
+        dadosDiaSemana.add(linha2);
+        
+        when(agendamentoRepository.buscarAgendamentosPorDiaSemanaRaw(any(), any(), any())).thenReturn(dadosDiaSemana);
+        
+        Object[] linhaEspecialidade = new Object[]{"Pilates Clássico", 0.6};
+        List<Object[]> dadosEspecialidade = new ArrayList<>();
+        dadosEspecialidade.add(linhaEspecialidade);
+        
+        when(agendamentoRepository.buscarDistribuicaoAulasPorEspecialidadeRaw(any(), any(), any(), any())).thenReturn(dadosEspecialidade);
+        
+        Agendamento agendamentoTeste = new Agendamento();
+        agendamentoTeste.setProfessor(professor);
+        agendamentoTeste.setEspecialidade(especialidade);
+        
+        Aluno alunoTeste = new Aluno();
+        alunoTeste.setId(1L);
+        alunoTeste.setNome("Aluno Teste");
+        
+        Set<AgendamentoAluno> agendamentoAlunos = new HashSet<>();
+        AgendamentoAluno aa = new AgendamentoAluno(agendamentoTeste, alunoTeste);
+        agendamentoAlunos.add(aa);
+        agendamentoTeste.setAgendamentoAlunos(agendamentoAlunos);
+        
+        when(agendamentoRepository.findAgendamentosByProfessorAndPeriod(any(), any(), any()))
+            .thenReturn(Arrays.asList(agendamentoTeste));
+
+        RespostaDashProfessoraDTO result = professorService.respostaDashProfessora(1L, 30);
+
+        assertNotNull(result);
+        assertNotNull(result.getKpisProfessorDTO());
+        verify(professorRepository).existsById(1L);
+    }
+
+    @Test
+    void respostaDashProfessora_DeveLancarExcecao_QuandoProfessorNaoExiste() {
+        when(professorRepository.existsById(1L)).thenReturn(false);
+
+        assertThrows(EntidadeNaoEncontradaException.class, () -> {
+            professorService.respostaDashProfessora(1L, 30);
+        });
+    }
+
+    @Test
+    void criarProfessor_DeveUsarFotoString_QuandoImagemNaoFornecida() {
+        dto.setImagem(null);
+        dto.setFoto("fotoExistente.jpg");
+
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(passwordEncoder.encode("senha123")).thenReturn("encodedPassword");
+        when(professorRepository.save(any(Professor.class))).thenReturn(professor);
+        when(emailService.envioEmailPrimeiroAcesso(anyString(), anyString(), anyString())).thenReturn("Email enviado");
+
+        professorService.criarProfessor(dto);
+
+        verify(professorRepository, atLeast(2)).save(any(Professor.class));
+    }
+
+    @Test
+    void atualizarProfessor_DeveAtualizarEndereco_QuandoEnderecoExistir() {
+        EnderecoDTO enderecoDTO = new EnderecoDTO();
+        enderecoDTO.setRua("Rua Atualizada");
+        enderecoDTO.setNumero("456");
+        dto.setEndereco(enderecoDTO);
+        // Não atualizar especialidades neste teste, então seta como null
+        dto.setEspecialidadeIds(null);
+
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(professorRepository.save(any(Professor.class))).thenReturn(professor);
+
+        professorService.atualizarProfessor(1L, dto);
+
+        verify(professorRepository).save(any(Professor.class));
+    }
+
 }
 

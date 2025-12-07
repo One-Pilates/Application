@@ -1,7 +1,10 @@
 package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.AgendamentoDTO;
+import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.exception.BusinessException;
+import com.onePilates.agendamento.exception.EntidadeNaoEncontradaException;
+import com.onePilates.agendamento.exception.OperacaoInvalidaException;
 import com.onePilates.agendamento.model.*;
 import com.onePilates.agendamento.observer.AgendamentoNotifier;
 import com.onePilates.agendamento.repository.*;
@@ -268,6 +271,247 @@ class AgendamentoServiceTest {
         agendamentoService.criarAgendamento(dto);
 
         verify(notifier, never()).notificarTodos(any(Agendamento.class));
+    }
+
+    @Test
+    void listarTodosDTO_DeveRetornarListaDeAgendamentos() {
+        List<Agendamento> agendamentos = Arrays.asList(agendamento);
+        when(agendamentoRepository.findAll()).thenReturn(agendamentos);
+
+        List<AgendamentoResponseDTO> resultado = agendamentoService.listarTodosDTO();
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        verify(agendamentoRepository).findAll();
+    }
+
+    @Test
+    void buscarPorIdDTO_DeveRetornarAgendamentoQuandoEncontrado() {
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+
+        AgendamentoResponseDTO resultado = agendamentoService.buscarPorIdDTO(1L);
+
+        assertNotNull(resultado);
+        assertEquals(1L, resultado.getId());
+        verify(agendamentoRepository).findById(1L);
+    }
+
+    @Test
+    void buscarPorIdDTO_DeveLancarExcecaoQuandoNaoEncontrado() {
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(EntidadeNaoEncontradaException.class, () -> agendamentoService.buscarPorIdDTO(1L));
+    }
+
+    @Test
+    void buscarAgendamentosPorIdProfessor_DeveRetornarListaQuandoExistem() {
+        List<Agendamento> agendamentos = Arrays.asList(agendamento);
+        when(agendamentoRepository.findByProfessorId(1L)).thenReturn(agendamentos);
+
+        List<AgendamentoResponseDTO> resultado = agendamentoService.buscarAgendamentosPorIdProfessor(1L);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        verify(agendamentoRepository).findByProfessorId(1L);
+    }
+
+    @Test
+    void buscarAgendamentosPorIdSala_DeveRetornarListaQuandoExistem() {
+        List<Agendamento> agendamentos = Arrays.asList(agendamento);
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(agendamentoRepository.findBySalaId(1L)).thenReturn(agendamentos);
+
+        List<AgendamentoResponseDTO> resultado = agendamentoService.buscarAgendamentosPorIdSala(1L);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        verify(agendamentoRepository).findBySalaId(1L);
+    }
+
+    @Test
+    void buscarAgendamentosPorIdSala_DeveLancarExcecaoQuandoSalaNaoExiste() {
+        when(salaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> agendamentoService.buscarAgendamentosPorIdSala(1L));
+    }
+
+    @Test
+    void buscarAgendamentosPorIdSala_DeveLancarExcecaoQuandoNaoHaAgendamentos() {
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(agendamentoRepository.findBySalaId(1L)).thenReturn(Collections.emptyList());
+
+        assertThrows(RuntimeException.class, () -> agendamentoService.buscarAgendamentosPorIdSala(1L));
+    }
+
+    @Test
+    void buscarAgendamentosPorIdsDeSalaEProfessor_DeveRetornarListaFiltrada() {
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(agendamentoRepository.findByProfessorId(1L)).thenReturn(Arrays.asList(agendamento));
+
+        List<AgendamentoResponseDTO> resultado = agendamentoService.buscarAgendamentosPorIdsDeSalaEProfessor(1L, 1L);
+
+        assertNotNull(resultado);
+        verify(agendamentoRepository).findByProfessorId(1L);
+    }
+
+    @Test
+    void buscarAgendamentosPorIdsDeSalaEProfessor_DeveLancarExcecaoQuandoIdsInvalidos() {
+        assertThrows(IllegalArgumentException.class, () -> 
+            agendamentoService.buscarAgendamentosPorIdsDeSalaEProfessor(null, 1L));
+    }
+
+    @Test
+    void buscarAgendamentosPorIdsDeSalaEProfessor_DeveLancarExcecaoQuandoSalaNaoExiste() {
+        when(salaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> 
+            agendamentoService.buscarAgendamentosPorIdsDeSalaEProfessor(1L, 1L));
+    }
+
+    @Test
+    void atualizarAgendamento_DeveAtualizarComSucesso_QuandoDadosValidos() {
+        AgendamentoDTO dtoAtualizacao = new AgendamentoDTO();
+        dtoAtualizacao.setDataHora(LocalDateTime.now().plusDays(2));
+        dtoAtualizacao.setSalaId(1L);
+        dtoAtualizacao.setProfessorId(1L);
+        dtoAtualizacao.setEspecialidadeId(1L);
+        dtoAtualizacao.setAlunoIds(Set.of(1L, 2L));
+
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class), eq(1L));
+        when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamento);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+
+        AgendamentoResponseDTO resultado = agendamentoService.atualizarAgendamento(1L, dtoAtualizacao);
+
+        assertNotNull(resultado);
+        verify(agendamentoRepository).save(any(Agendamento.class));
+    }
+
+    @Test
+    void atualizarAgendamento_DeveNotificarProfessor_QuandoNotificacaoAtiva() {
+        AgendamentoDTO dtoAtualizacao = new AgendamentoDTO();
+        dtoAtualizacao.setDataHora(LocalDateTime.now().plusDays(2));
+
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class), eq(1L));
+        when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamento);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+        when(emailService.enviarEmailAvisoDeAulaAtualizada(any(), any(), any(), any(), any(), any()))
+            .thenReturn("Email enviado");
+
+        agendamentoService.atualizarAgendamento(1L, dtoAtualizacao);
+
+        verify(emailService).enviarEmailAvisoDeAulaAtualizada(any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void atualizarAgendamento_DeveNotificarAmbosProfessores_QuandoProfessorFoiTrocado() {
+        Professor professorNovo = new Professor();
+        professorNovo.setId(2L);
+        professorNovo.setNome("Professor Novo");
+        professorNovo.setEmail("professor.novo@teste.com");
+        professorNovo.setNotificacaoAtiva(true);
+
+        AgendamentoDTO dtoAtualizacao = new AgendamentoDTO();
+        dtoAtualizacao.setProfessorId(2L);
+
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+        when(professorRepository.findById(2L)).thenReturn(Optional.of(professorNovo));
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class), eq(1L));
+        when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamento);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+        when(emailService.envioEmailCancelamentoAula(any(), any(), any(), any(), any()))
+            .thenReturn("Email enviado");
+        when(emailService.enviarEmailAvisoDeAulaMarcada(any(), any(), any(), any(), any(), any()))
+            .thenReturn("Email enviado");
+
+        agendamentoService.atualizarAgendamento(1L, dtoAtualizacao);
+
+        verify(emailService).envioEmailCancelamentoAula(any(), any(), any(), any(), any());
+        verify(emailService).enviarEmailAvisoDeAulaMarcada(any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void registrarPresencas_DeveRegistrarComSucesso_QuandoAulaJaAconteceu() {
+        agendamento.setDataHora(LocalDateTime.now().minusDays(1));
+        Map<Long, StatusPresenca> presencas = new HashMap<>();
+        presencas.put(1L, StatusPresenca.PRESENTE);
+        presencas.put(2L, StatusPresenca.FALTA);
+
+        AgendamentoAluno agendamentoAluno1 = agendamento.getAgendamentoAlunos().iterator().next();
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+        when(agendamentoAlunoRepository.save(any(AgendamentoAluno.class))).thenReturn(agendamentoAluno1);
+
+        assertDoesNotThrow(() -> agendamentoService.registrarPresencas(1L, presencas));
+
+        verify(agendamentoAlunoRepository, atLeastOnce()).save(any(AgendamentoAluno.class));
+    }
+
+    @Test
+    void registrarPresencas_DeveLancarExcecao_QuandoAulaAindaNaoAconteceu() {
+        agendamento.setDataHora(LocalDateTime.now().plusDays(1));
+        Map<Long, StatusPresenca> presencas = new HashMap<>();
+        presencas.put(1L, StatusPresenca.PRESENTE);
+
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+
+        assertThrows(OperacaoInvalidaException.class, () -> 
+            agendamentoService.registrarPresencas(1L, presencas));
+    }
+
+    @Test
+    void registrarPresencas_DeveLancarExcecao_QuandoAlunoNaoPertenceAoAgendamento() {
+        agendamento.setDataHora(LocalDateTime.now().minusDays(1));
+        Map<Long, StatusPresenca> presencas = new HashMap<>();
+        presencas.put(999L, StatusPresenca.PRESENTE);
+
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+
+        assertThrows(OperacaoInvalidaException.class, () -> 
+            agendamentoService.registrarPresencas(1L, presencas));
+    }
+
+    @Test
+    void criarAgendamento_DeveNormalizarDataHora() {
+        LocalDateTime dataComMinutos = LocalDateTime.now().plusDays(1).withMinute(30).withSecond(45);
+        dto.setDataHora(dataComMinutos);
+
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(salaRepository.findById(1L)).thenReturn(Optional.of(sala));
+        when(especialidadeRepository.findById(1L)).thenReturn(Optional.of(especialidade));
+        when(alunoRepository.findAllById(any())).thenReturn(alunos);
+        when(agendamentoRepository.existsByProfessorIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.existsBySalaIdAndDataHora(any(), any())).thenReturn(false);
+        when(agendamentoRepository.findAgendamentosByAlunoAndDataHora(any(), any())).thenReturn(Collections.emptyList());
+        when(agendamentoRepository.save(any(Agendamento.class))).thenReturn(agendamento);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+        doNothing().when(agendamentoValidator).validar(any(AgendamentoDTO.class));
+
+        agendamentoService.criarAgendamento(dto);
+
+        // Verifica que a data foi normalizada (minutos, segundos e nanossegundos zerados)
+        assertEquals(0, dto.getDataHora().getMinute());
+        assertEquals(0, dto.getDataHora().getSecond());
+        assertEquals(0, dto.getDataHora().getNano());
+    }
+
+    @Test
+    void excluirAgendamento_DeveNaoNotificar_QuandoNotificacaoInativa() {
+        professor.setNotificacaoAtiva(false);
+        when(agendamentoRepository.existsById(1L)).thenReturn(true);
+        when(agendamentoRepository.findById(1L)).thenReturn(Optional.of(agendamento));
+        doNothing().when(agendamentoRepository).deleteById(1L);
+
+        agendamentoService.excluirAgendamento(1L);
+
+        verify(emailService, never()).envioEmailCancelamentoAula(any(), any(), any(), any(), any());
+        verify(agendamentoRepository).deleteById(1L);
     }
 }
 
