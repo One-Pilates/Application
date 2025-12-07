@@ -27,7 +27,7 @@ export const useViewProfileModel = () => {
         if (tipo === 'professor' && data.foto) {
           setDadosUser({
             ...data,
-            foto: `${api.defaults.baseURL}/api/imagens/${data.foto}`
+            foto: `${api.defaults.baseURL}/api/imagens/${data.foto}?token=${localStorage.getItem('token')}`
           });
         } else {
           setDadosUser(data);
