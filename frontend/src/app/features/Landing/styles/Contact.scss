@@ -1,14 +1,17 @@
 @use '../../../shared//styles/variables.scss' as *;
 
 .contact {
-  padding: 6rem 0;
+  padding: 8rem 1.5rem;
   background: $branco;
+  margin-bottom: 4rem;
 }
 
 .contact-content {
+  max-width: 1200px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: 4rem;
   align-items: stretch;
 }
 

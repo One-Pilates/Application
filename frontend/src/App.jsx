@@ -15,15 +15,13 @@ function App() {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('theme');
     if (saved) return saved === 'dark';
-    return false; // Padrão sempre modo claro
+    return false;
   });
 
   useEffect(() => {
-    // Forçar modo claro em rotas públicas (login e landing)
     if (isPublicRoute) {
       document.documentElement.classList.remove('dark');
     } else {
-      // Aplicar preferência do usuário apenas em rotas privadas
       if (isDark) {
         document.documentElement.classList.add('dark');
       } else {
@@ -34,13 +32,11 @@ function App() {
 
   return (
     <Routes>
-      {/* Rotas privadas */}
       <Route element={<PrivateRoutes />}>
         <Route path="/professora/*" element={<TeacherRoutes />} />
         <Route path="/secretaria/*" element={<SecretaryRoutes />} />
       </Route>
       
-      {/* Rotas públicas */}
       <Route path="/*" element={<PublicRoutes />} />
     </Routes>
   );

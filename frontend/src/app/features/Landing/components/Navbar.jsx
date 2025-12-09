@@ -32,7 +32,7 @@
           {/* LOGO */}
           <div className="navbar-logo">
             <img
-              src={isScrolled ? "/logoBranca.png" : "/logoOriginal.png"}
+              src="/logoBranca.png"
               alt="One Pilates"
             />
           </div>

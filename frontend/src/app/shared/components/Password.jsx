@@ -11,7 +11,6 @@ export default function RedefinirSenha() {
   const { user } = useAuth() || {};
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState("");
-  const [usarOutroEmail, setUsarOutroEmail] = useState(false);
   const [codigo, setCodigo] = useState(["", "", "", "", ""]);
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
@@ -21,12 +20,6 @@ export default function RedefinirSenha() {
   
   const inputsRef = useRef([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user?.email && !usarOutroEmail) {
-      setEmail(user.email);
-    }
-  }, [user, usarOutroEmail]);
 
   const steps = [
     { label: "Email" },
@@ -295,35 +288,10 @@ export default function RedefinirSenha() {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={user?.email && !usarOutroEmail}
-                  className="w-full py-3.5 px-4 text-base border-2 border-gray-300 dark:border-dark-component rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 disabled:bg-gray-100 disabled:cursor-not-allowed dark:disabled:bg-dark-component"
+                  className="w-full py-3.5 px-4 text-base border-2 border-gray-300 dark:border-dark-component rounded-lg outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                   placeholder="seuemail@exemplo.com"
                   required
                 />
-                {user?.email && !usarOutroEmail && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUsarOutroEmail(true);
-                      setEmail("");
-                    }}
-                    className="text-sm text-blue-500 hover:text-blue-600 hover:underline self-start mt-1 transition-all"
-                  >
-                    Deseja usar outro email?
-                  </button>
-                )}
-                {usarOutroEmail && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUsarOutroEmail(false);
-                      setEmail(user?.email || "");
-                    }}
-                    className="text-sm text-blue-500 hover:text-blue-600 hover:underline self-start mt-1 transition-all"
-                  >
-                    Voltar para email cadastrado
-                  </button>
-                )}
               </div>
 
               <div className="flex items-center gap-4 p-4 bg-blue-50 border border-blue-500 rounded-xl text-blue-900">

@@ -29,12 +29,11 @@ const ViewStudio = ({
   return (
     <div className="flex flex-col gap-6 py-6 px-16 h-full mx-auto ml-auto">
       <div className="flex flex-row w-full items-center">
-        <h1 className="text-3xl font-bold">Configurações do Studio</h1>
-        {/* <Botao  onClick={()=> navigate("/secretaria/professor/cadastrar")} cor="bg-blue-500" texto={"Adicionar Professor"}></Botao> */}
+        <h1 className="text-3xl font-bold dark:text-fontMain">Configurações do Studio</h1>
       </div>
-      <div className=" bg-white rounded-xl shadow mt-4 w-full h-auto py-6 px-24">
+      <div className="bg-white dark:bg-dark-secondary rounded-xl shadow mt-4 w-full h-auto py-6 px-24">
         {/* Tabs */}
-        <div className="border-b-2">
+        <div className="border-b-2 dark:border-dark-component">
           <nav className="flex">
             <button
               onClick={() => setActiveTab("especialidades")}
@@ -42,7 +41,7 @@ const ViewStudio = ({
                 ${
                   activeTab === "especialidades"
                     ? "border-orange-500 text-orange-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    : "border-transparent text-gray-500 dark:text-fontSec hover:text-gray-700 dark:hover:text-fontMain hover:border-gray-300 dark:hover:border-dark-component"
                 }
                 `}
             >
@@ -54,7 +53,7 @@ const ViewStudio = ({
                 ${
                   activeTab === "salas"
                     ? "border-orange-500 text-orange-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    : "border-transparent text-gray-500 dark:text-fontSec hover:text-gray-700 dark:hover:text-fontMain hover:border-gray-300 dark:hover:border-dark-component"
                 }`}
             >
               Salas
@@ -66,7 +65,7 @@ const ViewStudio = ({
           {activeTab === "especialidades" ? (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-800">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-fontMain">
                   Especialidades Cadastradas
                 </h2>
                 <Botao
@@ -80,12 +79,11 @@ const ViewStudio = ({
                 {especialidades.map((esp) => (
                   <div
                     key={esp.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                  >
+                    className="border border-gray-200 dark:border-dark-component rounded-lg p-4 hover:shadow-md transition-shadow dark:bg-dark-component">
                     <div className="flex justify-between items-center">
                       <h3 className="font-medium text-orange-600 text-lg">{esp.nome}</h3>
                       <div className="flex gap-2">
-                        <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition">
+                        <button className="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition">
                           <FiEdit
                             onClick={() => handleEditEsp(esp)}
                             size={18}
@@ -93,7 +91,7 @@ const ViewStudio = ({
                         </button>
                         <button
                           onClick={() => handleDeleteEspecialidade(esp.id)}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition"
+                          className="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition"
                         >
                           <FiTrash2 size={18} />
                         </button>
@@ -106,7 +104,7 @@ const ViewStudio = ({
           ) : (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-800">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-fontMain">
                   Salas Cadastradas
                 </h2>
                 <Botao
@@ -118,21 +116,20 @@ const ViewStudio = ({
                 {salas.map((sala) => (
                   <div
                     key={sala.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                  >
+                    className="border border-gray-200 dark:border-dark-component rounded-lg p-4 hover:shadow-md transition-shadow dark:bg-dark-component">
                     <div className="flex justify-between items-center">
                       <div className="flex flex-col gap-2">
                         <h3 className="font-medium text-orange-600 text-lg">
                           {sala.nome}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-fontSec">
                           Capacidade: até{" "}
                           <span className="font-semibold">
                             {sala.quantidadeMaximaAlunos}
                           </span>{" "}
                           alunos
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-fontSec">
                           Equipamentos PCD:{" "}
                           <span className="font-semibold">
                             {sala.quantidadeEquipamentosPCD}
@@ -144,25 +141,25 @@ const ViewStudio = ({
                             sala.especialidades.map((esp, index) => (
                               <span
                                 key={index}
-                                className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium"
+                                className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-full text-sm font-medium"
                               >
                                 {esp}
                               </span>
                             ))
                           ) : (
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-gray-500 dark:text-fontSec">
                               Sem especialidades
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition">
+                        <button className="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition">
                           <FiEdit
                           onClick={() => handleEditSala(sala)}
                           size={18} />
                         </button>
-                        <button className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition">
+                        <button className="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition">
                           <FiTrash2
                           onClick={() => handleDeleteSala(sala.id)}
                           size={18} />
@@ -179,21 +176,21 @@ const ViewStudio = ({
       {/* Modal de Especialidade */}
       {showEspModal && (
         <div className="modal-overlay animate-slideUp">
-          <div className="bg-white rounded-lg max-w-md w-full py-6 px-8">
+          <div className="bg-white dark:bg-dark-secondary rounded-lg max-w-md w-full py-6 px-8">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-fontMain">
                 {editingEsp ? "Editar Especialidade" : "Nova Especialidade"}
               </h3>
               <button
                 onClick={() => setShowEspModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 dark:text-fontSec dark:hover:text-fontMain"
               >
                 <FiX size={24} />
               </button>
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-fontMain mb-2">
                 Nome da Especialidade <span className="text-red-500">*</span>
               </label>
               <input
@@ -201,7 +198,7 @@ const ViewStudio = ({
                 value={formEsp}
                 onChange={(e) => setFormEsp(e.target.value)}
                 placeholder="Ex: Fisioterapia"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-dark-component dark:bg-dark-component dark:text-fontMain rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -219,19 +216,19 @@ const ViewStudio = ({
       {/*Modal de Sala */}
       {showSalaModal && (
         <div className="modal-overlay animate-slideUp">
-          <div className="bg-white rounded-lg max-w-lg w-full p-6">
+          <div className="bg-white dark:bg-dark-secondary rounded-lg max-w-lg w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-fontMain">
                 {editingSala ? 'Editar Sala' : 'Nova Sala'}
               </h3>
-              <button onClick={() => setShowSalaModal(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowSalaModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-fontSec dark:hover:text-fontMain">
                 <FiX size={24} />
               </button>
             </div>
 
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-fontMain mb-2">
                   Nome da Sala <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -239,13 +236,13 @@ const ViewStudio = ({
                   value={formSala.nome}
                   onChange={(e) => setFormSala({...formSala, nome: e.target.value})}
                   placeholder="Ex: Sala Reformer"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-dark-component dark:bg-dark-component dark:text-fontMain rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-fontMain mb-2">
                     Capacidade Máxima <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -254,12 +251,12 @@ const ViewStudio = ({
                     value={formSala.quantidadeMaximaAlunos}
                     onChange={(e) => setFormSala({...formSala, quantidadeMaximaAlunos: e.target.value})}
                     placeholder="Ex: 8"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-dark-component dark:bg-dark-component dark:text-fontMain rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-fontMain mb-2">
                     Equipamentos PCD <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -268,20 +265,20 @@ const ViewStudio = ({
                     value={formSala.quantidadeEquipamentosPCD}
                     onChange={(e) => setFormSala({...formSala, quantidadeEquipamentosPCD: e.target.value})}
                     placeholder="Ex: 2"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-dark-component dark:bg-dark-component dark:text-fontMain rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-fontMain mb-3">
                   Especialidades da Sala
                 </label>
-                <div className="space-y-2 max-h-40 overflow-y-auto p-3 border border-gray-200 rounded-lg bg-gray-50">
+                <div className="space-y-2 max-h-40 overflow-y-auto p-3 border border-gray-200 dark:border-dark-component rounded-lg bg-gray-50 dark:bg-dark-component">
                   {especialidades.map((esp) => (
                     <label
                       key={esp.id}
-                      className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors"
+                      className="flex items-center gap-3 p-2 hover:bg-white dark:hover:bg-dark-secondary rounded cursor-pointer transition-colors"
                     >
                       <input
                         type="checkbox"
@@ -306,11 +303,11 @@ const ViewStudio = ({
                         }}
                         className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
-                      <span className="text-sm text-gray-700">{esp.nome}</span>
+                      <span className="text-sm text-gray-700 dark:text-fontMain">{esp.nome}</span>
                     </label>
                   ))}
                   {especialidades.length === 0 && (
-                    <p className="text-sm text-gray-500 text-center py-2">
+                    <p className="text-sm text-gray-500 dark:text-fontSec text-center py-2">
                       Nenhuma especialidade cadastrada
                     </p>
                   )}
