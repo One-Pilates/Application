@@ -1,26 +1,26 @@
-# One Pilates 🧘‍♀️  
+# One Pilates — Backend 🔙
 
+## 📌 Introdução
+O **One Pilates Backend** é responsável por gerenciar regras de negócio, autenticação, agendamentos e persistência de dados do sistema de gerenciamento do estúdio One Pilates.
 
-
-## 📌 Introdução  
-O **One Pilates** é um projeto voltado para gerenciamento de agendamento para um estúdio de Pilates da empresa [One Pilates](https://onepilates.com.br/site/).  
-A aplicação integra **backend em Java + Spring Boot** e **frontend em React + Vite**, com banco de dados **MySQL** e suporte a APIs construídas em **Node.js**.  
-
-O objetivo é proporcionar uma plataforma interna, moderna e intuitiva para os e administradores, professores e secretárias.
-
-## 🛠 Tecnologias  
-Este projeto utiliza as seguintes tecnologias:  
-
-<div align="center">
-  <img src="https://skillicons.dev/icons?i=java,spring,react,vite,nodejs,mysql" alt="My Skills" />
-</div>
-
+A aplicação foi desenvolvida utilizando **Java com Spring Boot**, integrada a um banco de dados **MySQL**, com suporte a APIs auxiliares em **Node.js**.
 
 ---
 
-## ⚙️ Instalação  
+## 🛠 Tecnologias
+- Java  
+- Spring Boot  
+- MySQL  
+- Node.js  
 
-### 🔹 Backend (Java + Spring Boot)  
+<div align="center">
+  <img src="https://skillicons.dev/icons?i=java,spring,mysql,nodejs" alt="Backend Skills" />
+</div>
+
+---
+
+## ⚙️ Instalação
+
 ```bash
 # Clonar o repositório
 git clone https://github.com/One-Pilates/Application
@@ -28,32 +28,16 @@ git clone https://github.com/One-Pilates/Application
 # Entrar no backend
 cd one-pilates/backend
 
-# Rodar com Maven ou Gradle
+# Rodar a aplicação
 ./mvnw spring-boot:run
 ```
 
-### 🔹 Frontend (React + Vite)  
-```bash
-cd one-pilates/frontend
+🚀 Uso
 
-# Instalar dependências
-npm install
+Após iniciar o projeto:
 
-# Rodar projeto
-npm run dev
-```
+API disponível em: http://localhost:8080
 
----
+📄 Licença
 
-## 🚀 Uso  
-Após rodar o projeto:  
-- Backend estará disponível em: `http://localhost:8080`  
-- Frontend estará disponível em: `http://localhost:5173`  
-
----
-
-## 📄 Licença  
-Este projeto é distribuído sob a licença **MIT**.  
-
-Sptech School.
-
+Este projeto é distribuído sob a licença MIT.
