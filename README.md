@@ -1,43 +1,128 @@
-# One Pilates — Backend 🔙
+# One Pilates - Backend API
 
-## 📌 Introdução
-O **One Pilates Backend** é responsável por gerenciar regras de negócio, autenticação, agendamentos e persistência de dados do sistema de gerenciamento do estúdio One Pilates.
+Backend robusto para gerenciamento de agendamentos, clientes, professores e funcionalidades administrativas da One Pilates.
 
-A aplicação foi desenvolvida utilizando **Java com Spring Boot**, integrada a um banco de dados **MySQL**, com suporte a APIs auxiliares em **Node.js**.
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=java,spring,mysql,rabbitmq" alt="Tecnologias principais" />
+</p>
 
----
+## Stack
+- Java 17+
+- Spring Boot 3
+- Spring Security (JWT)
+- Spring Data JPA
+- MySQL
+- RabbitMQ
+- Swagger/OpenAPI
+- Maven
+- Lombok
 
-## 🛠 Tecnologias
-- Java  
-- Spring Boot  
-- MySQL  
-- Node.js  
+## Funcionalidades
+- Autenticação e autorização com JWT
+- Gerenciamento de agendamentos
+- Gestão de alunos, professores e administradores
+- Controle de ausências
+- Gerenciamento de especialidades e salas
+- Upload de imagens
+- API REST completa documentada
+- Fila de mensagens com RabbitMQ
+- Validações robustas de dados
 
-<div align="center">
-  <img src="https://skillicons.dev/icons?i=java,spring,mysql,nodejs" alt="Backend Skills" />
-</div>
+## Requisitos
+- Java 17+
+- Maven 3.8+
+- MySQL 8.0+
+- RabbitMQ 3.12+
 
----
-
-## ⚙️ Instalação
-
+## Como rodar localmente
 ```bash
-# Clonar o repositório
-git clone https://github.com/One-Pilates/Application
+# Instalar dependências
+mvn clean install
 
-# Entrar no backend
-cd one-pilates/backend
-
-# Rodar a aplicação
-./mvnw spring-boot:run
+# Ambiente de desenvolvimento
+mvn spring-boot:run
 ```
 
-🚀 Uso
+Aplicação local: http://localhost:8080
 
-Após iniciar o projeto:
+## Scripts
+```bash
+# Desenvolvimento
+mvn spring-boot:run
 
-API disponível em: http://localhost:8080
+# Build de produção
+mvn clean package
 
-📄 Licença
+# Executar testes
+mvn test
 
+# Executar testes com cobertura
+mvn test jacoco:report
+
+# Executar aplicação gerada
+java -jar target/agendamento-0.0.1-SNAPSHOT.jar
+```
+
+## Build para produção
+```bash
+mvn clean package -DskipTests
+```
+
+Os arquivos finais serão gerados em `target/`.
+
+## Documentação da API
+Após iniciar a aplicação, acesse:
+
+📖 Swagger UI: http://localhost:8080/swagger-ui.html
+
+📋 OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+## Estrutura principal
+```text
+src/
+  main/
+    java/
+      com/onePilates/agendamento/
+        config/           # Configurações (Security, Swagger)
+        controller/       # Controllers REST
+        dto/              # Data Transfer Objects
+        exception/        # Exceções customizadas
+        handler/          # Exception handlers
+        model/            # Entidades JPA
+        repository/       # Repositories Spring Data
+        service/          # Lógica de negócio
+        security/         # Componentes de segurança
+        validator/        # Validadores
+        observer/         # Padrão Observer
+    resources/
+      application.properties    # Configurações da aplicação
+  test/
+    java/
+      com/onePilates/agendamento/
+        controller/       # Testes de controllers
+        service/          # Testes de serviços
+        integration/      # Testes de integração
+```
+
+## Variáveis de Ambiente
+Crie um arquivo `application.properties` na pasta `src/main/resources/` com as configurações necessárias:
+
+```properties
+# Database
+spring.datasource.url=jdbc:mysql://localhost:3306/onepilates
+spring.datasource.username=root
+spring.datasource.password=
+
+# JWT
+jwt.secret=sua_chave_secreta_aqui
+jwt.expiration=86400000
+
+# RabbitMQ
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=guest
+spring.rabbitmq.password=guest
+```
+
+## Licença
 Este projeto é distribuído sob a licença MIT.
