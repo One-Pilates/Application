@@ -5,6 +5,7 @@ public class AlunoAgendamentoResponseDTO {
     private String nome;
     private String observacao;
     private Boolean status;
+    private Boolean alunoComLimitacoesFisicas;
 
     public AlunoAgendamentoResponseDTO() {
     }
@@ -46,5 +47,13 @@ public class AlunoAgendamentoResponseDTO {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public Boolean getAlunoComLimitacoesFisicas() {
+        return alunoComLimitacoesFisicas;
+    }
+
+    public void setAlunoComLimitacoesFisicas(Boolean alunoComLimitacoesFisicas) {
+        this.alunoComLimitacoesFisicas = alunoComLimitacoesFisicas;
     }
 }

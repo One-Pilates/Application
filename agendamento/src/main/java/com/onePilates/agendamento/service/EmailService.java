@@ -69,7 +69,7 @@ public class EmailService {
                                             <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; max-width:600px; font-family:'Poppins', Arial, Helvetica, sans-serif;">
                                                 <tr>
                                                     <td align="center" style="padding:40px 40px 30px 40px; background-color:#ffffff;">
-                                                        <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block; max-width:160px; height:auto; border:0;">
+                                                        <!-- <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block; max-width:160px; height:auto; border:0;"> -->
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -201,7 +201,7 @@ public class EmailService {
                     <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; border-radius:10px;">
                         <tr>
                             <td align="center" style="padding:40px;">
-                                <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block; max-width:160px; height:auto; border:0;">
+                                <!-- <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block; max-width:160px; height:auto; border:0;"> -->
                             </td>
                         </tr>
                         <tr>
@@ -277,7 +277,7 @@ public class EmailService {
                                 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;">
                                     <tr>
                                         <td align="center" style="padding:40px;">
-                                            <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block;">
+                                            <!-- <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block;"> -->
                                         </td>
                                     </tr>
 
@@ -418,7 +418,7 @@ public class EmailService {
                                             <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; max-width:600px; font-family:'Poppins', Arial, Helvetica, sans-serif;">
                                                 <tr>
                                                     <td align="center" style="padding:40px 40px 30px 40px; background-color:#ffffff;">
-                                                        <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block; max-width:160px; height:auto; border:0;">
+                                                        <!-- <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates" width="160" style="display:block; max-width:160px; height:auto; border:0;"> -->
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -551,8 +551,8 @@ public class EmailService {
                                style="background-color:#ffffff; border-radius:10px;">
                             <tr>
                                 <td align="center" style="padding:40px;">
-                                    <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates"
-                                         width="160" style="display:block;">
+                                    <!-- <img src="https://i.ibb.co/q39Mz6gR/logo-Original.png" alt="OnePilates"
+                                         width="160" style="display:block;"> -->
                                 </td>
                             </tr>
 

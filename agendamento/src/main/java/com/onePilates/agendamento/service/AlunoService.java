@@ -69,6 +69,7 @@ public class AlunoService {
             if (dto.getAlunoComLimitacoesFisicas() != null) aluno.setAlunoComLimitacoesFisicas(dto.getAlunoComLimitacoesFisicas());
             if (dto.getTipoContato() != null) aluno.setTipoContato(dto.getTipoContato());
             if (dto.getNotificacaoAtiva() != null) aluno.setNotificacaoAtiva(dto.getNotificacaoAtiva());
+            if (dto.getObservacao() != null) aluno.setObservacao(dto.getObservacao());
 
             if (dto.getEndereco() != null) {
                 Endereco endereco = aluno.getEndereco() != null ? aluno.getEndereco() : new Endereco();
@@ -119,6 +120,7 @@ public class AlunoService {
         aluno.setAlunoComLimitacoesFisicas(dto.getAlunoComLimitacoesFisicas());
         aluno.setTipoContato(dto.getTipoContato());
         aluno.setNotificacaoAtiva(dto.getNotificacaoAtiva());
+        aluno.setObservacao(dto.getObservacao());
 
         System.out.println(dto.getEndereco().getBairro());
 
@@ -150,6 +152,7 @@ public class AlunoService {
         dto.setAlunoComLimitacoesFisicas(aluno.getAlunoComLimitacoesFisicas());
         dto.setTipoContato(aluno.getTipoContato());
         dto.setNotificacaoAtiva(aluno.getNotificacaoAtiva());
+        dto.setObservacao(aluno.getObservacao());
 
         EnderecoResponseDTO enderecoDTO = new EnderecoResponseDTO();
         enderecoDTO.setRua(aluno.getEndereco().getRua());

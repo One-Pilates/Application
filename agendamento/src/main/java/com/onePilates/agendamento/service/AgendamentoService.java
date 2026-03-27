@@ -595,7 +595,15 @@ public class AgendamentoService {
                     AlunoAgendamentoResponseDTO alunoDTO = new AlunoAgendamentoResponseDTO();
                     alunoDTO.setId(aa.getAluno().getId());
                     alunoDTO.setNome(aa.getAluno().getNome());
-                    alunoDTO.setObservacao(aa.getAluno().getObservacao());
+                    String observacao = (aa.getObservacao() != null && !aa.getObservacao().trim().isEmpty())
+                        ? aa.getObservacao()
+                        : (aa.getAluno().getObservacao() != null ? aa.getAluno().getObservacao() : null);
+                    alunoDTO.setObservacao(observacao);
+                    alunoDTO.setAlunoComLimitacoesFisicas(
+                        aa.getAluno().getAlunoComLimitacoesFisicas() != null
+                            ? aa.getAluno().getAlunoComLimitacoesFisicas()
+                            : false
+                    );
                     alunoDTO.setStatus(aa.getAluno().getStatus());
                     // Status de presença pode ser adicionado ao DTO se necessário
                     return alunoDTO;
@@ -604,5 +612,26 @@ public class AgendamentoService {
 
         dto.setAlunos(alunosDTO);
         return dto;
+    }
+
+    @Transactional
+    public void atualizarObservacaoAluno(Long agendamentoId, Long alunoId, String observacao) {
+        logger.info("Tentativa de atualizar observação do aluno {} no agendamento {}", alunoId, agendamentoId);
+        try {
+            Agendamento agendamento = buscarPorId(agendamentoId);
+
+            AgendamentoAluno agendamentoAluno = agendamento.getAgendamentoAlunos().stream()
+                    .filter(aa -> aa.getAluno().getId().equals(alunoId))
+                    .findFirst()
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Aluno não encontrado neste agendamento"));
+
+            agendamentoAluno.setObservacao(observacao);
+            agendamentoAlunoRepository.save(agendamentoAluno);
+
+            logger.info("Observação atualizada com sucesso para aluno {} no agendamento {}", alunoId, agendamentoId);
+        } catch (Exception e) {
+            logger.error("Erro ao atualizar observação do aluno {} no agendamento {}", alunoId, agendamentoId, e);
+            throw e;
+        }
     }
 }

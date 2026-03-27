@@ -12,6 +12,7 @@ public class AlunoResponseDTO {
     private Boolean alunoComLimitacoesFisicas;
     private String tipoContato;
     private Boolean notificacaoAtiva;
+    private String observacao;
     private EnderecoResponseDTO endereco;
 
     public Long getId() {
@@ -84,6 +85,14 @@ public class AlunoResponseDTO {
 
     public void setNotificacaoAtiva(Boolean notificacaoAtiva) {
         this.notificacaoAtiva = notificacaoAtiva;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
     }
 
     public EnderecoResponseDTO getEndereco() {

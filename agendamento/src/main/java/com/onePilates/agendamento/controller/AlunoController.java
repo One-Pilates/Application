@@ -38,7 +38,7 @@ public class AlunoController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<AlunoResponseDTO> atualizarAlunoParcial(@PathVariable Long id, @RequestBody AlunoDTO dto) {
         return ResponseEntity.ok(alunoService.atualizarAluno(id, dto));
     }

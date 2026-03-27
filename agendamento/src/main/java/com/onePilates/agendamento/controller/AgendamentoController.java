@@ -1,6 +1,7 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.AgendamentoDTO;
+import com.onePilates.agendamento.dto.AtualizarObservacaoAlunoDTO;
 import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.model.StatusPresenca;
 import com.onePilates.agendamento.service.AgendamentoService;
@@ -121,6 +122,17 @@ public class AgendamentoController {
             @RequestBody Map<Long, StatusPresenca> presencas
     ) {
         agendamentoService.registrarPresencas(agendamentoId, presencas);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{agendamentoId}/alunos/{alunoId}/observacao")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
+    public ResponseEntity<Void> atualizarObservacaoAluno(
+            @PathVariable Long agendamentoId,
+            @PathVariable Long alunoId,
+            @RequestBody AtualizarObservacaoAlunoDTO dto
+    ) {
+        agendamentoService.atualizarObservacaoAluno(agendamentoId, alunoId, dto.getObservacao());
         return ResponseEntity.ok().build();
     }
 

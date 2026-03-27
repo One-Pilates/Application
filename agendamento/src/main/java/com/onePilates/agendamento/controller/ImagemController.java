@@ -1,11 +1,11 @@
 package com.onePilates.agendamento.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,23 +18,22 @@ import java.nio.file.Paths;
 @CrossOrigin(origins = "*")
 public class ImagemController {
 
-    private static final String UPLOAD_DIR = "imagens/";
+    @Value("${app.upload.dir:imagens}")
+    private String uploadDir;
 
     @GetMapping(value = "/**", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/webp"})
     public ResponseEntity<Resource> servirImagem(HttpServletRequest request) {
         try {
-            // Extrair o caminho da URL (tudo após /api/imagens/)
             String requestPath = request.getRequestURI();
             String caminhoRelativo = requestPath.substring("/api/imagens/".length());
-            
-            // O caminho já vem completo (ex: "imagens/professor_3_1234567890.jpg")
-            // Se vier sem "imagens/", adicionar
-            String caminhoCompleto = caminhoRelativo.startsWith("imagens/") 
-                ? caminhoRelativo 
-                : UPLOAD_DIR + caminhoRelativo;
-            
-            // Construir o caminho completo do arquivo
-            Path filePath = Paths.get(caminhoCompleto).normalize();
+
+            if (caminhoRelativo.startsWith("imagens/")) {
+                caminhoRelativo = caminhoRelativo.substring("imagens/".length());
+            }
+
+            String uploadDirectory = getUploadDirectory();
+
+            Path filePath = Paths.get(uploadDirectory, caminhoRelativo).normalize();
 
             File file = filePath.toFile();
 
@@ -44,7 +43,6 @@ public class ImagemController {
 
             Resource resource = new FileSystemResource(file);
 
-            // Determinar o tipo de conteúdo baseado na extensão
             String contentType = determinarContentType(file.getName());
 
             return ResponseEntity.ok()
@@ -69,5 +67,21 @@ public class ImagemController {
         }
         return "application/octet-stream";
     }
-}
 
+    private String getUploadDirectory() {
+        File currentDir = new File(System.getProperty("user.dir"));
+        File projectDir = currentDir;
+
+        while (projectDir != null && !new File(projectDir, "pom.xml").exists()) {
+            projectDir = projectDir.getParentFile();
+        }
+
+        if (projectDir != null && new File(projectDir, "pom.xml").exists()) {
+            Path uploadPath = Paths.get(projectDir.getAbsolutePath(), uploadDir);
+            return uploadPath.toString() + File.separator;
+        }
+
+        Path uploadPath = Paths.get(currentDir.getAbsolutePath(), uploadDir);
+        return uploadPath.toString() + File.separator;
+    }
+}

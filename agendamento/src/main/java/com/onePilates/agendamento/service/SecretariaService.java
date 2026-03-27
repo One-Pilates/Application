@@ -280,6 +280,7 @@ public class SecretariaService {
         return dto;
     }
 
+    @Transactional
     public ResponsDashSecretariaAdmDTO respostaDashSecretariaAdm(Integer qtdUltimosDias) {
 
         LocalDateTime inicio = LocalDate.now().minusDays(qtdUltimosDias).atStartOfDay();
@@ -300,6 +301,14 @@ public class SecretariaService {
         List<Agendamento> ordenados = agendamentos.stream()
                 .sorted(Comparator.comparing(a -> a.getProfessor().getNome()))
                 .toList();
+
+        if (ordenados.isEmpty()) {
+            ResponsDashSecretariaAdmDTO resposta = new ResponsDashSecretariaAdmDTO();
+            resposta.setAgendamentosPorDias(grafico1);
+            resposta.setQtdSessoesPorProfessor(new ArrayList<>());
+            resposta.setQtdDeAlunosAtendidos(0);
+            return resposta;
+        }
 
         List<AgendamentosPorProfessorDTO> professoresObservados = new ArrayList<>();
 
