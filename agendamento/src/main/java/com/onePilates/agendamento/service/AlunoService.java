@@ -2,6 +2,7 @@ package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.AlunoDTO;
 import com.onePilates.agendamento.dto.EnderecoDTO;
+import com.onePilates.agendamento.dto.response.AlunoPaginadoResponseDTO;
 import com.onePilates.agendamento.dto.response.AlunoResponseDTO;
 import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
 import com.onePilates.agendamento.exception.EntidadeNaoEncontradaException;
@@ -10,11 +11,10 @@ import com.onePilates.agendamento.model.Endereco;
 import com.onePilates.agendamento.repository.AlunoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AlunoService {
@@ -40,14 +40,18 @@ public class AlunoService {
         }
     }
 
-    public List<AlunoResponseDTO> listarTodosDTO() {
-        logger.debug("Listando todos os alunos");
-        List<AlunoResponseDTO> alunos = alunoRepository.findAll()
-                .stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
-        logger.debug("Encontrados {} alunos", alunos.size());
-        return alunos;
+    public AlunoPaginadoResponseDTO listarTodosDTO(Pageable pageable, String nome) {
+        logger.debug("Listando alunos com paginacao");
+        var pagina = (nome != null && !nome.isBlank())
+                ? alunoRepository.findByNomeContainingIgnoreCase(nome, pageable)
+                : alunoRepository.findAll(pageable);
+        var paginaDto = pagina.map(this::toResponseDTO);
+        logger.debug("Encontrados {} alunos na pagina", paginaDto.getNumberOfElements());
+        return new AlunoPaginadoResponseDTO(
+                paginaDto.getContent(),
+                paginaDto.getTotalElements(),
+                paginaDto.getTotalPages()
+        );
     }
 
     public AlunoResponseDTO buscarPorIdDTO(Long id) {

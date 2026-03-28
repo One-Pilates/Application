@@ -1,13 +1,13 @@
 package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.dto.AlunoDTO;
+import com.onePilates.agendamento.dto.response.AlunoPaginadoResponseDTO;
 import com.onePilates.agendamento.dto.response.AlunoResponseDTO;
 import com.onePilates.agendamento.service.AlunoService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/alunos")
@@ -27,8 +27,11 @@ public class AlunoController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
-    public ResponseEntity<List<AlunoResponseDTO>> listarAlunos() {
-        return ResponseEntity.ok(alunoService.listarTodosDTO());
+    public ResponseEntity<AlunoPaginadoResponseDTO> listarAlunos(
+            @RequestParam(required = false) String nome,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(alunoService.listarTodosDTO(pageable, nome));
     }
 
     @GetMapping("/{id}")
