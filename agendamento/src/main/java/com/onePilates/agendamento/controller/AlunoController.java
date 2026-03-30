@@ -29,9 +29,10 @@ public class AlunoController {
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
     public ResponseEntity<AlunoPaginadoResponseDTO> listarAlunos(
             @RequestParam(required = false) String nome,
+            @RequestParam(required = false) Boolean status,
             Pageable pageable
     ) {
-        return ResponseEntity.ok(alunoService.listarTodosDTO(pageable, nome));
+        return ResponseEntity.ok(alunoService.listarTodosDTO(pageable, nome, status));
     }
 
     @GetMapping("/{id}")

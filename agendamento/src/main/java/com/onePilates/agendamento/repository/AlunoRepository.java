@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AlunoRepository extends JpaRepository<Aluno, Long> {
 	Page<Aluno> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
+	Page<Aluno> findByStatus(Boolean status, Pageable pageable);
+	Page<Aluno> findByNomeContainingIgnoreCaseAndStatus(String nome, Boolean status, Pageable pageable);
 }

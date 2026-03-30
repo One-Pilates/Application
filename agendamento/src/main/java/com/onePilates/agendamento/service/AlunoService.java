@@ -40,11 +40,18 @@ public class AlunoService {
         }
     }
 
-    public AlunoPaginadoResponseDTO listarTodosDTO(Pageable pageable, String nome) {
+    public AlunoPaginadoResponseDTO listarTodosDTO(Pageable pageable, String nome, Boolean status) {
         logger.debug("Listando alunos com paginacao");
-        var pagina = (nome != null && !nome.isBlank())
-                ? alunoRepository.findByNomeContainingIgnoreCase(nome, pageable)
-                : alunoRepository.findAll(pageable);
+        var temNome = nome != null && !nome.isBlank();
+        var temStatus = status != null;
+
+        var pagina = temNome && temStatus
+                ? alunoRepository.findByNomeContainingIgnoreCaseAndStatus(nome, status, pageable)
+                : temNome
+                    ? alunoRepository.findByNomeContainingIgnoreCase(nome, pageable)
+                    : temStatus
+                        ? alunoRepository.findByStatus(status, pageable)
+                        : alunoRepository.findAll(pageable);
         var paginaDto = pagina.map(this::toResponseDTO);
         logger.debug("Encontrados {} alunos na pagina", paginaDto.getNumberOfElements());
         return new AlunoPaginadoResponseDTO(
