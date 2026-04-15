@@ -1,7 +1,11 @@
 package com.onePilates.agendamento.observer;
 
+import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaCriadaEmailDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.EmailRequestDTO;
 import com.onePilates.agendamento.model.Agendamento;
+import com.onePilates.agendamento.model.TipoEmail;
 import com.onePilates.agendamento.service.EmailService;
+import com.onePilates.agendamento.service.RabbitMQProducer;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,10 +13,11 @@ import java.util.List;
 @Service
 public class NotificacaoProfessorObserver implements AgendamentoObserver {
 
-    private final EmailService emailService;
 
-    public NotificacaoProfessorObserver(EmailService emailService) {
-        this.emailService = emailService;
+    private final RabbitMQProducer rabbitMQProducer;
+
+    public NotificacaoProfessorObserver(RabbitMQProducer rabbitMQProducer) {
+        this.rabbitMQProducer = rabbitMQProducer;
     }
 
     @Override
@@ -25,14 +30,19 @@ public class NotificacaoProfessorObserver implements AgendamentoObserver {
         System.out.println("🔔 Notificando professor " + agendamento.getProfessor().getNome() +
                 " sobre novo agendamento com os alunos: " + String.join(", ", nomesAlunos));
 
-        emailService.enviarEmailAvisoDeAulaMarcada(
-                agendamento.getProfessor().getNome(), 
-                nomesAlunos, 
-                agendamento.getProfessor().getEmail(),
-                agendamento.getDataHora(),
-                agendamento.getSala().getNome(),
-                agendamento.getEspecialidade().getNome()
-        );
+        AulaCriadaEmailDTO aulaCriadaEmailDTO = new AulaCriadaEmailDTO();
+        aulaCriadaEmailDTO.setNomeEspecialidade(agendamento.getEspecialidade().getNome());
+        aulaCriadaEmailDTO.setNomeProfessor(agendamento.getProfessor().getNome());
+        aulaCriadaEmailDTO.setNomeSala(agendamento.getSala().getNome());
+        aulaCriadaEmailDTO.setDataHoraAgendamento(agendamento.getDataHora().toString());
+        aulaCriadaEmailDTO.setNomesDosAlunos(nomesAlunos);
+        EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+        emailRequestDTO.setDestinatario(agendamento.getProfessor().getEmail());
+        emailRequestDTO.setTypeEmail(TipoEmail.AULA_CRIADA);
+        emailRequestDTO.setPayload(aulaCriadaEmailDTO);
+
+
+        rabbitMQProducer.enviarPraFilaDeEmails(emailRequestDTO);
     }
 
 

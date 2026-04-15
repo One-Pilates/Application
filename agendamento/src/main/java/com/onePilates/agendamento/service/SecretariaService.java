@@ -3,6 +3,8 @@ package com.onePilates.agendamento.service;
 import com.onePilates.agendamento.dto.AgendamentoPorDiaDTO;
 import com.onePilates.agendamento.dto.AgendamentosPorProfessorDTO;
 import com.onePilates.agendamento.dto.SecretariaDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.EmailRequestDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.PrimeiroAcessoEmailDTO;
 import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
 import com.onePilates.agendamento.dto.response.ResponsDashSecretariaAdmDTO;
 import com.onePilates.agendamento.dto.response.SecretariaResponseDTO;
@@ -33,19 +35,16 @@ public class SecretariaService {
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
     private final EmailService emailService;
+    private final RabbitMQProducer rabbitMQ;
     private final AgendamentoRepository agendamentoRepository;
 
-    public SecretariaService(
-            SecretariaRepository secretariaRepository,
-            EnderecoRepository enderecoRepository,
-            PasswordEncoder passwordEncoder,
-            ImageService imageService, EmailService emailService, AgendamentoRepository agendamentoRepository
-    ) {
+    public SecretariaService(SecretariaRepository secretariaRepository, EnderecoRepository enderecoRepository, PasswordEncoder passwordEncoder, ImageService imageService, EmailService emailService, RabbitMQProducer rabbitMQ, AgendamentoRepository agendamentoRepository) {
         this.secretariaRepository = secretariaRepository;
         this.enderecoRepository = enderecoRepository;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
         this.emailService = emailService;
+        this.rabbitMQ = rabbitMQ;
         this.agendamentoRepository = agendamentoRepository;
     }
 
@@ -104,7 +103,17 @@ public class SecretariaService {
                 saved.setFoto(dto.getFoto());
                 saved = secretariaRepository.save(saved);
             }
-            emailService.envioEmailPrimeiroAcesso(secretaria.getNome(), secretaria.getEmail(), dto.getSenha());
+
+            PrimeiroAcessoEmailDTO primeiroAcessoEmailDTO = new PrimeiroAcessoEmailDTO();
+            primeiroAcessoEmailDTO.setSenhaTemporaria(dto.getSenha());
+            primeiroAcessoEmailDTO.setNomeFuncionario(secretaria.getNome());
+
+            EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+            emailRequestDTO.setTypeEmail(TipoEmail.PRIMEIRO_ACESSO);
+            emailRequestDTO.setDestinatario(secretaria.getEmail());
+            emailRequestDTO.setPayload(primeiroAcessoEmailDTO);
+
+            rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
             logger.info("Secretária criada com sucesso. ID: {}", saved.getId());
             return saved;
         } catch (BusinessException e) {

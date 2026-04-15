@@ -1,6 +1,8 @@
 package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.AgendamentoDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaCanceladaEmailDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.EmailRequestDTO;
 import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.dto.response.AlunoAgendamentoResponseDTO;
 import com.onePilates.agendamento.exception.*;
@@ -8,6 +10,7 @@ import com.onePilates.agendamento.model.*;
 import com.onePilates.agendamento.observer.AgendamentoNotifier;
 import com.onePilates.agendamento.repository.*;
 import com.onePilates.agendamento.validator.AgendamentoValidator;
+import jakarta.validation.constraints.Email;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,18 +34,9 @@ public class AgendamentoService {
     private final AgendamentoAlunoRepository agendamentoAlunoRepository;
     private final AgendamentoValidator agendamentoValidator;
     private final EmailService emailService;
+    private final RabbitMQProducer rabbitMQ;
 
-    public AgendamentoService(
-            AgendamentoRepository agendamentoRepository,
-            ProfessorRepository professorRepository,
-            SalaRepository salaRepository,
-            EspecialidadeRepository especialidadeRepository,
-            AlunoRepository alunoRepository,
-            AgendamentoNotifier notifier,
-            AgendamentoAlunoRepository agendamentoAlunoRepository,
-            AgendamentoValidator agendamentoValidator,
-            EmailService emailService
-    ) {
+    public AgendamentoService(AgendamentoRepository agendamentoRepository, ProfessorRepository professorRepository, SalaRepository salaRepository, EspecialidadeRepository especialidadeRepository, AlunoRepository alunoRepository, AgendamentoNotifier notifier, AgendamentoAlunoRepository agendamentoAlunoRepository, AgendamentoValidator agendamentoValidator, EmailService emailService, RabbitMQProducer rabbitMQ) {
         this.agendamentoRepository = agendamentoRepository;
         this.professorRepository = professorRepository;
         this.salaRepository = salaRepository;
@@ -52,7 +46,9 @@ public class AgendamentoService {
         this.agendamentoAlunoRepository = agendamentoAlunoRepository;
         this.agendamentoValidator = agendamentoValidator;
         this.emailService = emailService;
+        this.rabbitMQ = rabbitMQ;
     }
+
 
     /**
      * Cria um novo agendamento após validar todas as regras de negócio.
@@ -483,13 +479,19 @@ public class AgendamentoService {
             Professor professor = agendamento.getProfessor();
             if (professor.getNotificacaoAtiva() != null && professor.getNotificacaoAtiva()) {
                 logger.debug("Enviando notificação de cancelamento para professor: {}", professor.getNome());
-                emailService.envioEmailCancelamentoAula(
-                        professor.getNome(),
-                        professor.getEmail(),
-                        agendamento.getDataHora(),
-                        agendamento.getSala().getNome(),
-                        agendamento.getEspecialidade().getNome()
-                );
+
+                AulaCanceladaEmailDTO aulaCanceladaEmailDTO = new AulaCanceladaEmailDTO();
+                aulaCanceladaEmailDTO.setDataHoraAgendamento(agendamento.getDataHora().toString());
+                aulaCanceladaEmailDTO.setNomeProfessor(professor.getNome());
+                aulaCanceladaEmailDTO.setNomeEspecialidade(agendamento.getEspecialidade().getNome());
+                aulaCanceladaEmailDTO.setNomeSala(agendamento.getSala().getNome());
+
+                EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+                emailRequestDTO.setTypeEmail(TipoEmail.AULA_CANCELADA);
+                emailRequestDTO.setDestinatario(professor.getEmail());
+                emailRequestDTO.setPayload(aulaCanceladaEmailDTO);
+
+                rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
             }
             
             agendamentoRepository.deleteById(id);

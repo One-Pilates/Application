@@ -3,6 +3,8 @@ package com.onePilates.agendamento.service;
 import com.onePilates.agendamento.controller.ImagemController;
 import com.onePilates.agendamento.dto.FuncionarioLoginDTO;
 import com.onePilates.agendamento.dto.loginPages.LoginDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.CodigoAcessoEmailDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.EmailRequestDTO;
 import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
 import com.onePilates.agendamento.dto.response.LoginResponseDTO;
 import com.onePilates.agendamento.dto.response.NovaSenhaResponseDTO;
@@ -10,6 +12,7 @@ import com.onePilates.agendamento.exception.*;
 import com.onePilates.agendamento.model.Funcionario;
 import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.model.Role;
+import com.onePilates.agendamento.model.TipoEmail;
 import com.onePilates.agendamento.repository.AdministradorRepository;
 import com.onePilates.agendamento.repository.FuncionarioRepository;
 import com.onePilates.agendamento.repository.ProfessorRepository;
@@ -39,22 +42,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final FuncionarioRepository funcionarioRepository;
     private final JwtUtil jwtUtil;
-    private final EmailService emailService;
+    private final RabbitMQProducer rabbitMQ;
 
-    public AuthService(
-            AdministradorRepository administradorRepository,
-            ProfessorRepository professorRepository,
-            SecretariaRepository secretariaRepository,
-            PasswordEncoder passwordEncoder, FuncionarioRepository funcionarioRepository,
-            JwtUtil jwtUtil, EmailService emailService
-    ) {
+    public AuthService(AdministradorRepository administradorRepository, ProfessorRepository professorRepository, SecretariaRepository secretariaRepository, PasswordEncoder passwordEncoder, FuncionarioRepository funcionarioRepository, JwtUtil jwtUtil, RabbitMQProducer rabbitMQ) {
         this.administradorRepository = administradorRepository;
         this.professorRepository = professorRepository;
         this.secretariaRepository = secretariaRepository;
         this.passwordEncoder = passwordEncoder;
         this.funcionarioRepository = funcionarioRepository;
         this.jwtUtil = jwtUtil;
-        this.emailService = emailService;
+        this.rabbitMQ = rabbitMQ;
     }
 
     public LoginResponseDTO authenticate(LoginDTO request) {
@@ -157,12 +154,21 @@ public class AuthService {
 
             funcionarioRepository.save(funcionario);
 
+            CodigoAcessoEmailDTO codigoAcessoEmailDTO = new CodigoAcessoEmailDTO();
+            codigoAcessoEmailDTO.setCodigo(codigoVerificacao);
+            codigoAcessoEmailDTO.setNomeFuncionario(funcionario.getNome());
+
+            EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+            emailRequestDTO.setPayload(codigoAcessoEmailDTO);
+            emailRequestDTO.setTypeEmail(TipoEmail.CODIGO_ACESSO);
+            emailRequestDTO.setDestinatario(funcionario.getEmail());
+
+
             try {
-                emailService.enviarCodigoPorEmail(funcionario.getNome(), codigoVerificacao, email);
-                logger.info("Código de verificação criado e enviado por email para: {}", email);
+                rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
+                logger.info("Código de verificação criado e enviado para a fila de emails");
             } catch (Exception e) {
-                logger.error("Erro ao enviar o e-mail de verificação para: {}", email, e);
-                throw new OperacaoInvalidaException("Erro ao enviar o e-mail de verificação.");
+                throw new OperacaoInvalidaException("Erro ao enviar o e-mail de verificação para a fila de emails.");
             }
 
             return "Código enviado para o e-mail do funcionário.";
