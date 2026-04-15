@@ -1,11 +1,7 @@
 package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.*;
-import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
-import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
-import com.onePilates.agendamento.dto.response.EspecialidadeResponseDTO;
-import com.onePilates.agendamento.dto.response.ProfessorResponseDTO;
-import com.onePilates.agendamento.dto.response.RespostaDashProfessoraDTO;
+import com.onePilates.agendamento.dto.response.*;
 import com.onePilates.agendamento.exception.*;
 import com.onePilates.agendamento.model.*;
 import com.onePilates.agendamento.repository.AgendamentoRepository;
@@ -13,6 +9,7 @@ import com.onePilates.agendamento.repository.EspecialidadeRepository;
 import com.onePilates.agendamento.repository.ProfessorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,15 +146,22 @@ public class ProfessorService {
         return toResponseDTO(salvo);
     }
 
-    public List<ProfessorResponseDTO> listarTodosDTO() {
-        logger.debug("Listando todos os professores");
-        List<ProfessorResponseDTO> professores = professorRepository.findAll()
-                .stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
-        logger.debug("Encontrados {} professores", professores.size());
-        return professores;
-    }
+        public ProfessorPaginadoResponseDTO listarTodosDTO(Pageable pageable, String nome) {
+        logger.debug("Listando professores com paginacao");
+        boolean temNome = nome != null && !nome.isBlank();
+
+        var pagina = temNome
+            ? professorRepository.findByNomeContainingIgnoreCase(nome, pageable)
+            : professorRepository.findAll(pageable);
+        var paginaDto = pagina.map(this::toResponseDTO);
+
+        logger.debug("Encontrados {} professores na pagina", paginaDto.getNumberOfElements());
+        return new ProfessorPaginadoResponseDTO(
+            paginaDto.getContent(),
+            paginaDto.getTotalElements(),
+            paginaDto.getTotalPages()
+        );
+        }
 
     public ProfessorResponseDTO buscarPorIdDTO(Long id) {
         logger.debug("Buscando professor por ID: {}", id);

@@ -42,8 +42,8 @@ public class AlunoService {
 
     public AlunoPaginadoResponseDTO listarTodosDTO(Pageable pageable, String nome, Boolean status) {
         logger.debug("Listando alunos com paginacao");
-        var temNome = nome != null && !nome.isBlank();
-        var temStatus = status != null;
+        boolean temNome = nome != null && !nome.isBlank();
+        boolean temStatus = status != null;
 
         var pagina = temNome && temStatus
                 ? alunoRepository.findByNomeContainingIgnoreCaseAndStatus(nome, status, pageable)
