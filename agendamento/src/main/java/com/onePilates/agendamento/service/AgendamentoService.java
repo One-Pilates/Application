@@ -1,6 +1,10 @@
 package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.AgendamentoDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaAtualizadaEmailDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaCanceladaEmailDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaCriadaEmailDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.EmailRequestDTO;
 import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.dto.response.AlunoAgendamentoResponseDTO;
 import com.onePilates.agendamento.exception.*;
@@ -8,6 +12,7 @@ import com.onePilates.agendamento.model.*;
 import com.onePilates.agendamento.observer.AgendamentoNotifier;
 import com.onePilates.agendamento.repository.*;
 import com.onePilates.agendamento.validator.AgendamentoValidator;
+import jakarta.validation.constraints.Email;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,19 +35,9 @@ public class AgendamentoService {
     private final AgendamentoNotifier notifier;
     private final AgendamentoAlunoRepository agendamentoAlunoRepository;
     private final AgendamentoValidator agendamentoValidator;
-    private final EmailService emailService;
+    private final RabbitMQProducer rabbitMQ;
 
-    public AgendamentoService(
-            AgendamentoRepository agendamentoRepository,
-            ProfessorRepository professorRepository,
-            SalaRepository salaRepository,
-            EspecialidadeRepository especialidadeRepository,
-            AlunoRepository alunoRepository,
-            AgendamentoNotifier notifier,
-            AgendamentoAlunoRepository agendamentoAlunoRepository,
-            AgendamentoValidator agendamentoValidator,
-            EmailService emailService
-    ) {
+    public AgendamentoService(AgendamentoRepository agendamentoRepository, ProfessorRepository professorRepository, SalaRepository salaRepository, EspecialidadeRepository especialidadeRepository, AlunoRepository alunoRepository, AgendamentoNotifier notifier, AgendamentoAlunoRepository agendamentoAlunoRepository, AgendamentoValidator agendamentoValidator, RabbitMQProducer rabbitMQ) {
         this.agendamentoRepository = agendamentoRepository;
         this.professorRepository = professorRepository;
         this.salaRepository = salaRepository;
@@ -51,7 +46,7 @@ public class AgendamentoService {
         this.notifier = notifier;
         this.agendamentoAlunoRepository = agendamentoAlunoRepository;
         this.agendamentoValidator = agendamentoValidator;
-        this.emailService = emailService;
+        this.rabbitMQ = rabbitMQ;
     }
 
     /**
@@ -409,13 +404,19 @@ public class AgendamentoService {
                 // Notificar professor antigo sobre remoção
                 if (professorAntigo.getNotificacaoAtiva() != null && professorAntigo.getNotificacaoAtiva()) {
                     logger.debug("Enviando notificação de remoção para professor: {}", professorAntigo.getNome());
-                    emailService.envioEmailCancelamentoAula(
-                            professorAntigo.getNome(),
-                            professorAntigo.getEmail(),
-                            agendamentoSalvo.getDataHora(),
-                            agendamentoSalvo.getSala().getNome(),
-                            agendamentoSalvo.getEspecialidade().getNome()
-                    );
+                    AulaCanceladaEmailDTO aulaCanceladaEmailDTO = new AulaCanceladaEmailDTO();
+                    aulaCanceladaEmailDTO.setNomeSala(agendamentoSalvo.getSala().getNome());
+                    aulaCanceladaEmailDTO.setDataHoraAgendamento(agendamentoSalvo.getDataHora().toString());
+                    aulaCanceladaEmailDTO.setNomeEspecialidade(agendamentoSalvo.getEspecialidade().getNome());
+                    aulaCanceladaEmailDTO.setNomeProfessor(professorAntigo.getNome());
+
+                    EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+                    emailRequestDTO.setDestinatario(professorAntigo.getEmail());
+                    emailRequestDTO.setTypeEmail(TipoEmail.AULA_CANCELADA);
+                    emailRequestDTO.setPayload(aulaCanceladaEmailDTO);
+
+                  rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
+                  logger.info("Enviando solicitação para notificar o professor antigo que a aula foi cancelada");
                 }
                 
                 // Notificar professor novo sobre novo agendamento
@@ -424,14 +425,20 @@ public class AgendamentoService {
                     List<String> nomesAlunos = agendamentoSalvo.getAgendamentoAlunos().stream()
                             .map(aa -> aa.getAluno().getNome())
                             .collect(Collectors.toList());
-                    emailService.enviarEmailAvisoDeAulaMarcada(
-                            professorNovo.getNome(),
-                            nomesAlunos,
-                            professorNovo.getEmail(),
-                            agendamentoSalvo.getDataHora(),
-                            agendamentoSalvo.getSala().getNome(),
-                            agendamentoSalvo.getEspecialidade().getNome()
-                    );
+
+                    AulaCriadaEmailDTO aulaCriadaEmailDTO = new AulaCriadaEmailDTO();
+                    aulaCriadaEmailDTO.setNomesDosAlunos(nomesAlunos);
+                    aulaCriadaEmailDTO.setDataHoraAgendamento(agendamentoSalvo.getDataHora().toString());
+                    aulaCriadaEmailDTO.setNomeSala(agendamentoSalvo.getSala().getNome());
+                    aulaCriadaEmailDTO.setNomeProfessor(professorNovo.getNome());
+                    aulaCriadaEmailDTO.setNomeEspecialidade(agendamentoSalvo.getEspecialidade().getNome());
+
+                    EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+                    emailRequestDTO.setPayload(aulaCriadaEmailDTO);
+                    emailRequestDTO.setTypeEmail(TipoEmail.AULA_CRIADA);
+                    emailRequestDTO.setDestinatario(professorNovo.getEmail());
+
+                     rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
                 }
             } else {
                 // Caso normal: atualização sem troca de professor - notificar apenas o professor atual
@@ -440,14 +447,20 @@ public class AgendamentoService {
                     List<String> nomesAlunos = agendamentoSalvo.getAgendamentoAlunos().stream()
                             .map(aa -> aa.getAluno().getNome())
                             .collect(Collectors.toList());
-                    emailService.enviarEmailAvisoDeAulaAtualizada(
-                            professorNovo.getNome(),
-                            nomesAlunos,
-                            professorNovo.getEmail(),
-                            agendamentoSalvo.getDataHora(),
-                            agendamentoSalvo.getSala().getNome(),
-                            agendamentoSalvo.getEspecialidade().getNome()
-                    );
+
+                    AulaAtualizadaEmailDTO aulaAtualizadaEmailDTO = new AulaAtualizadaEmailDTO();
+                    aulaAtualizadaEmailDTO.setDataHoraAgendamento(agendamentoSalvo.getDataHora().toString());
+                    aulaAtualizadaEmailDTO.setDestinatario(professorNovo.getEmail());
+                    aulaAtualizadaEmailDTO.setNomeEspecialidade(agendamentoSalvo.getEspecialidade().getNome());
+                    aulaAtualizadaEmailDTO.setNomeSala(agendamentoSalvo.getSala().getNome());
+                    aulaAtualizadaEmailDTO.setNomesAlunos(nomesAlunos);
+                    aulaAtualizadaEmailDTO.setNomeProfessor(professorNovo.getNome());
+
+                    EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+                    emailRequestDTO.setDestinatario(professorNovo.getEmail());
+                    emailRequestDTO.setPayload(aulaAtualizadaEmailDTO);
+                    emailRequestDTO.setTypeEmail(TipoEmail.AULA_ATUALIZADA);
+                    rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
                 }
             }
             
@@ -483,13 +496,19 @@ public class AgendamentoService {
             Professor professor = agendamento.getProfessor();
             if (professor.getNotificacaoAtiva() != null && professor.getNotificacaoAtiva()) {
                 logger.debug("Enviando notificação de cancelamento para professor: {}", professor.getNome());
-                emailService.envioEmailCancelamentoAula(
-                        professor.getNome(),
-                        professor.getEmail(),
-                        agendamento.getDataHora(),
-                        agendamento.getSala().getNome(),
-                        agendamento.getEspecialidade().getNome()
-                );
+
+                AulaCanceladaEmailDTO aulaCanceladaEmailDTO = new AulaCanceladaEmailDTO();
+                aulaCanceladaEmailDTO.setDataHoraAgendamento(agendamento.getDataHora().toString());
+                aulaCanceladaEmailDTO.setNomeProfessor(professor.getNome());
+                aulaCanceladaEmailDTO.setNomeEspecialidade(agendamento.getEspecialidade().getNome());
+                aulaCanceladaEmailDTO.setNomeSala(agendamento.getSala().getNome());
+
+                EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+                emailRequestDTO.setTypeEmail(TipoEmail.AULA_CANCELADA);
+                emailRequestDTO.setDestinatario(professor.getEmail());
+                emailRequestDTO.setPayload(aulaCanceladaEmailDTO);
+
+                rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
             }
             
             agendamentoRepository.deleteById(id);

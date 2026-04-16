@@ -6,7 +6,6 @@ import com.onePilates.agendamento.model.Aluno;
 import com.onePilates.agendamento.model.Especialidade;
 import com.onePilates.agendamento.model.Professor;
 import com.onePilates.agendamento.model.Sala;
-import com.onePilates.agendamento.service.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
