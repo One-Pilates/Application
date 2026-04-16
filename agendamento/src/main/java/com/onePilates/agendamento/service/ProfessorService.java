@@ -34,17 +34,17 @@ public class ProfessorService {
     private final AgendamentoService agendamentoService;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
-    private final EmailService emailService;
+
     private final RabbitMQProducer rabbitMQ;
 
-    public ProfessorService(ProfessorRepository professorRepository, EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository, AgendamentoService agendamentoService, PasswordEncoder passwordEncoder, ImageService imageService, EmailService emailService, RabbitMQProducer rabbitMQ) {
+
+    public ProfessorService(ProfessorRepository professorRepository, EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository, AgendamentoService agendamentoService, PasswordEncoder passwordEncoder, ImageService imageService, RabbitMQProducer rabbitMQ) {
         this.professorRepository = professorRepository;
         this.especialidadeRepository = especialidadeRepository;
         this.agendamentoRepository = agendamentoRepository;
         this.agendamentoService = agendamentoService;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
-        this.emailService = emailService;
         this.rabbitMQ = rabbitMQ;
     }
 

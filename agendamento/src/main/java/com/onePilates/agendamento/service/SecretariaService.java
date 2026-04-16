@@ -34,16 +34,14 @@ public class SecretariaService {
     private final EnderecoRepository enderecoRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
-    private final EmailService emailService;
     private final RabbitMQProducer rabbitMQ;
     private final AgendamentoRepository agendamentoRepository;
 
-    public SecretariaService(SecretariaRepository secretariaRepository, EnderecoRepository enderecoRepository, PasswordEncoder passwordEncoder, ImageService imageService, EmailService emailService, RabbitMQProducer rabbitMQ, AgendamentoRepository agendamentoRepository) {
+    public SecretariaService(SecretariaRepository secretariaRepository, EnderecoRepository enderecoRepository, PasswordEncoder passwordEncoder, ImageService imageService, RabbitMQProducer rabbitMQ, AgendamentoRepository agendamentoRepository) {
         this.secretariaRepository = secretariaRepository;
         this.enderecoRepository = enderecoRepository;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
-        this.emailService = emailService;
         this.rabbitMQ = rabbitMQ;
         this.agendamentoRepository = agendamentoRepository;
     }
