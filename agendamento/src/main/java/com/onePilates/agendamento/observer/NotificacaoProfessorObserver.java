@@ -4,7 +4,6 @@ import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaCriadaEmailDTO;
 import com.onePilates.agendamento.dto.rabbitMQDTOs.EmailRequestDTO;
 import com.onePilates.agendamento.model.Agendamento;
 import com.onePilates.agendamento.model.TipoEmail;
-import com.onePilates.agendamento.service.EmailService;
 import com.onePilates.agendamento.service.RabbitMQProducer;
 import org.springframework.stereotype.Service;
 
