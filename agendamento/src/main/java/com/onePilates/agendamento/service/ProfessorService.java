@@ -154,7 +154,7 @@ public class ProfessorService {
         return toResponseDTO(salvo);
     }
 
-        public ProfessorPaginadoResponseDTO listarTodosDTO(Pageable pageable, String nome) {
+        public ProfessorPaginadoResponseDTO listarTodosPaginadosDTO(Pageable pageable, String nome) {
         logger.debug("Listando professores com paginacao");
         boolean temNome = nome != null && !nome.isBlank();
 
@@ -170,6 +170,16 @@ public class ProfessorService {
             paginaDto.getTotalPages()
         );
         }
+
+    public List<ProfessorResponseDTO> listarTodosDTO() {
+        logger.debug("Listando todos os professores");
+        List<ProfessorResponseDTO> professores = professorRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+        logger.debug("Encontrados {} professores", professores.size());
+        return professores;
+    }
 
     public ProfessorResponseDTO buscarPorIdDTO(Long id) {
         logger.debug("Buscando professor por ID: {}", id);

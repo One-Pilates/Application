@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/professores")
@@ -33,13 +34,20 @@ public class ProfessorController {
         return ResponseEntity.created(location).body(response);
     }
 
-    @GetMapping
+    @GetMapping("/paginacao")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
-    public ResponseEntity<ProfessorPaginadoResponseDTO> listarProfessores(
+    public ResponseEntity<ProfessorPaginadoResponseDTO> listarProfessoresPaginados(
             @RequestParam(required = false) String nome,
             Pageable pageable
     ) {
-        return ResponseEntity.ok(professorService.listarTodosDTO(pageable, nome));
+        return ResponseEntity.ok(professorService.listarTodosPaginadosDTO(pageable, nome));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    public ResponseEntity<List<ProfessorResponseDTO>> listarProfessores() {
+        return ResponseEntity.ok(professorService.listarTodosDTO());
+
     }
 
     @GetMapping("/{id}")

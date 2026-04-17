@@ -15,6 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class AlunoService {
@@ -40,7 +43,7 @@ public class AlunoService {
         }
     }
 
-    public AlunoPaginadoResponseDTO listarTodosDTO(Pageable pageable, String nome, Boolean status) {
+    public AlunoPaginadoResponseDTO listarTodosPaginadosDTO(Pageable pageable, String nome, Boolean status) {
         logger.debug("Listando alunos com paginacao");
         boolean temNome = nome != null && !nome.isBlank();
         boolean temStatus = status != null;
@@ -59,6 +62,17 @@ public class AlunoService {
                 paginaDto.getTotalElements(),
                 paginaDto.getTotalPages()
         );
+    }
+
+    public List<AlunoResponseDTO> listarTodosDTO() {
+        logger.debug("Listando todos os alunos");
+        List<AlunoResponseDTO> alunos = alunoRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+        logger.debug("Encontrados {} alunos", alunos.size());
+        return alunos;
+
     }
 
     public AlunoResponseDTO buscarPorIdDTO(Long id) {

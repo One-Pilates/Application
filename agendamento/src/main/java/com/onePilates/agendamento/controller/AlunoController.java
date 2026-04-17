@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/alunos")
 public class AlunoController {
@@ -25,14 +27,21 @@ public class AlunoController {
         return ResponseEntity.ok(alunoService.toResponseDTO(alunoService.criarAluno(dto)));
     }
 
-    @GetMapping
+    @GetMapping("/paginacao")
     @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
-    public ResponseEntity<AlunoPaginadoResponseDTO> listarAlunos(
+    public ResponseEntity<AlunoPaginadoResponseDTO> listarAlunosPaginados(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) Boolean status,
             Pageable pageable
     ) {
-        return ResponseEntity.ok(alunoService.listarTodosDTO(pageable, nome, status));
+        return ResponseEntity.ok(alunoService.listarTodosPaginadosDTO(pageable, nome, status));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA', 'PROFESSOR')")
+    public ResponseEntity<List<AlunoResponseDTO>> listarAlunos() {
+        return ResponseEntity.ok(alunoService.listarTodosDTO());
+
     }
 
     @GetMapping("/{id}")
