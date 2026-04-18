@@ -36,10 +36,6 @@ build/
 # Imagens são gerenciadas pelo .gitignore dentro do diretório imagens/
 # O diretório imagens/ é mantido vazio no git (exceto .gitignore e .gitkeep)
 
-### Configurações Sensíveis ###
-# ❌ REMOVIDO: não ignorar mais application.properties
-# src/main/resources/application.properties
-# src/test/resources/application-test.properties
 
 ### Variáveis de ambiente ###
 # Ignorar arquivo real
