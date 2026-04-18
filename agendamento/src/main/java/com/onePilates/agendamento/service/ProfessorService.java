@@ -199,6 +199,7 @@ public class ProfessorService {
             if (dto.getFoto() != null) existente.setFoto(dto.getFoto());
             if (dto.getObservacoes() != null) existente.setObservacoes(dto.getObservacoes());
             if (dto.getNotificacaoAtiva() != null) existente.setNotificacaoAtiva(dto.getNotificacaoAtiva());
+            if (dto.getStatus() != null) existente.setStatus(dto.getStatus());
             if (dto.getCargo() != null) existente.setCargo(dto.getCargo());
             if (dto.getTelefone() != null) existente.setTelefone(dto.getTelefone());
 
