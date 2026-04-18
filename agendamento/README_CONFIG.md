@@ -9,6 +9,10 @@ Os seguintes arquivos contêm informações sensíveis e **NÃO** são commitado
 
 ## 📋 Como Configurar
 
+### 0. Usar arquivo `.env`
+
+Se existir um arquivo `.env` na raiz do projeto, a aplicação o carrega automaticamente na inicialização. Os nomes das variáveis devem bater com os placeholders usados em `src/main/resources/application.properties`, por exemplo `DB_HOST`, `JWT_SECRET` e `RABBITMQ_HOST`.
+
 ### 1. Copiar o arquivo de exemplo
 
 ```bash
