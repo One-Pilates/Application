@@ -8,7 +8,6 @@
 -- Hash BCrypt da senha para todos os usuários: $2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16
 -- ============================================
 
-USE onePilates;
 
 -- ============================================
 -- VERIFICAÇÃO DA ESTRUTURA DA TABELA SALA
@@ -32,7 +31,7 @@ USE onePilates;
 -- ============================================
 -- 1. INSERIR ESPECIALIDADES
 -- ============================================
-INSERT INTO especialidade (nome) VALUES
+INSERT IGNORE INTO especialidade (nome) VALUES
 ('Pilates'),
 ('Osteopatia'),
 ('RPG'),
@@ -46,38 +45,38 @@ INSERT INTO especialidade (nome) VALUES
 -- 2. INSERIR SALAS
 -- ============================================
 -- Sala Grande 1
-INSERT INTO sala (nome, quantidade_maxima_alunos, quantidade_equipamentos_pcd) VALUES
+INSERT IGNORE INTO sala (nome, quantidade_maxima_alunos, quantidade_equipamentos_pcd) VALUES
 ('Sala Grande 1', 6, 2);
 
 -- Sala Grande 2
-INSERT INTO sala (nome, quantidade_maxima_alunos, quantidade_equipamentos_pcd) VALUES
+INSERT IGNORE INTO sala (nome, quantidade_maxima_alunos, quantidade_equipamentos_pcd) VALUES
 ('Sala Grande 2', 6, 1);
 
 -- Sala Pequena 1 (com Osteopatia e 1 equipamento PCD)
-INSERT INTO sala (nome, quantidade_maxima_alunos, quantidade_equipamentos_pcd) VALUES
+INSERT IGNORE INTO sala (nome, quantidade_maxima_alunos, quantidade_equipamentos_pcd) VALUES
 ('Sala Pequena 1', 1, 1);
 
 -- Sala Pequena 2 (sem Osteopatia e sem equipamento PCD)
-INSERT INTO sala (nome, quantidade_maxima_alunos, quantidade_equipamentos_pcd) VALUES
+INSERT IGNORE INTO sala (nome, quantidade_maxima_alunos, quantidade_equipamentos_pcd) VALUES
 ('Sala Pequena 2', 1, 0);
 
 -- ============================================
 -- 3. RELACIONAR SALAS COM ESPECIALIDADES
 -- ============================================
 -- Sala Grande 1: Pilates, RPG, Fisioterapia
-INSERT INTO sala_especialidade (sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO sala_especialidade (sala_id, especialidade_id) VALUES
 (1, 1), -- Pilates
 (1, 3), -- RPG
 (1, 7); -- Fisioterapia
 
 -- Sala Grande 2: Pilates, RPG, Fisioterapia
-INSERT INTO sala_especialidade (sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO sala_especialidade (sala_id, especialidade_id) VALUES
 (2, 1), -- Pilates
 (2, 3), -- RPG
 (2, 7); -- Fisioterapia
 
 -- Sala Pequena 1: Osteopatia, RPG, Microfisioterapia, Shiatsu, Drenagem Linfática, Fisioterapia, Acupuntura
-INSERT INTO sala_especialidade (sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO sala_especialidade (sala_id, especialidade_id) VALUES
 (3, 2), -- Osteopatia
 (3, 3), -- RPG
 (3, 4), -- Microfisioterapia
@@ -87,7 +86,7 @@ INSERT INTO sala_especialidade (sala_id, especialidade_id) VALUES
 (3, 8); -- Acupuntura
 
 -- Sala Pequena 2: RPG, Microfisioterapia, Shiatsu, Drenagem Linfática, Fisioterapia, Acupuntura
-INSERT INTO sala_especialidade (sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO sala_especialidade (sala_id, especialidade_id) VALUES
 (4, 3), -- RPG
 (4, 4), -- Microfisioterapia
 (4, 5), -- Shiatsu
@@ -100,20 +99,20 @@ INSERT INTO sala_especialidade (sala_id, especialidade_id) VALUES
 -- ============================================
 -- NOTA: IDs são incluídos explicitamente para garantir referências corretas nas outras tabelas
 -- Endereço para Administrador (ID: 1)
-INSERT INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
+INSERT IGNORE INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
 (1, 'Rua das Flores', '123', 'Centro', 'São Paulo', 'São Paulo', '01310-100', 'SP');
 
 -- Endereços para Professores (IDs: 2, 3)
-INSERT INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
+INSERT IGNORE INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
 (2, 'Av. Paulista', '1000', 'Bela Vista', 'São Paulo', 'São Paulo', '01310-100', 'SP'),
 (3, 'Rua Augusta', '500', 'Consolação', 'São Paulo', 'São Paulo', '01305-100', 'SP');
 
 -- Endereço para Secretária (ID: 4)
-INSERT INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
+INSERT IGNORE INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
 (4, 'Rua dos Três Irmãos', '456', 'Vila Progredior', 'São Paulo', 'São Paulo', '05615-190', 'SP');
 
 -- Endereços para Alunos (IDs: 5 a 24 - 20 endereços)
-INSERT INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
+INSERT IGNORE INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
 (5, 'Rua A', '101', 'Bairro A', 'São Paulo', 'São Paulo', '01000-000', 'SP'),
 (6, 'Rua B', '202', 'Bairro B', 'São Paulo', 'São Paulo', '02000-000', 'SP'),
 (7, 'Rua C', '303', 'Bairro C', 'São Paulo', 'São Paulo', '03000-000', 'SP'),
@@ -139,39 +138,39 @@ INSERT INTO endereco (id, rua, numero, bairro, cidade, estado, cep, uf) VALUES
 -- 5. INSERIR ADMINISTRADOR
 -- ============================================
 -- Hash BCrypt da senha: $2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+INSERT IGNORE INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
 ('Administrador', 'admin@onepilates.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'ADMINISTRADOR', '00000000000', '1980-01-01', TRUE, TRUE, 'Administrador', 1, '(11) 99999-0000', FALSE);
 
 
-INSERT INTO administrador (id) VALUES (1);
+INSERT IGNORE INTO administrador (id) VALUES (1);
 
 -- ============================================
 -- 6. INSERIR PROFESSORES
 -- ============================================
 -- Professor 1: Andrei Scafi
 
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+INSERT IGNORE INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
 ('Andrei Scafi', 'andreiscafi@gmail.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '11122233300', '1990-05-15', TRUE, TRUE, 'Professor de Pilates', 2, '(11) 99999-1111', TRUE);
 
-INSERT INTO professor (id) VALUES (2);
+INSERT IGNORE INTO professor (id) VALUES (2);
 
 -- Professor 2: Guilherme Queiroz
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+INSERT IGNORE INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
 ('Guilherme Queiroz', 'andrei.vasconcelos@sptech.school', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'PROFESSOR', '22233344400', '1985-08-20', TRUE, TRUE, 'Professor de Pilates', 3, '(11) 99999-2222', TRUE);
 
-INSERT INTO professor (id) VALUES (3);
+INSERT IGNORE INTO professor (id) VALUES (3);
 
 -- ============================================
 -- 7. RELACIONAR PROFESSORES COM ESPECIALIDADES
 -- ============================================
 -- Andrei Scafi: Pilates, RPG, Fisioterapia
-INSERT INTO professor_especialidade (professor_id, especialidade_id) VALUES
+INSERT IGNORE INTO professor_especialidade (professor_id, especialidade_id) VALUES
 (2, 1), -- Pilates
 (2, 3), -- RPG
 (2, 7); -- Fisioterapia
 
 -- Guilherme Queiroz: Pilates, RPG, Fisioterapia
-INSERT INTO professor_especialidade (professor_id, especialidade_id) VALUES
+INSERT IGNORE INTO professor_especialidade (professor_id, especialidade_id) VALUES
 (3, 1), -- Pilates
 (3, 3), -- RPG
 (3, 7); -- Fisioterapia
@@ -181,15 +180,15 @@ INSERT INTO professor_especialidade (professor_id, especialidade_id) VALUES
 -- ============================================
 -- Secretária: Amanda
 
-INSERT INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
+INSERT IGNORE INTO funcionario (nome, email, senha, role, cpf, data_nascimento, status, notificacao_ativa, cargo, endereco_id, telefone, primeiro_acesso) VALUES
 ('Amanda', 'amanda@email.com', '$2a$10$QosoIZARoPcs1uMI4UExI.ampEaJMB0B390y8QHhzY4gwV4IE2W16', 'SECRETARIA', '33344455500', '1992-03-10', TRUE, TRUE, 'Secretária', 4, '(11) 99999-3333', FALSE);
 
-INSERT INTO secretaria (id) VALUES (4);
+INSERT IGNORE INTO secretaria (id) VALUES (4);
 
 -- ============================================
 -- 9. INSERIR ALUNOS (20 alunos)
 -- ============================================
-INSERT INTO aluno (nome, email, cpf, data_nascimento, status, aluno_com_limitacoes_fisicas, tipo_contato, notificacao_ativa, observacao, endereco_id) VALUES
+INSERT IGNORE INTO aluno (nome, email, cpf, data_nascimento, status, aluno_com_limitacoes_fisicas, tipo_contato, notificacao_ativa, observacao, endereco_id) VALUES
 ('Ana Silva', 'ana.silva@email.com', '11111111111', '1995-01-15', TRUE, FALSE, 'EMAIL', TRUE, NULL, 5),
 ('Bruno Santos', 'bruno.santos@email.com', '22222222222', '1990-02-20', TRUE, FALSE, 'EMAIL', TRUE, NULL, 6),
 ('Carla Oliveira', 'carla.oliveira@email.com', '33333333333', '1988-03-25', TRUE, TRUE, 'EMAIL', TRUE, 'Usuária de cadeira de rodas', 7),
@@ -221,7 +220,7 @@ INSERT INTO aluno (nome, email, cpf, data_nascimento, status, aluno_com_limitaco
 -- Estratégia: Andrei usa principalmente Sala Grande 1, Guilherme usa Sala Grande 2
 
 -- AGOSTO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (1, '2025-08-04 08:00:00', 2, 1, 1), -- Segunda - Pilates
 (2, '2025-08-04 10:00:00', 2, 1, 3), -- Segunda - RPG
 (3, '2025-08-05 08:00:00', 2, 1, 1), -- Terça - Pilates
@@ -245,7 +244,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (21, '2025-08-29 09:00:00', 2, 1, 3); -- Sexta - RPG (ajustado de 30/08 sábado)
 
 -- SETEMBRO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (22, '2025-09-01 08:00:00', 2, 1, 1), -- Segunda - Pilates
 (23, '2025-09-01 14:00:00', 2, 2, 7), -- Segunda - Fisioterapia
 (24, '2025-09-02 08:00:00', 2, 1, 1), -- Terça - Pilates
@@ -267,7 +266,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (40, '2025-09-26 09:00:00', 2, 1, 3); -- Sexta - RPG (ajustado de 27/09 sábado)
 
 -- OUTUBRO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (41, '2025-10-01 08:00:00', 2, 1, 1), -- Quarta - Pilates
 (42, '2025-10-02 10:00:00', 2, 1, 3), -- Quinta - RPG
 (43, '2025-10-03 14:00:00', 2, 2, 7), -- Sexta - Fisioterapia (ajustado de 04/10 sábado)
@@ -291,7 +290,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (61, '2025-10-30 14:00:00', 2, 2, 7); -- Quinta - Fisioterapia
 
 -- NOVEMBRO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (62, '2025-10-31 09:00:00', 2, 1, 3), -- Sexta - RPG (ajustado de 01/11 sábado)
 (63, '2025-11-03 08:00:00', 2, 1, 1), -- Segunda - Pilates
 (64, '2025-11-03 10:00:00', 2, 1, 3), -- Segunda - RPG
@@ -313,7 +312,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (80, '2025-11-27 14:00:00', 2, 2, 7); -- Quinta - Fisioterapia
 
 -- DEZEMBRO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (81, '2025-12-01 08:00:00', 2, 1, 1), -- Segunda - Pilates
 (82, '2025-12-01 10:00:00', 2, 1, 3), -- Segunda - RPG
 (83, '2025-12-02 08:00:00', 2, 1, 1), -- Terça - Pilates
@@ -341,7 +340,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 -- Estratégia: Guilherme usa principalmente Sala Grande 2 para evitar conflitos com Andrei
 
 -- AGOSTO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (98, '2025-08-04 09:00:00', 3, 2, 1), -- Segunda - Pilates
 (99, '2025-08-04 11:00:00', 3, 2, 3), -- Segunda - RPG
 (100, '2025-08-04 13:00:00', 3, 2, 7), -- Segunda - Fisioterapia
@@ -392,7 +391,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (145, '2025-08-19 16:00:00', 3, 2, 1); -- Terça - Pilates
 
 -- SETEMBRO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (146, '2025-09-01 09:00:00', 3, 2, 1), -- Segunda - Pilates
 (147, '2025-09-01 11:00:00', 3, 2, 3), -- Segunda - RPG
 (148, '2025-09-01 15:00:00', 3, 2, 7), -- Segunda - Fisioterapia
@@ -475,7 +474,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (225, '2025-09-26 15:00:00', 3, 2, 1); -- Sexta - Pilates
 
 -- OUTUBRO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (226, '2025-10-01 09:00:00', 3, 2, 1), -- Quarta - Pilates
 (227, '2025-10-01 11:00:00', 3, 2, 3), -- Quarta - RPG
 (228, '2025-10-01 14:00:00', 3, 2, 7), -- Quarta - Fisioterapia
@@ -570,7 +569,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (317, '2025-10-31 15:00:00', 3, 2, 1); -- Sexta - Pilates
 
 -- NOVEMBRO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (318, '2025-11-03 09:00:00', 3, 2, 1), -- Segunda - Pilates
 (319, '2025-11-03 11:00:00', 3, 2, 3), -- Segunda - RPG
 (320, '2025-11-03 15:00:00', 3, 2, 7), -- Segunda - Fisioterapia
@@ -649,7 +648,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (393, '2025-11-27 17:00:00', 3, 2, 7); -- Quinta - Fisioterapia
 
 -- DEZEMBRO 2025
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (394, '2025-12-01 09:00:00', 3, 2, 1), -- Segunda - Pilates
 (395, '2025-12-01 11:00:00', 3, 2, 3), -- Segunda - RPG
 (396, '2025-12-01 15:00:00', 3, 2, 7), -- Segunda - Fisioterapia
@@ -723,7 +722,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 -- Alunos: 11-20 (sem conflito com Guilherme que usa 1-10)
 
 -- JANEIRO 2026
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (458, '2026-01-02 09:00:00', 2, 1, 3),
 (459, '2026-01-05 08:00:00', 2, 1, 1),
 (460, '2026-01-05 10:00:00', 2, 1, 3),
@@ -747,7 +746,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (478, '2026-01-30 09:00:00', 2, 1, 3);
 
 -- FEVEREIRO 2026
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (479, '2026-02-02 08:00:00', 2, 1, 1),
 (480, '2026-02-02 10:00:00', 2, 1, 3),
 (481, '2026-02-03 08:00:00', 2, 1, 1),
@@ -770,7 +769,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (498, '2026-02-27 09:00:00', 2, 1, 3);
 
 -- MARCO 2026
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (499, '2026-03-02 08:00:00', 2, 1, 1),
 (500, '2026-03-02 10:00:00', 2, 1, 3),
 (501, '2026-03-03 08:00:00', 2, 1, 1),
@@ -796,7 +795,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (521, '2026-03-31 08:00:00', 2, 1, 1);
 
 -- ABRIL 2026 (03/04 Sexta Santa; 21/04 Tiradentes)
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (522, '2026-04-02 14:00:00', 2, 1, 7),
 (523, '2026-04-06 08:00:00', 2, 1, 1),
 (524, '2026-04-06 10:00:00', 2, 1, 3),
@@ -818,7 +817,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (540, '2026-04-30 14:00:00', 2, 1, 7);
 
 -- MAIO 2026 (01/05 Dia do Trabalho)
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (541, '2026-05-04 08:00:00', 2, 1, 1),
 (542, '2026-05-04 10:00:00', 2, 1, 3),
 (543, '2026-05-05 08:00:00', 2, 1, 1),
@@ -841,7 +840,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (560, '2026-05-29 09:00:00', 2, 1, 3);
 
 -- JUNHO 2026 (04/06 Corpus Christi)
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (561, '2026-06-01 08:00:00', 2, 1, 1),
 (562, '2026-06-01 10:00:00', 2, 1, 3),
 (563, '2026-06-02 08:00:00', 2, 1, 1),
@@ -875,7 +874,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 -- Alunos: 1-10 (sem conflito com Andrei que usa 11-20)
 
 -- JANEIRO 2026
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (583, '2026-01-02 09:00:00', 3, 2, 1),(584, '2026-01-02 11:00:00', 3, 2, 3),(585, '2026-01-02 13:00:00', 3, 2, 7),(586, '2026-01-02 15:00:00', 3, 2, 1),
 (587, '2026-01-05 09:00:00', 3, 2, 1),(588, '2026-01-05 11:00:00', 3, 2, 3),(589, '2026-01-05 14:00:00', 3, 2, 7),(590, '2026-01-05 16:00:00', 3, 2, 1),
 (591, '2026-01-06 09:00:00', 3, 2, 3),(592, '2026-01-06 11:00:00', 3, 2, 1),(593, '2026-01-06 15:00:00', 3, 2, 1),(594, '2026-01-06 17:00:00', 3, 2, 7),
@@ -899,7 +898,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (663, '2026-01-30 09:00:00', 3, 2, 1),(664, '2026-01-30 11:00:00', 3, 2, 3),(665, '2026-01-30 13:00:00', 3, 2, 7),(666, '2026-01-30 15:00:00', 3, 2, 1);
 
 -- FEVEREIRO 2026
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (667, '2026-02-02 09:00:00', 3, 2, 1),(668, '2026-02-02 11:00:00', 3, 2, 3),(669, '2026-02-02 14:00:00', 3, 2, 7),(670, '2026-02-02 16:00:00', 3, 2, 1),
 (671, '2026-02-03 09:00:00', 3, 2, 3),(672, '2026-02-03 11:00:00', 3, 2, 1),(673, '2026-02-03 15:00:00', 3, 2, 1),(674, '2026-02-03 17:00:00', 3, 2, 7),
 (675, '2026-02-04 09:00:00', 3, 2, 1),(676, '2026-02-04 11:00:00', 3, 2, 3),(677, '2026-02-04 14:00:00', 3, 2, 7),(678, '2026-02-04 16:00:00', 3, 2, 1),
@@ -922,7 +921,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (743, '2026-02-27 09:00:00', 3, 2, 1),(744, '2026-02-27 11:00:00', 3, 2, 3),(745, '2026-02-27 13:00:00', 3, 2, 7),(746, '2026-02-27 15:00:00', 3, 2, 1);
 
 -- MARCO 2026
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (747, '2026-03-02 09:00:00', 3, 2, 1),(748, '2026-03-02 11:00:00', 3, 2, 3),(749, '2026-03-02 14:00:00', 3, 2, 7),(750, '2026-03-02 16:00:00', 3, 2, 1),
 (751, '2026-03-03 09:00:00', 3, 2, 3),(752, '2026-03-03 11:00:00', 3, 2, 1),(753, '2026-03-03 15:00:00', 3, 2, 1),(754, '2026-03-03 17:00:00', 3, 2, 7),
 (755, '2026-03-04 09:00:00', 3, 2, 1),(756, '2026-03-04 11:00:00', 3, 2, 3),(757, '2026-03-04 14:00:00', 3, 2, 7),(758, '2026-03-04 16:00:00', 3, 2, 1),
@@ -947,7 +946,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (831, '2026-03-31 09:00:00', 3, 2, 3),(832, '2026-03-31 11:00:00', 3, 2, 1),(833, '2026-03-31 15:00:00', 3, 2, 1),(834, '2026-03-31 17:00:00', 3, 2, 7);
 
 -- ABRIL 2026 (03/04 Sexta Santa; 21/04 Tiradentes)
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (835, '2026-04-01 09:00:00', 3, 2, 1),(836, '2026-04-01 11:00:00', 3, 2, 3),(837, '2026-04-01 14:00:00', 3, 2, 7),(838, '2026-04-01 16:00:00', 3, 2, 1),
 (839, '2026-04-02 09:00:00', 3, 2, 3),(840, '2026-04-02 11:00:00', 3, 2, 1),(841, '2026-04-02 15:00:00', 3, 2, 1),(842, '2026-04-02 17:00:00', 3, 2, 7),
 (843, '2026-04-06 09:00:00', 3, 2, 1),(844, '2026-04-06 11:00:00', 3, 2, 3),(845, '2026-04-06 14:00:00', 3, 2, 7),(846, '2026-04-06 16:00:00', 3, 2, 1),
@@ -970,7 +969,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (911, '2026-04-30 09:00:00', 3, 2, 3),(912, '2026-04-30 11:00:00', 3, 2, 1),(913, '2026-04-30 15:00:00', 3, 2, 1),(914, '2026-04-30 17:00:00', 3, 2, 7);
 
 -- MAIO 2026 (01/05 Dia do Trabalho)
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (915, '2026-05-04 09:00:00', 3, 2, 1),(916, '2026-05-04 11:00:00', 3, 2, 3),(917, '2026-05-04 14:00:00', 3, 2, 7),(918, '2026-05-04 16:00:00', 3, 2, 1),
 (919, '2026-05-05 09:00:00', 3, 2, 3),(920, '2026-05-05 11:00:00', 3, 2, 1),(921, '2026-05-05 15:00:00', 3, 2, 1),(922, '2026-05-05 17:00:00', 3, 2, 7),
 (923, '2026-05-06 09:00:00', 3, 2, 1),(924, '2026-05-06 11:00:00', 3, 2, 3),(925, '2026-05-06 14:00:00', 3, 2, 7),(926, '2026-05-06 16:00:00', 3, 2, 1),
@@ -993,7 +992,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 (991, '2026-05-29 09:00:00', 3, 2, 1),(992, '2026-05-29 11:00:00', 3, 2, 3),(993, '2026-05-29 13:00:00', 3, 2, 7),(994, '2026-05-29 15:00:00', 3, 2, 1);
 
 -- JUNHO 2026 (04/06 Corpus Christi)
-INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
+INSERT IGNORE INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id) VALUES
 (995,  '2026-06-01 09:00:00', 3, 2, 1),(996,  '2026-06-01 11:00:00', 3, 2, 3),(997,  '2026-06-01 14:00:00', 3, 2, 7),(998,  '2026-06-01 16:00:00', 3, 2, 1),
 (999,  '2026-06-02 09:00:00', 3, 2, 3),(1000, '2026-06-02 11:00:00', 3, 2, 1),(1001, '2026-06-02 15:00:00', 3, 2, 1),(1002, '2026-06-02 17:00:00', 3, 2, 7),
 (1003, '2026-06-03 09:00:00', 3, 2, 1),(1004, '2026-06-03 11:00:00', 3, 2, 3),(1005, '2026-06-03 14:00:00', 3, 2, 7),(1006, '2026-06-03 16:00:00', 3, 2, 1),
@@ -1029,7 +1028,7 @@ INSERT INTO agendamento (id, data_hora, professor_id, sala_id, especialidade_id)
 -- ============================================
 -- Estratégia: Andrei usa principalmente alunos 11-20 para evitar conflitos com Guilherme
 -- Agendamentos de agosto do Andrei (IDs 1-21) - PASSADOS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 1 (04/08 08:00 - Segunda - Pilates)
 (1, 11, 'PRESENTE'), (1, 12, 'PRESENTE'), (1, 13, 'PRESENTE'), (1, 14, 'FALTA'),
 -- Agendamento 2 (04/08 10:00 - Segunda - RPG)
@@ -1128,7 +1127,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 (48, 8, 'PRESENTE'), (48, 9, 'PRESENTE'), (48, 10, 'PRESENTE'), (48, 1, 'FALTA');
 
 -- Agendamentos de setembro do Andrei (IDs 22-40) - PASSADOS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 22 (01/09 08:00 - Segunda - Pilates)
 (22, 11, 'PRESENTE'), (22, 12, 'PRESENTE'), (22, 13, 'PRESENTE'), (22, 14, 'FALTA'),
 -- Agendamento 23 (01/09 14:00 - Segunda - Fisioterapia)
@@ -1169,7 +1168,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 (40, 19, 'PRESENTE'), (40, 20, 'PRESENTE'), (40, 11, 'PRESENTE'), (40, 12, 'FALTA');
 
 -- Agendamentos de outubro do Andrei (IDs 41-61) - PASSADOS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 41 (01/10 08:00 - Quarta - Pilates)
 (41, 12, 'PRESENTE'), (41, 13, 'PRESENTE'), (41, 14, 'PRESENTE'), (41, 15, 'FALTA'),
 -- Agendamento 42 (02/10 10:00 - Quinta - RPG)
@@ -1215,7 +1214,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 
 -- Agendamentos de novembro do Andrei (IDs 62-80)
 -- Agendamentos até 14/11/2025 são PASSADOS, após são FUTUROS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 62 (31/10 09:00 - Sexta - RPG) - PASSADO (ajustado de 01/11 sábado)
 (62, 13, 'PRESENTE'), (62, 14, 'PRESENTE'), (62, 15, 'PRESENTE'), (62, 16, 'FALTA'),
 -- Agendamento 63 (03/11 08:00 - Segunda - Pilates) - PASSADO
@@ -1256,7 +1255,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 (80, 11, 'PENDENTE'), (80, 12, 'PENDENTE'), (80, 13, 'PENDENTE'), (80, 14, 'PENDENTE');
 
 -- Agendamentos de dezembro do Andrei (IDs 81-97) - FUTUROS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 81 (01/12 08:00 - Segunda - Pilates)
 (81, 12, 'PENDENTE'), (81, 13, 'PENDENTE'), (81, 14, 'PENDENTE'), (81, 15, 'PENDENTE'),
 -- Agendamento 82 (01/12 10:00 - Segunda - RPG)
@@ -1297,7 +1296,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- ============================================
 -- Estratégia: Guilherme usa principalmente alunos 1-10 para evitar conflitos com Andrei
 -- Agendamentos de agosto do Guilherme (IDs 98-145) - PASSADOS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 98 (04/08 09:00 - Segunda - Pilates)
 (98, 1, 'PRESENTE'), (98, 2, 'PRESENTE'), (98, 3, 'PRESENTE'), (98, 4, 'FALTA'),
 -- Agendamento 99 (04/08 11:00 - Segunda - RPG)
@@ -1396,7 +1395,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 (145, 8, 'PRESENTE'), (145, 9, 'PRESENTE'), (145, 10, 'PRESENTE'), (145, 1, 'FALTA');
 
 -- Agendamentos de setembro do Guilherme (IDs 146-225) - PASSADOS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 146 (01/09 09:00 - Segunda - Pilates)
 (146, 9, 'PRESENTE'), (146, 10, 'PRESENTE'), (146, 1, 'PRESENTE'), (146, 2, 'FALTA'),
 -- Agendamento 147 (01/09 11:00 - Segunda - RPG)
@@ -1559,7 +1558,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 (225, 8, 'PRESENTE'), (225, 9, 'PRESENTE'), (225, 10, 'PRESENTE'), (225, 1, 'FALTA');
 
 -- Agendamentos de outubro do Guilherme (IDs 226-317) - PASSADOS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 226 (01/10 09:00 - Quarta - Pilates)
 (226, 9, 'PRESENTE'), (226, 10, 'PRESENTE'), (226, 1, 'PRESENTE'), (226, 2, 'FALTA'),
 -- Agendamento 227 (01/10 11:00 - Quarta - RPG)
@@ -1747,7 +1746,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 
 -- Agendamentos de novembro do Guilherme (IDs 318-393)
 -- Agendamentos até 14/11/2025 são PASSADOS, após são FUTUROS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 318 (03/11 09:00 - Segunda - Pilates) - PASSADO
 (318, 1, 'PRESENTE'), (318, 2, 'PRESENTE'), (318, 3, 'PRESENTE'), (318, 4, 'FALTA'),
 -- Agendamento 319 (03/11 11:00 - Segunda - RPG) - PASSADO
@@ -1902,7 +1901,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 (393, 6, 'PENDENTE'), (393, 7, 'PENDENTE'), (393, 8, 'PENDENTE'), (393, 9, 'PENDENTE');
 
 -- Agendamentos de dezembro do Guilherme (IDs 394-457) - FUTUROS
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- Agendamento 394 (01/12 09:00 - Segunda - Pilates)
 (394, 7, 'PENDENTE'), (394, 8, 'PENDENTE'), (394, 9, 'PENDENTE'), (394, 10, 'PENDENTE'),
 -- Agendamento 395 (01/12 11:00 - Segunda - RPG)
@@ -2036,7 +2035,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- AGENDAMENTOS ANDREI - JAN-JUN 2026 (IDs 458-582) - FUTUROS
 -- Rotacao alunos 11-20, iniciando em 19 (continuacao do ID 97)
 -- ============================================
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 (458,19,'PENDENTE'),(458,20,'PENDENTE'),(458,11,'PENDENTE'),(458,12,'PENDENTE'),
 (459,20,'PENDENTE'),(459,11,'PENDENTE'),(459,12,'PENDENTE'),(459,13,'PENDENTE'),
 (460,11,'PENDENTE'),(460,12,'PENDENTE'),(460,13,'PENDENTE'),(460,14,'PENDENTE'),
@@ -2167,7 +2166,7 @@ INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 -- AGENDAMENTOS GUILHERME - JAN-JUN 2026 (IDs 583-1078) - FUTUROS
 -- Rotacao alunos 1-10, iniciando em 1 (continuacao do ID 457)
 -- ============================================
-INSERT INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
+INSERT IGNORE INTO agendamento_aluno (agendamento_id, aluno_id, status_presenca) VALUES
 (583,1,'PENDENTE'),(583,2,'PENDENTE'),(583,3,'PENDENTE'),(583,4,'PENDENTE'),
 (584,2,'PENDENTE'),(584,3,'PENDENTE'),(584,4,'PENDENTE'),(584,5,'PENDENTE'),
 (585,3,'PENDENTE'),(585,4,'PENDENTE'),(585,5,'PENDENTE'),(585,6,'PENDENTE'),
