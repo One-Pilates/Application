@@ -31,18 +31,17 @@ public class ProfessorService {
     private final AgendamentoRepository agendamentoRepository;
     private final AgendamentoService agendamentoService;
     private final PasswordEncoder passwordEncoder;
-    private final ImageService imageService;
-
+    private final S3Service s3Service;
     private final RabbitMQProducer rabbitMQ;
 
 
-    public ProfessorService(ProfessorRepository professorRepository, EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository, AgendamentoService agendamentoService, PasswordEncoder passwordEncoder, ImageService imageService, RabbitMQProducer rabbitMQ) {
+    public ProfessorService(ProfessorRepository professorRepository, EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository, AgendamentoService agendamentoService, PasswordEncoder passwordEncoder, S3Service s3Service, RabbitMQProducer rabbitMQ) {
         this.professorRepository = professorRepository;
         this.especialidadeRepository = especialidadeRepository;
         this.agendamentoRepository = agendamentoRepository;
         this.agendamentoService = agendamentoService;
         this.passwordEncoder = passwordEncoder;
-        this.imageService = imageService;
+        this.s3Service = s3Service;
         this.rabbitMQ = rabbitMQ;
     }
 
@@ -50,15 +49,28 @@ public class ProfessorService {
         Professor professor = professorRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
 
-        String fotoAntiga = professor.getFoto();
-        String caminhoNovaFoto = imageService.atualizarImagem(id, file, fotoAntiga, "professor");
+        try {
+            String fotoAnterior = professor.getFoto();
 
-        professor.setFoto(caminhoNovaFoto);
-        professorRepository.save(professor);
+            // 📤 Faz upload no S3
+            String key = s3Service.uploadFotoPerfil(file, id);
 
-        return caminhoNovaFoto;
+            // 💾 Atualiza no banco
+            professor.setFoto(key);
+            professorRepository.save(professor);
+
+            // 🧹 Remove a foto antiga se existir e for diferente
+            if (fotoAnterior != null && !fotoAnterior.isBlank() && !fotoAnterior.equals(key)) {
+                s3Service.removerObjeto(fotoAnterior);
+            }
+
+            return key;
+
+        } catch (Exception e) {
+            logger.error("Erro ao salvar foto no S3: {}", e.getMessage(), e);
+            throw new RuntimeException("Erro ao salvar foto");
+        }
     }
-
 
     @Transactional
     public ProfessorResponseDTO criarProfessor(ProfessorDTO dto) {
@@ -80,6 +92,7 @@ public class ProfessorService {
 
 
     private ProfessorResponseDTO criarProfessorInterno(ProfessorDTO dto, Role roleToSet) {
+
         validateDto(dto);
 
         Professor professor = new Professor();
@@ -101,6 +114,7 @@ public class ProfessorService {
             throw new CampoObrigatorioException("Senha é obrigatória");
         }
 
+        // 📍 Endereço
         EnderecoDTO enderecoDTO = dto.getEndereco();
         if (enderecoDTO != null) {
             Endereco endereco = new Endereco();
@@ -114,33 +128,39 @@ public class ProfessorService {
             professor.setEndereco(endereco);
         }
 
+        // 📍 Especialidades
         Set<Especialidade> especialidades = Optional.ofNullable(dto.getEspecialidadeIds())
                 .orElse(Collections.emptySet())
                 .stream()
                 .map(id -> especialidadeRepository.findById(id)
                         .orElseThrow(() -> new EntidadeNaoEncontradaException("Especialidade não encontrada: " + id)))
                 .collect(Collectors.toSet());
+
         professor.setEspecialidades(especialidades);
 
-        // Salva o professor primeiro para obter o ID
+        // 💾 Salva primeiro para gerar ID
         Professor salvo = professorRepository.save(professor);
 
-        // Processa imagem se fornecida (após salvar para ter o ID)
+        // 📸 Upload da imagem no S3 (AGORA CORRETO)
         if (dto.getImagem() != null && !dto.getImagem().isEmpty()) {
             try {
-                String caminhoFoto = imageService.salvarImagem(salvo.getId(), dto.getImagem(), "professor");
-                salvo.setFoto(caminhoFoto);
+                // usa o ID já gerado
+                String key = s3Service.uploadFotoPerfil(dto.getImagem(), salvo.getId());
+
+                salvo.setFoto(key);
                 salvo = professorRepository.save(salvo);
+
             } catch (Exception e) {
-                logger.error("Erro ao salvar imagem do professor: {}", e.getMessage(), e);
-                // Se falhar ao salvar imagem, continua sem foto
+                logger.error("Erro ao salvar imagem do professor no S3: {}", e.getMessage(), e);
             }
-        } else if (dto.getFoto() != null && !dto.getFoto().isBlank()) {
-            // Mantém compatibilidade com o campo foto (String) se imagem não for fornecida
+        }
+        // fallback (caso venha string pronta)
+        else if (dto.getFoto() != null && !dto.getFoto().isBlank()) {
             salvo.setFoto(dto.getFoto());
             salvo = professorRepository.save(salvo);
         }
-        //Criação dos DTOs para envio de email
+
+        // 📧 Email de primeiro acesso
         PrimeiroAcessoEmailDTO primeiroAcessoEmailDTO = new PrimeiroAcessoEmailDTO();
         primeiroAcessoEmailDTO.setNomeFuncionario(professor.getNome());
         primeiroAcessoEmailDTO.setSenhaTemporaria(dto.getSenha());
@@ -151,6 +171,7 @@ public class ProfessorService {
         emailRequestDTO.setPayload(primeiroAcessoEmailDTO);
 
         rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
+
         return toResponseDTO(salvo);
     }
 
@@ -254,7 +275,7 @@ public class ProfessorService {
 
             // Remove a imagem se existir
             if (professor.getFoto() != null) {
-                imageService.removerImagem(professor.getFoto());
+                s3Service.removerObjeto(professor.getFoto());
             }
 
             professorRepository.deleteById(id);

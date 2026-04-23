@@ -34,7 +34,7 @@ public class ImageService {
 
         while (projectDir != null && !new File(projectDir, "pom.xml").exists()) {
             projectDir = projectDir.getParentFile();
-        }
+         }
 
         if (projectDir != null && new File(projectDir, "pom.xml").exists()) {
             String projectPath = projectDir.getAbsolutePath();
