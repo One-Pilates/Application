@@ -25,3 +25,6 @@ app.rabbitmq.routing-key=${EMAIL_ROUTING_KEY:email.routingkey}
 logging.level.org.springframework.amqp=${LOG_AMQP:INFO}
 logging.level.org.hibernate.SQL=${LOG_SQL:INFO}
 logging.level.org.hibernate.type.descriptor.sql=${LOG_SQL_TYPE:TRACE}
+
+# IA Configuration
+groq.api.key={Key do Groq}
