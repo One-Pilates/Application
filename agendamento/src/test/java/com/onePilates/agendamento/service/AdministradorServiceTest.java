@@ -39,7 +39,7 @@ class AdministradorServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private ImageService imageService;
+    private S3Service s3Service;
 
     @InjectMocks
     private AdministradorService administradorService;
@@ -114,14 +114,14 @@ class AdministradorServiceTest {
         when(passwordEncoder.encode(dto.getSenha())).thenReturn("encodedPassword");
         when(enderecoRepository.save(any(Endereco.class))).thenReturn(endereco);
         when(administradorRepository.save(any(Administrador.class))).thenReturn(administrador);
-        when(imageService.salvarImagem(anyLong(), any(MultipartFile.class), anyString())).thenReturn("imagens/admin_1_123.jpg");
+        when(s3Service.uploadFotoAdministrador(any(MultipartFile.class), anyLong())).thenReturn("administradores/1/foto-perfil-123.jpg");
 
         Administrador result = administradorService.criarAdministrador(dto);
 
         assertNotNull(result);
         // Quando há imagem, save é chamado 2 vezes (uma para criar, outra para atualizar com foto)
         verify(administradorRepository, times(2)).save(any(Administrador.class));
-        verify(imageService).salvarImagem(anyLong(), any(MultipartFile.class), eq("administrador"));
+        verify(s3Service).uploadFotoAdministrador(any(MultipartFile.class), anyLong());
     }
 
     @Test
@@ -272,14 +272,15 @@ class AdministradorServiceTest {
         administrador.setFoto("fotoAntiga.jpg");
 
         when(administradorRepository.findById(1L)).thenReturn(Optional.of(administrador));
-        when(imageService.atualizarImagem(eq(1L), eq(file), eq("fotoAntiga.jpg"), eq("administrador")))
-                .thenReturn("novaFoto.jpg");
+        when(s3Service.uploadFotoAdministrador(eq(file), eq(1L)))
+            .thenReturn("administradores/1/foto-perfil-123.jpg");
         when(administradorRepository.save(any(Administrador.class))).thenReturn(administrador);
 
         String result = administradorService.salvarFoto(1L, file);
 
-        assertEquals("novaFoto.jpg", result);
-        verify(imageService).atualizarImagem(1L, file, "fotoAntiga.jpg", "administrador");
+        assertEquals("administradores/1/foto-perfil-123.jpg", result);
+        verify(s3Service).uploadFotoAdministrador(file, 1L);
+        verify(s3Service).removerObjeto("fotoAntiga.jpg");
         verify(administradorRepository).save(any(Administrador.class));
     }
 
@@ -299,13 +300,13 @@ class AdministradorServiceTest {
         administrador.setFoto("foto.jpg");
 
         when(administradorRepository.findById(1L)).thenReturn(Optional.of(administrador));
-        doNothing().when(imageService).removerImagem("foto.jpg");
+        doNothing().when(s3Service).removerObjeto("foto.jpg");
         doNothing().when(administradorRepository).deleteById(1L);
 
         administradorService.excluirAdministrador(1L);
 
         verify(administradorRepository).findById(1L);
-        verify(imageService).removerImagem("foto.jpg");
+        verify(s3Service).removerObjeto("foto.jpg");
         verify(administradorRepository).deleteById(1L);
     }
 
@@ -327,7 +328,7 @@ class AdministradorServiceTest {
 
         administradorService.excluirAdministrador(1L);
 
-        verify(imageService, never()).removerImagem(anyString());
+        verify(s3Service, never()).removerObjeto(anyString());
         verify(administradorRepository).deleteById(1L);
     }
 
