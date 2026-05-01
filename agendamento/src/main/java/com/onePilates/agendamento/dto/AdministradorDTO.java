@@ -13,6 +13,7 @@ public class AdministradorDTO {
     private String foto;
     private String observacoes;
     private Boolean notificacaoAtiva;
+    private Boolean primeiro_acesso;
     private String senha;
     private String cargo;
     private EnderecoDTO endereco;
@@ -115,5 +116,13 @@ public class AdministradorDTO {
 
     public void setImagem(MultipartFile imagem) {
         this.imagem = imagem;
+    }
+
+    public Boolean getPrimeiro_acesso() {
+        return primeiro_acesso;
+    }
+
+    public void setPrimeiro_acesso(Boolean primeiro_acesso) {
+        this.primeiro_acesso = primeiro_acesso;
     }
 }

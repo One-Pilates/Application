@@ -1,11 +1,14 @@
 package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.AdministradorDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.EmailRequestDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.PrimeiroAcessoEmailDTO;
 import com.onePilates.agendamento.dto.response.AdministradorResponseDTO;
 import com.onePilates.agendamento.dto.response.EnderecoResponseDTO;
 import com.onePilates.agendamento.exception.*;
 import com.onePilates.agendamento.model.Administrador;
 import com.onePilates.agendamento.model.Endereco;
+import com.onePilates.agendamento.model.TipoEmail;
 import com.onePilates.agendamento.repository.AdministradorRepository;
 import com.onePilates.agendamento.repository.EnderecoRepository;
 import org.slf4j.Logger;
@@ -27,17 +30,14 @@ public class AdministradorService {
 
     private final AdministradorRepository administradorRepository;
     private final EnderecoRepository enderecoRepository;
+    private final RabbitMQProducer rabbitMQProducer;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
 
-    public AdministradorService(
-            AdministradorRepository administradorRepository,
-            EnderecoRepository enderecoRepository,
-            PasswordEncoder passwordEncoder,
-            S3Service s3Service
-    ) {
+    public AdministradorService(AdministradorRepository administradorRepository, EnderecoRepository enderecoRepository, RabbitMQProducer rabbitMQProducer, PasswordEncoder passwordEncoder, S3Service s3Service) {
         this.administradorRepository = administradorRepository;
         this.enderecoRepository = enderecoRepository;
+        this.rabbitMQProducer = rabbitMQProducer;
         this.passwordEncoder = passwordEncoder;
         this.s3Service = s3Service;
     }
@@ -61,8 +61,10 @@ public class AdministradorService {
             administrador.setStatus(dto.getStatus());
             administrador.setObservacoes(dto.getObservacoes());
             administrador.setNotificacaoAtiva(dto.getNotificacaoAtiva());
+            administrador.setPrimeiroAcesso(dto.getPrimeiro_acesso());
             administrador.setSenha(passwordEncoder.encode(dto.getSenha()));
             administrador.setCargo(dto.getCargo());
+
 
             if (dto.getEndereco() != null) {
             Endereco endereco = new Endereco();
@@ -94,6 +96,20 @@ public class AdministradorService {
                 // Mantém compatibilidade com o campo foto (String) se imagem não for fornecida
                 saved.setFoto(dto.getFoto());
                 saved = administradorRepository.save(saved);
+            }
+
+            if(administrador.getNotificacaoAtiva()){
+
+                PrimeiroAcessoEmailDTO primeiroAcessoEmailDTO = new PrimeiroAcessoEmailDTO();
+                primeiroAcessoEmailDTO.setNomeFuncionario(administrador.getNome());
+                primeiroAcessoEmailDTO.setSenhaTemporaria(dto.getSenha());
+
+                EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+                emailRequestDTO.setTypeEmail(TipoEmail.PRIMEIRO_ACESSO);
+                emailRequestDTO.setDestinatario(administrador.getEmail());
+                emailRequestDTO.setPayload(primeiroAcessoEmailDTO);
+
+                rabbitMQProducer.enviarPraFilaDeEmails(emailRequestDTO);
             }
 
             logger.info("Administrador criado com sucesso. ID: {}", saved.getId());

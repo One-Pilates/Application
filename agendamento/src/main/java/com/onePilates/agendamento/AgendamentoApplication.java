@@ -1,36 +1,70 @@
 package com.onePilates.agendamento;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import com.onePilates.agendamento.security.SenhaTemp;
+import com.onePilates.agendamento.service.IniciarAplicacaoService;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
-
-
 @SpringBootApplication
-public class  AgendamentoApplication {
+public class AgendamentoApplication {
+
+    private static final Logger log =
+            LoggerFactory.getLogger(AgendamentoApplication.class);
 
     private static final Dotenv DOTENV = Dotenv.configure()
             .ignoreIfMissing()
             .load();
 
     public static void main(String[] args) {
+
         carregarVariaveisDoEnv();
 
-        // Recupera o contexto da aplicação Spring
-        ApplicationContext context = SpringApplication.run(AgendamentoApplication.class, args);
+        // Inicializa a aplicação Spring
+        ApplicationContext context =
+                SpringApplication.run(AgendamentoApplication.class, args);
 
-        // Recupera o bean SenhaTemp
+        // Cria senha temporária codificada
         SenhaTemp senhaTemp = context.getBean(SenhaTemp.class);
         senhaTemp.criarSenhaCodificada();
+
+        // Inicializa administrador padrão
+        IniciarAplicacaoService iniciarAplicacaoService =
+                context.getBean(IniciarAplicacaoService.class);
+
+        String resultadoAdministrador =
+                iniciarAplicacaoService.criarAdministradorInicial();
+
+        // Log do administrador
+        log.info(resultadoAdministrador);
+
+        // Log de inicialização
+        log.info("""
+
+                ██████╗ ███╗   ██╗███████╗██████╗ ██╗██╗      █████╗ ████████╗███████╗███████╗
+                ██╔═══██╗████╗  ██║██╔════╝██╔══██╗██║██║     ██╔══██╗╚══██╔══╝██╔════╝██╔════╝
+                ██║   ██║██╔██╗ ██║█████╗  ██████╔╝██║██║     ███████║   ██║   █████╗  ███████╗
+                ██║   ██║██║╚██╗██║██╔══╝  ██╔═══╝ ██║██║     ██╔══██║   ██║   ██╔══╝  ╚════██║
+                ╚██████╔╝██║ ╚████║███████╗██║     ██║███████╗██║  ██║   ██║   ███████╗███████║
+                 ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚══════╝
+
+                           🚀 APLICAÇÃO RODANDO COM SUCESSO 🚀
+
+                """);
     }
 
     private static void carregarVariaveisDoEnv() {
+
         for (DotenvEntry entry : DOTENV.entries()) {
-            System.getProperties().putIfAbsent(entry.getKey(), entry.getValue());
+
+            System.getProperties().putIfAbsent(
+                    entry.getKey(),
+                    entry.getValue()
+            );
         }
     }
-
 }
