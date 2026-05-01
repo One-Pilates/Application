@@ -269,9 +269,18 @@ public class ProfessorService {
     @Transactional
     public void excluirProfessor(Long id) {
         logger.info("Tentativa de excluir professor ID: {}", id);
+
         try {
             Professor professor = professorRepository.findById(id)
                     .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
+
+            // Verifica se existem agendamentos
+            List<Agendamento> agendamentos = agendamentoRepository.findByProfessorId(id);
+
+            if (agendamentos != null && !agendamentos.isEmpty()) {
+                logger.info("Existem {} agendamentos para o professor ID {}. Excluindo todos...", agendamentos.size(), id);
+                agendamentoRepository.deleteAll(agendamentos);
+            }
 
             // Remove a imagem se existir
             if (professor.getFoto() != null) {
@@ -279,10 +288,13 @@ public class ProfessorService {
             }
 
             professorRepository.deleteById(id);
+
             logger.info("Professor excluído com sucesso. ID: {}", id);
+
         } catch (BusinessException e) {
             logger.warn("Falha ao excluir professor ID {}: {}", id, e.getMessage());
             throw e;
+
         } catch (Exception e) {
             logger.error("Erro inesperado ao excluir professor ID: {}", id, e);
             throw e;
