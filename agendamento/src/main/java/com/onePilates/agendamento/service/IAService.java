@@ -24,18 +24,34 @@ public class IAService {
             .build();
 
     public IAService() {
-        System.out.println("IAService inicializado!");
     }
 
-    public String getRecomendacao(String nomeAluno, String observacao, String especialidade) {
-        System.out.println("Iniciando busca de recomendação para: " + nomeAluno);
+    public String getRecomendacao(String nomeAluno, String observacao, String especialidade, List<Map<String, String>> historico, String mensagemUsuario) {
         
-        String prompt = buildPrompt(nomeAluno, observacao, especialidade);
+        List<Map<String, String>> messages;
+        
+        if (historico == null || historico.isEmpty()) {
+            // Primeira vez: Usa o prompt estruturado (modelo padrão)
+            String prompt = buildPrompt(nomeAluno, observacao, especialidade);
+            messages = List.of(Map.of("role", "user", "content", prompt));
+        } else {
+            // Conversa em andamento: Mantém a personalidade de especialista, mas responde de forma livre/concisa
+            String systemPrompt = String.format(
+                "Você é um especialista em %s e reabilitação física. " +
+                "Mantenha sua personalidade de especialista, mas responda de forma muito BREVE e DIRETA (máximo 3-4 linhas). " +
+                "O foco é ajudar o professor com o aluno %s sobre a observação: \"%s\".",
+                especialidade, nomeAluno, observacao
+            );
+            
+            messages = new java.util.ArrayList<>();
+            messages.add(Map.of("role", "system", "content", systemPrompt));
+            messages.addAll(historico);
+        }
 
         try {
             Map<String, Object> body = Map.of(
                     "model", "llama-3.3-70b-versatile",
-                    "messages", List.of(Map.of("role", "user", "content", prompt)),
+                    "messages", messages,
                     "temperature", 0.7,
                     "max_tokens", 800
             );
@@ -50,13 +66,9 @@ public class IAService {
                     .timeout(Duration.ofSeconds(30))
                     .build();
 
-            System.out.println("Enviando requisição para Groq...");
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("Resposta Groq recebida. Status: " + response.statusCode());
-
             if (response.statusCode() != 200) {
-                System.err.println("Erro na Groq: " + response.body());
                 throw new RuntimeException("API da Groq retornou erro " + response.statusCode() + ": " + response.body());
             }
 
@@ -79,8 +91,6 @@ public class IAService {
             return (String) message.get("content");
 
         } catch (Exception e) {
-            System.err.println("Falha no IAService: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException("Falha ao obter recomendação da IA: " + e.getMessage(), e);
         }
     }

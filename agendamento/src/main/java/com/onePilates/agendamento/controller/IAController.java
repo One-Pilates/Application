@@ -14,7 +14,6 @@ public class IAController {
     private final IAService iaService;
 
     public IAController(IAService iaService) {
-        System.out.println("IAController inicializado!");
         this.iaService = iaService;
     }
 
@@ -24,11 +23,12 @@ public class IAController {
             String recomendacao = iaService.getRecomendacao(
                     request.nomeAluno(),
                     request.observacao(),
-                    request.especialidade()
+                    request.especialidade(),
+                    request.historico(),
+                    request.mensagemUsuario()
             );
             return ResponseEntity.ok(Map.of("recomendacao", recomendacao));
         } catch (Exception e) {
-            System.err.println("Erro no IAController: " + e.getMessage());
             return ResponseEntity.internalServerError().body(Map.of("erro", e.getMessage()));
         }
     }

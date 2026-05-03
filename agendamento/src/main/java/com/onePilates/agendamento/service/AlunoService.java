@@ -147,7 +147,6 @@ public class AlunoService {
         aluno.setNotificacaoAtiva(dto.getNotificacaoAtiva());
         aluno.setObservacao(dto.getObservacao());
 
-        System.out.println(dto.getEndereco().getBairro());
 
         EnderecoDTO enderecoDTO = dto.getEndereco();
         Endereco endereco = new Endereco();
