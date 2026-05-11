@@ -68,10 +68,10 @@ public class AgendamentoService {
         try {
             // Primeira validação (completa) - feita no validator dentro de mapDtoToEntity
             Agendamento agendamento = mapDtoToEntity(dto);
-            
+
             // Segunda validação (double-check) imediatamente antes do save para prevenir race condition
             validarConflitosAntesDeSalvar(dto);
-            
+
             agendamento = agendamentoRepository.save(agendamento);
             
             logger.debug("Agendamento criado com ID: {}", agendamento.getId());
@@ -98,6 +98,43 @@ public class AgendamentoService {
         }
     }
 
+    @Transactional
+    public Agendamento criarAgendamentoAbsoluto(AgendamentoDTO dto) {
+        // Normalizar data/hora para hora cheia (zerar minutos, segundos e nanossegundos)
+        if (dto.getDataHora() != null) {
+            dto.setDataHora(normalizarDataHora(dto.getDataHora()));
+        }
+
+
+        try {
+            // Primeira validação (completa) - feita no validator dentro de mapDtoToEntity
+            Agendamento agendamento = mapDtoToEntity(dto);
+
+            agendamento = agendamentoRepository.save(agendamento);
+
+            logger.debug("Agendamento criado com ID: {}", agendamento.getId());
+
+            // Recarregar o agendamento com todas as relações para o observer
+            agendamento = agendamentoRepository.findById(agendamento.getId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Erro ao recarregar agendamento"));
+
+            Professor professor = agendamento.getProfessor();
+
+            if (professor.getNotificacaoAtiva() != null && professor.getNotificacaoAtiva()) {
+                logger.debug("Enviando notificação para professor: {}", professor.getNome());
+                notifier.notificarTodos(agendamento);
+            }
+
+            logger.info("Agendamento criado com sucesso. ID: {}", agendamento.getId());
+            return agendamento;
+        } catch (BusinessException e) {
+            logger.warn("Falha ao criar agendamento: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao criar agendamento", e);
+            throw e;
+        }
+    }
     /**
      * Busca todos os agendamentos de um professor específico.
      *

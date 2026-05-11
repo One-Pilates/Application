@@ -13,6 +13,6 @@ public class SenhaTemp {
 
     public void criarSenhaCodificada() {
         String senhaCodificada = passwordEncoder.encode("12345678");
-        System.out.println("Senha Codificada: " + senhaCodificada);
+
     }
 }

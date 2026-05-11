@@ -37,6 +37,14 @@ public class AgendamentoController {
     }
 
     /**
+     * Caminho do agendamento absoluto, que ignora todas as regras de agendamento
+     */
+    @PostMapping("/absoluto")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
+    public ResponseEntity<AgendamentoResponseDTO> criarAgendamentoAbsoluto(@RequestBody AgendamentoDTO dto){
+        return ResponseEntity.ok(agendamentoService.toResponseDTO(agendamentoService.criarAgendamentoAbsoluto(dto)));
+    }
+    /**
      * Lista todos os agendamentos cadastrados.
      * 
      * @return ResponseEntity com a lista de agendamentos e status 200 (OK)
