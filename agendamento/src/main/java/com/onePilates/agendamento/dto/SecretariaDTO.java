@@ -1,5 +1,6 @@
 package com.onePilates.agendamento.dto;
 
+import com.onePilates.agendamento.model.Role;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +43,12 @@ public class SecretariaDTO {
     @NotBlank(message = "O campo cargo é obrigatório")
     private String cargo;
 
+    @NotNull(message = "O campo role é obrigatório")
+    private Role role;
+
     private EnderecoDTO endereco;
+
+    private String telefone;
 
     public SecretariaDTO() {
     }
@@ -127,12 +133,28 @@ public class SecretariaDTO {
         this.cargo = cargo;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public EnderecoDTO getEndereco() {
         return endereco;
     }
 
     public void setEndereco(EnderecoDTO endereco) {
         this.endereco = endereco;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public MultipartFile getImagem() {

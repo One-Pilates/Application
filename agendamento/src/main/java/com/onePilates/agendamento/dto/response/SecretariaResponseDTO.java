@@ -14,6 +14,7 @@ public class SecretariaResponseDTO {
     private Boolean notificacaoAtiva;
     private String cargo;
     private String role;
+    private String telefone;
     private EnderecoResponseDTO endereco;
 
     public SecretariaResponseDTO() {
@@ -105,6 +106,14 @@ public class SecretariaResponseDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public EnderecoResponseDTO getEndereco() {

@@ -67,7 +67,8 @@ public class SecretariaService {
             secretaria.setNotificacaoAtiva(dto.getNotificacaoAtiva());
             secretaria.setSenha(passwordEncoder.encode(dto.getSenha()));
             secretaria.setCargo(dto.getCargo());
-            secretaria.setRole(Role.SECRETARIA);
+            secretaria.setRole(dto.getRole() != null ? dto.getRole() : Role.SECRETARIA);
+            secretaria.setTelefone(dto.getTelefone());
             secretaria.setPrimeiroAcesso(true);
 
             if (dto.getEndereco() != null) {
@@ -182,6 +183,12 @@ public class SecretariaService {
             if (dto.getCargo() != null) {
                 secretaria.setCargo(dto.getCargo());
             }
+            if (dto.getTelefone() != null) {
+                secretaria.setTelefone(dto.getTelefone());
+            }
+            if (dto.getRole() != null) {
+                secretaria.setRole(dto.getRole());
+            }
 
             if (dto.getEndereco() != null) {
                 Endereco endereco = secretaria.getEndereco();
@@ -278,6 +285,7 @@ public class SecretariaService {
         dto.setNotificacaoAtiva(secretaria.getNotificacaoAtiva());
         dto.setCargo(secretaria.getCargo());
         dto.setRole(secretaria.getRole() != null ? secretaria.getRole().name() : null);
+        dto.setTelefone(secretaria.getTelefone());
 
         if (secretaria.getEndereco() != null) {
             EnderecoResponseDTO enderecoDTO = new EnderecoResponseDTO();
