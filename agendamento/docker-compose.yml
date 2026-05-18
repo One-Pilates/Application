@@ -9,3 +9,20 @@ services:
     environment:
       - SERVICES=s3
       - DEBUG=1
+
+  redis:
+    image: redis:7-alpine
+    container_name: onepilates-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD:-sua_senha_redis}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:
