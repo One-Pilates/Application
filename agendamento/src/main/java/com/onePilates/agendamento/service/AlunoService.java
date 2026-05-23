@@ -92,7 +92,7 @@ public class AlunoService {
             if (dto.getDataNascimento() != null) aluno.setDataNascimento(dto.getDataNascimento());
             if (dto.getStatus() != null) aluno.setStatus(dto.getStatus());
             if (dto.getAlunoComLimitacoesFisicas() != null) aluno.setAlunoComLimitacoesFisicas(dto.getAlunoComLimitacoesFisicas());
-            if (dto.getTipoContato() != null) aluno.setTipoContato(dto.getTipoContato());
+            if (dto.getTelefone() != null) aluno.setTipoContato(dto.getTelefone());
             if (dto.getNotificacaoAtiva() != null) aluno.setNotificacaoAtiva(dto.getNotificacaoAtiva());
             if (dto.getObservacao() != null) aluno.setObservacao(dto.getObservacao());
 
@@ -143,7 +143,7 @@ public class AlunoService {
         aluno.setDataNascimento(dto.getDataNascimento());
         aluno.setStatus(dto.getStatus());
         aluno.setAlunoComLimitacoesFisicas(dto.getAlunoComLimitacoesFisicas());
-        aluno.setTipoContato(dto.getTipoContato());
+        aluno.setTipoContato(dto.getTelefone());
         aluno.setNotificacaoAtiva(dto.getNotificacaoAtiva());
         aluno.setObservacao(dto.getObservacao());
 
@@ -174,7 +174,7 @@ public class AlunoService {
         dto.setDataNascimento(aluno.getDataNascimento());
         dto.setStatus(aluno.getStatus());
         dto.setAlunoComLimitacoesFisicas(aluno.getAlunoComLimitacoesFisicas());
-        dto.setTipoContato(aluno.getTipoContato());
+        dto.setTelefone(aluno.getTipoContato());
         dto.setNotificacaoAtiva(aluno.getNotificacaoAtiva());
         dto.setObservacao(aluno.getObservacao());
 

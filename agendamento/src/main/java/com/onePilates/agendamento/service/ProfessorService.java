@@ -325,6 +325,8 @@ public class ProfessorService {
             EnderecoResponseDTO enderecoDTO = new EnderecoResponseDTO();
             enderecoDTO.setRua(professor.getEndereco().getRua());
             enderecoDTO.setCidade(professor.getEndereco().getCidade());
+            enderecoDTO.setBairro(professor.getEndereco().getBairro());
+            enderecoDTO.setUf(professor.getEndereco().getUf());
             enderecoDTO.setEstado(professor.getEndereco().getEstado());
             enderecoDTO.setCep(professor.getEndereco().getCep());
             dto.setEndereco(enderecoDTO);

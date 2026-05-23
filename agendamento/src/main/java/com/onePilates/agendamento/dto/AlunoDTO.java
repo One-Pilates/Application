@@ -9,7 +9,7 @@ public class AlunoDTO {
     private LocalDate dataNascimento;
     private Boolean status;
     private Boolean alunoComLimitacoesFisicas;
-    private String tipoContato;
+    private String telefone;
     private Boolean notificacaoAtiva;
     private String observacao;
     private EnderecoDTO endereco;
@@ -62,12 +62,12 @@ public class AlunoDTO {
         this.alunoComLimitacoesFisicas = alunoComLimitacoesFisicas;
     }
 
-    public String getTipoContato() {
-        return tipoContato;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setTipoContato(String tipoContato) {
-        this.tipoContato = tipoContato;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public Boolean getNotificacaoAtiva() {
