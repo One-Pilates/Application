@@ -293,6 +293,8 @@ public class SecretariaService {
             enderecoDTO.setCidade(secretaria.getEndereco().getCidade());
             enderecoDTO.setEstado(secretaria.getEndereco().getEstado());
             enderecoDTO.setCep(secretaria.getEndereco().getCep());
+            enderecoDTO.setUf(secretaria.getEndereco().getUf());
+            enderecoDTO.setBairro(secretaria.getEndereco().getBairro());
             dto.setEndereco(enderecoDTO);
         }
 
