@@ -4,6 +4,7 @@ import com.onePilates.agendamento.dto.AgendamentoDTO;
 import com.onePilates.agendamento.exception.*;
 import com.onePilates.agendamento.model.*;
 import com.onePilates.agendamento.repository.*;
+import com.onePilates.agendamento.service.AgendamentoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,20 +28,14 @@ public class AgendamentoValidator {
     private final AusenciaRepository ausenciaRepository;
     private final AgendamentoRepository agendamentoRepository;
 
-    public AgendamentoValidator(
-            SalaRepository salaRepository,
-            ProfessorRepository professorRepository,
-            EspecialidadeRepository especialidadeRepository,
-            AlunoRepository alunoRepository,
-            AusenciaRepository ausenciaRepository,
-            AgendamentoRepository agendamentoRepository
-    ) {
+    public AgendamentoValidator(SalaRepository salaRepository, ProfessorRepository professorRepository, EspecialidadeRepository especialidadeRepository, AlunoRepository alunoRepository, AusenciaRepository ausenciaRepository, AgendamentoRepository agendamentoRepository) {
         this.salaRepository = salaRepository;
         this.professorRepository = professorRepository;
         this.especialidadeRepository = especialidadeRepository;
         this.alunoRepository = alunoRepository;
         this.ausenciaRepository = ausenciaRepository;
         this.agendamentoRepository = agendamentoRepository;
+
     }
 
     /**
@@ -362,5 +358,311 @@ public class AgendamentoValidator {
             return diaNum >= inicioNum || diaNum <= fimNum;
         }
     }
+
+
+    public List<String> validarCriacao(AgendamentoDTO dto) {
+
+        List<String> erros = new ArrayList<>();
+
+        try {
+            validarDataHora(dto.getDataHora());
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        Sala sala = null;
+        Professor professor = null;
+        Especialidade especialidade = null;
+        List<Aluno> alunos = new ArrayList<>();
+
+        try {
+            sala = salaRepository.findById(dto.getSalaId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Sala não encontrada"));
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        try {
+            professor = professorRepository.findById(dto.getProfessorId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        try {
+            especialidade = especialidadeRepository.findById(dto.getEspecialidadeId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Especialidade não encontrada"));
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        try {
+            alunos = alunoRepository.findAllById(dto.getAlunoIds());
+
+            if (alunos.size() != dto.getAlunoIds().size()) {
+                throw new EntidadeNaoEncontradaException("Um ou mais alunos não foram encontrados");
+            }
+
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        // só executa regras dependentes se entidades existirem
+
+        if (professor != null) {
+            try {
+                validarStatusProfessor(professor);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (!alunos.isEmpty()) {
+            try {
+                validarStatusAluno(alunos);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (sala != null && especialidade != null) {
+            try {
+                validarEspecialidadeSala(sala, especialidade);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (professor != null && especialidade != null) {
+            try {
+                validarEspecialidadeProfessor(professor, especialidade);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (sala != null) {
+            try {
+                validarLotacaoSala(sala, alunos.size());
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+
+            try {
+                validarEquipamentosPCD(sala, alunos);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (professor != null) {
+            try {
+                validarAusenciaProfessor(professor, dto.getDataHora());
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        try {
+            validarConflitosBasicos(dto, dto.getDataHora(), alunos, null);
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        return erros;
+    }
+    public List<String> validarCriacaoListandoErros(AgendamentoDTO dto) {
+        List<String> erros = new ArrayList<>();
+
+        try {
+            validarDataHora(dto.getDataHora());
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        Sala sala = null;
+        Professor professor = null;
+        Especialidade especialidade = null;
+        List<Aluno> alunos = new ArrayList<>();
+
+        try {
+            sala = salaRepository.findById(dto.getSalaId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Sala não encontrada"));
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        try {
+            professor = professorRepository.findById(dto.getProfessorId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Professor não encontrado"));
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        try {
+            especialidade = especialidadeRepository.findById(dto.getEspecialidadeId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Especialidade não encontrada"));
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        try {
+            alunos = alunoRepository.findAllById(dto.getAlunoIds());
+            if (alunos.size() != dto.getAlunoIds().size()) {
+                throw new EntidadeNaoEncontradaException("Um ou mais alunos não foram encontrados");
+            }
+        } catch (BusinessException e) {
+            erros.add(e.getMessage());
+        }
+
+        // só executa regras dependentes se entidades existirem
+        if (professor != null) {
+            try {
+                validarStatusProfessor(professor);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (!alunos.isEmpty()) {
+            try {
+                validarStatusAluno(alunos);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (sala != null && especialidade != null) {
+            try {
+                validarEspecialidadeSala(sala, especialidade);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (professor != null && especialidade != null) {
+            try {
+                validarEspecialidadeProfessor(professor, especialidade);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (sala != null) {
+            try {
+                validarLotacaoSala(sala, alunos.size());
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+
+            try {
+                validarEquipamentosPCD(sala, alunos);
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        if (professor != null) {
+            try {
+                validarAusenciaProfessor(professor, dto.getDataHora());
+            } catch (BusinessException e) {
+                erros.add(e.getMessage());
+            }
+        }
+
+        // 🔑 Aqui usamos o acumulativo para não lançar exceção
+        validarConflitosBasicosAcumulativo(dto, dto.getDataHora(), alunos, null, erros);
+
+        return erros;
+    }
+
+    public void validarConflitosBasicosAcumulativo(
+            AgendamentoDTO dto,
+            LocalDateTime dataHora,
+            List<Aluno> alunos,
+            Long agendamentoIdExcluir,
+            List<String> erros
+    ) {
+
+        // Conflito de professor
+        if (agendamentoRepository.existsByProfessorIdAndDataHoraExcludingId(
+                dto.getProfessorId(),
+                dataHora,
+                agendamentoIdExcluir
+        )) {
+
+            String mensagem = agendamentoRepository
+                    .findByProfessorIdAndDataHoraExcludingId(
+                            dto.getProfessorId(),
+                            dataHora,
+                            agendamentoIdExcluir
+                    )
+                    .map(conflito -> String.format(
+                            "O professor %s já possui um agendamento em %s na sala %s.",
+                            conflito.getProfessor().getNome(),
+                            dataHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm")),
+                            conflito.getSala().getNome()
+                    ))
+                    .orElse("O professor já possui um agendamento neste horário.");
+
+            erros.add(mensagem);
+        }
+
+        // Conflito de sala
+        if (agendamentoRepository.existsBySalaIdAndDataHoraExcludingId(
+                dto.getSalaId(),
+                dataHora,
+                agendamentoIdExcluir
+        )) {
+
+            String mensagem = agendamentoRepository
+                    .findBySalaIdAndDataHoraExcludingId(
+                            dto.getSalaId(),
+                            dataHora,
+                            agendamentoIdExcluir
+                    )
+                    .map(conflito -> String.format(
+                            "A sala %s já está ocupada em %s pelo professor %s.",
+                            conflito.getSala().getNome(),
+                            dataHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm")),
+                            conflito.getProfessor().getNome()
+                    ))
+                    .orElse("A sala já está ocupada neste horário.");
+
+            erros.add(mensagem);
+        }
+
+        // Conflito de alunos
+        List<String> nomesIndisponiveis = alunos.stream()
+                .filter(aluno ->
+                        !agendamentoRepository
+                                .findAgendamentosByAlunoAndDataHoraExcludingId(
+                                        aluno,
+                                        dataHora,
+                                        agendamentoIdExcluir
+                                )
+                                .isEmpty()
+                )
+                .map(Aluno::getNome)
+                .toList();
+
+        if (!nomesIndisponiveis.isEmpty()) {
+
+            String dataHoraFormatada = dataHora.format(
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm")
+            );
+
+            erros.add(
+                    String.format(
+                            "Os seguintes alunos estão indisponíveis para o horário %s: %s",
+                            dataHoraFormatada,
+                            String.join(", ", nomesIndisponiveis)
+                    )
+            );
+        }
+    }
+
 }
+
+
 

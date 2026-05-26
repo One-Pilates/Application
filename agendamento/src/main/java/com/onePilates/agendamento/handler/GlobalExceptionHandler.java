@@ -1,6 +1,7 @@
 package com.onePilates.agendamento.handler;
 
 import com.onePilates.agendamento.exception.BusinessException;
+import com.onePilates.agendamento.exception.ValidacaoMultiplaException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,5 +68,18 @@ public class GlobalExceptionHandler {
         Map<String, String> erro = new HashMap<>();
         erro.put("erro", "Erro interno no servidor. Por favor, tente novamente mais tarde.");
         return new ResponseEntity<>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ValidacaoMultiplaException.class)
+    public ResponseEntity<Map<String, Object>> handleValidacaoMultipla(
+            ValidacaoMultiplaException ex
+    ) {
+
+        Map<String, Object> erro = new HashMap<>();
+
+        erro.put("mensagem", "Erro de validação");
+        erro.put("erros", ex.getErros());
+
+        return new ResponseEntity<>(erro, HttpStatus.BAD_REQUEST);
     }
 }
