@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,45 +62,48 @@ public class AgendamentoService {
     @CacheEvict(value = "agendamentos", allEntries = true)
     @Transactional
     public Agendamento criarAgendamento(AgendamentoDTO dto) {
-        // Normalizar data/hora para hora cheia (zerar minutos, segundos e nanossegundos)
         if (dto.getDataHora() != null) {
             dto.setDataHora(normalizarDataHora(dto.getDataHora()));
         }
-        
+
         logger.info("Tentativa de criar agendamento para data/hora: {}", dto.getDataHora());
-        
+
         try {
-            // Primeira validação (completa) - feita no validator dentro de mapDtoToEntity
+            // Validação acumulativa (já inclui conflitos)
+            List<String> erros = agendamentoValidator.validarCriacaoListandoErros(dto);
+
+            if (!erros.isEmpty()) {
+                logger.warn("Falha na validação múltipla do agendamento: {}", erros);
+                throw new ValidacaoMultiplaException(erros);
+            }
+
             Agendamento agendamento = mapDtoToEntity(dto);
 
-            // Segunda validação (double-check) imediatamente antes do save para prevenir race condition
-            validarConflitosAntesDeSalvar(dto);
-
             agendamento = agendamentoRepository.save(agendamento);
-            
             logger.debug("Agendamento criado com ID: {}", agendamento.getId());
-            
-            // Recarregar o agendamento com todas as relações para o observer
+
             agendamento = agendamentoRepository.findById(agendamento.getId())
                     .orElseThrow(() -> new EntidadeNaoEncontradaException("Erro ao recarregar agendamento"));
 
             Professor professor = agendamento.getProfessor();
-
-            if (professor.getNotificacaoAtiva() != null && professor.getNotificacaoAtiva()) {
-                logger.debug("Enviando notificação para professor: {}", professor.getNome());
+            if (Boolean.TRUE.equals(professor.getNotificacaoAtiva())) {
                 notifier.notificarTodos(agendamento);
             }
 
             logger.info("Agendamento criado com sucesso. ID: {}", agendamento.getId());
             return agendamento;
+
+        } catch (ValidacaoMultiplaException e) {
+            throw e;
         } catch (BusinessException e) {
-            logger.warn("Falha ao criar agendamento: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            logger.error("Erro inesperado ao criar agendamento", e);
             throw e;
         }
     }
+
+
+
 
     @CacheEvict(value = "agendamentos", allEntries = true)
     @Transactional
@@ -227,9 +231,6 @@ public class AgendamentoService {
 
 
     private Agendamento mapDtoToEntity(AgendamentoDTO dto) {
-        // Validar antes de criar a entidade usando o validator dedicado
-        agendamentoValidator.validar(dto);
-
         Agendamento agendamento = new Agendamento();
         agendamento.setDataHora(dto.getDataHora());
 
@@ -260,6 +261,7 @@ public class AgendamentoService {
         return agendamento;
     }
 
+
     /**
      * Valida conflitos críticos imediatamente antes de salvar o agendamento.
      * Esta validação dupla (double-check) reduz significativamente a janela de race condition
@@ -270,7 +272,7 @@ public class AgendamentoService {
      */
     private void validarConflitosAntesDeSalvar(AgendamentoDTO dto) {
         logger.debug("Validação dupla (double-check) de conflitos antes de salvar agendamento");
-        
+
         // Validação rápida de conflitos críticos (professor, sala e alunos)
         if (agendamentoRepository.existsByProfessorIdAndDataHora(dto.getProfessorId(), dto.getDataHora())) {
             logger.warn("Conflito detectado na validação dupla: Professor {} já possui agendamento em {}", 
@@ -303,7 +305,7 @@ public class AgendamentoService {
                 );
             }
         }
-        
+
         logger.debug("Validação dupla concluída sem conflitos");
     }
 
@@ -699,4 +701,6 @@ public class AgendamentoService {
             throw e;
         }
     }
+
+
 }
