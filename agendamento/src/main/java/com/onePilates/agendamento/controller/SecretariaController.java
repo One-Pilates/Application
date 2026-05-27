@@ -30,7 +30,7 @@ public class SecretariaController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR')")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'SECRETARIA')")
     public ResponseEntity<List<SecretariaResponseDTO>> listarSecretarias() {
         return ResponseEntity.ok(secretariaService.listarTodosDTO());
     }
