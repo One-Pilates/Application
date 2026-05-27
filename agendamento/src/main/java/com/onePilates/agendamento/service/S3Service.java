@@ -3,10 +3,15 @@ package com.onePilates.agendamento.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+import java.io.IOException;
 
 @Service
 public class S3Service {
@@ -86,5 +91,32 @@ public class S3Service {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao remover objeto do S3", e);
         }
+    }
+
+    public DownloadS3Objeto baixarObjeto(String key) {
+        if (key == null || key.isBlank()) {
+            throw new RuntimeException("Chave do objeto não pode ser vazia");
+        }
+
+        try {
+            GetObjectRequest request = GetObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build();
+
+            try (ResponseInputStream<GetObjectResponse> response = s3Client.getObject(request)) {
+                byte[] conteudo = response.readAllBytes();
+                String contentType = response.response().contentType();
+
+                return new DownloadS3Objeto(conteudo, contentType);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao ler objeto do S3", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao baixar objeto do S3", e);
+        }
+    }
+
+    public record DownloadS3Objeto(byte[] conteudo, String contentType) {
     }
 }
