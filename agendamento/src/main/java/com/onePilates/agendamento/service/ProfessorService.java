@@ -329,6 +329,7 @@ public class ProfessorService {
             enderecoDTO.setUf(professor.getEndereco().getUf());
             enderecoDTO.setEstado(professor.getEndereco().getEstado());
             enderecoDTO.setCep(professor.getEndereco().getCep());
+            enderecoDTO.setNumero(professor.getEndereco().getNumero());
             dto.setEndereco(enderecoDTO);
         }
 

@@ -295,6 +295,7 @@ public class SecretariaService {
             enderecoDTO.setCep(secretaria.getEndereco().getCep());
             enderecoDTO.setUf(secretaria.getEndereco().getUf());
             enderecoDTO.setBairro(secretaria.getEndereco().getBairro());
+            enderecoDTO.setNumero(secretaria.getEndereco().getNumero());
             dto.setEndereco(enderecoDTO);
         }
 
