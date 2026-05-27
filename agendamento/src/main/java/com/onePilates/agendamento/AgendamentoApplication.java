@@ -28,10 +28,6 @@ public class AgendamentoApplication {
         ApplicationContext context =
                 SpringApplication.run(AgendamentoApplication.class, args);
 
-        // Cria senha temporária codificada
-        SenhaTemp senhaTemp = context.getBean(SenhaTemp.class);
-        senhaTemp.criarSenhaCodificada();
-
         // Inicializa administrador padrão
         IniciarAplicacaoService iniciarAplicacaoService =
                 context.getBean(IniciarAplicacaoService.class);
