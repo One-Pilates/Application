@@ -1,10 +1,7 @@
 package com.onePilates.agendamento.service;
 
 import com.onePilates.agendamento.dto.AgendamentoDTO;
-import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaAtualizadaEmailDTO;
-import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaCanceladaEmailDTO;
-import com.onePilates.agendamento.dto.rabbitMQDTOs.AulaCriadaEmailDTO;
-import com.onePilates.agendamento.dto.rabbitMQDTOs.EmailRequestDTO;
+import com.onePilates.agendamento.dto.rabbitMQDTOs.*;
 import com.onePilates.agendamento.dto.response.AgendamentoResponseDTO;
 import com.onePilates.agendamento.dto.response.AlunoAgendamentoResponseDTO;
 import com.onePilates.agendamento.exception.*;
@@ -555,6 +552,27 @@ public class AgendamentoService {
                 emailRequestDTO.setPayload(aulaCanceladaEmailDTO);
 
                 rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
+            }
+
+            for (Aluno aluno : agendamento.getAlunos()) {
+                System.out.println("Verificando notificação do aluno: " + aluno.getNome());
+
+                if (aluno.getNotificacaoAtiva() != null && aluno.getNotificacaoAtiva()) {
+                    logger.debug("Enviando notificação de cancelamento para aluno: {}", aluno.getNome());
+
+                    AulaCanceladaAlunoEmailDTO aulaCanceladaAlunoEmailDTO = new AulaCanceladaAlunoEmailDTO();
+                    aulaCanceladaAlunoEmailDTO.setNomeAluno(aluno.getNome());
+                    aulaCanceladaAlunoEmailDTO.setDataHoraAgendamento(agendamento.getDataHora().toString());
+                    aulaCanceladaAlunoEmailDTO.setNomeEspecialidade(agendamento.getEspecialidade().getNome());
+                    aulaCanceladaAlunoEmailDTO.setNomeSala(agendamento.getSala().getNome());
+
+                    EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
+                    emailRequestDTO.setTypeEmail(TipoEmail.AULA_CANCELADA_ALUNO);
+                    emailRequestDTO.setDestinatario(aluno.getEmail());
+                    emailRequestDTO.setPayload(aulaCanceladaAlunoEmailDTO);
+
+                    rabbitMQ.enviarPraFilaDeEmails(emailRequestDTO);
+                }
             }
             
             agendamentoRepository.deleteById(id);
