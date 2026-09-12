@@ -32,14 +32,14 @@ public class AdministradorService {
     private final EnderecoRepository enderecoRepository;
     private final RabbitMQProducer rabbitMQProducer;
     private final PasswordEncoder passwordEncoder;
-    private final S3Service s3Service;
+    private final ImagemService imagemService;
 
-    public AdministradorService(AdministradorRepository administradorRepository, EnderecoRepository enderecoRepository, RabbitMQProducer rabbitMQProducer, PasswordEncoder passwordEncoder, S3Service s3Service) {
+    public AdministradorService(AdministradorRepository administradorRepository, EnderecoRepository enderecoRepository, RabbitMQProducer rabbitMQProducer, PasswordEncoder passwordEncoder, ImagemService imagemService) {
         this.administradorRepository = administradorRepository;
         this.enderecoRepository = enderecoRepository;
         this.rabbitMQProducer = rabbitMQProducer;
         this.passwordEncoder = passwordEncoder;
-        this.s3Service = s3Service;
+        this.imagemService = imagemService;
     }
 
     @Transactional
@@ -85,7 +85,7 @@ public class AdministradorService {
             // Processa imagem se fornecida (após salvar para ter o ID)
             if (dto.getImagem() != null && !dto.getImagem().isEmpty()) {
                 try {
-                    String caminhoFoto = s3Service.uploadFotoAdministrador(dto.getImagem(), saved.getId());
+                    String caminhoFoto = imagemService.uploadFotoAdministrador(dto.getImagem(), saved.getId());
                     saved.setFoto(caminhoFoto);
                     saved = administradorRepository.save(saved);
                 } catch (Exception e) {
@@ -230,13 +230,13 @@ public class AdministradorService {
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Administrador não encontrado"));
 
         String fotoAntiga = administrador.getFoto();
-        String caminhoNovaFoto = s3Service.uploadFotoAdministrador(file, id);
+        String caminhoNovaFoto = imagemService.uploadFotoAdministrador(file, id);
 
         administrador.setFoto(caminhoNovaFoto);
         administradorRepository.save(administrador);
 
         if (fotoAntiga != null && !fotoAntiga.isBlank() && !fotoAntiga.equals(caminhoNovaFoto)) {
-            s3Service.removerObjeto(fotoAntiga);
+            imagemService.removerObjeto(fotoAntiga);
         }
 
         return caminhoNovaFoto;
@@ -251,7 +251,7 @@ public class AdministradorService {
             
             // Remove a imagem se existir
             if (administrador.getFoto() != null) {
-                s3Service.removerObjeto(administrador.getFoto());
+                imagemService.removerObjeto(administrador.getFoto());
             }
             
             administradorRepository.deleteById(id);

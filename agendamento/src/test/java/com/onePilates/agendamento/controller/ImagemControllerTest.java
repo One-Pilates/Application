@@ -2,6 +2,7 @@ package com.onePilates.agendamento.controller;
 
 import com.onePilates.agendamento.config.TestSecurityConfig;
 import com.onePilates.agendamento.repository.FuncionarioRepository;
+import com.onePilates.agendamento.service.ImagemService;
 import com.onePilates.agendamento.security.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,9 @@ class ImagemControllerTest {
 
     @MockBean
     private FuncionarioRepository funcionarioRepository;
+
+    @MockBean
+    private ImagemService imagemService;
 
     private Path imagensDir;
     private static final String TEST_DIR = "imagens";

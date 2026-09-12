@@ -31,17 +31,17 @@ public class ProfessorService {
     private final AgendamentoRepository agendamentoRepository;
     private final AgendamentoService agendamentoService;
     private final PasswordEncoder passwordEncoder;
-    private final S3Service s3Service;
+    private final ImagemService imagemService;
     private final RabbitMQProducer rabbitMQ;
 
 
-    public ProfessorService(ProfessorRepository professorRepository, EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository, AgendamentoService agendamentoService, PasswordEncoder passwordEncoder, S3Service s3Service, RabbitMQProducer rabbitMQ) {
+    public ProfessorService(ProfessorRepository professorRepository, EspecialidadeRepository especialidadeRepository, AgendamentoRepository agendamentoRepository, AgendamentoService agendamentoService, PasswordEncoder passwordEncoder, ImagemService imagemService, RabbitMQProducer rabbitMQ) {
         this.professorRepository = professorRepository;
         this.especialidadeRepository = especialidadeRepository;
         this.agendamentoRepository = agendamentoRepository;
         this.agendamentoService = agendamentoService;
         this.passwordEncoder = passwordEncoder;
-        this.s3Service = s3Service;
+        this.imagemService = imagemService;
         this.rabbitMQ = rabbitMQ;
     }
 
@@ -52,8 +52,8 @@ public class ProfessorService {
         try {
             String fotoAnterior = professor.getFoto();
 
-            // 📤 Faz upload no S3
-            String key = s3Service.uploadFotoPerfil(file, id);
+            // Salva a imagem localmente
+            String key = imagemService.uploadFotoPerfil(file, id);
 
             // 💾 Atualiza no banco
             professor.setFoto(key);
@@ -61,13 +61,13 @@ public class ProfessorService {
 
             // 🧹 Remove a foto antiga se existir e for diferente
             if (fotoAnterior != null && !fotoAnterior.isBlank() && !fotoAnterior.equals(key)) {
-                s3Service.removerObjeto(fotoAnterior);
+                imagemService.removerObjeto(fotoAnterior);
             }
 
             return key;
 
         } catch (Exception e) {
-            logger.error("Erro ao salvar foto no S3: {}", e.getMessage(), e);
+            logger.error("Erro ao salvar foto: {}", e.getMessage(), e);
             throw new RuntimeException("Erro ao salvar foto");
         }
     }
@@ -141,17 +141,17 @@ public class ProfessorService {
         // 💾 Salva primeiro para gerar ID
         Professor salvo = professorRepository.save(professor);
 
-        // 📸 Upload da imagem no S3 (AGORA CORRETO)
+        // Salva a imagem localmente
         if (dto.getImagem() != null && !dto.getImagem().isEmpty()) {
             try {
                 // usa o ID já gerado
-                String key = s3Service.uploadFotoPerfil(dto.getImagem(), salvo.getId());
+                String key = imagemService.uploadFotoPerfil(dto.getImagem(), salvo.getId());
 
                 salvo.setFoto(key);
                 salvo = professorRepository.save(salvo);
 
             } catch (Exception e) {
-                logger.error("Erro ao salvar imagem do professor no S3: {}", e.getMessage(), e);
+                logger.error("Erro ao salvar imagem do professor: {}", e.getMessage(), e);
             }
         }
         // fallback (caso venha string pronta)
@@ -284,7 +284,7 @@ public class ProfessorService {
 
             // Remove a imagem se existir
             if (professor.getFoto() != null) {
-                s3Service.removerObjeto(professor.getFoto());
+                imagemService.removerObjeto(professor.getFoto());
             }
 
             professorRepository.deleteById(id);

@@ -3,24 +3,30 @@ package com.onePilates.agendamento.controller;
 import com.onePilates.agendamento.exception.EntidadeNaoEncontradaException;
 import com.onePilates.agendamento.model.Funcionario;
 import com.onePilates.agendamento.repository.FuncionarioRepository;
-import com.onePilates.agendamento.service.S3Service;
-import org.springframework.core.io.ByteArrayResource;
+import com.onePilates.agendamento.service.ImagemService;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/api/imagens")
 @CrossOrigin(origins = "*")
 public class ImagemController {
 
+    private static final Path DIRETORIO_IMAGENS = Paths.get("imagens").toAbsolutePath().normalize();
     private final FuncionarioRepository funcionarioRepository;
-    private final S3Service s3Service;
+    private final ImagemService imagemService;
 
-    public ImagemController(FuncionarioRepository funcionarioRepository, S3Service s3Service) {
+    public ImagemController(FuncionarioRepository funcionarioRepository, ImagemService imagemService) {
         this.funcionarioRepository = funcionarioRepository;
-        this.s3Service = s3Service;
+        this.imagemService = imagemService;
     }
 
     @GetMapping("/funcionarios/{id}")
@@ -32,13 +38,37 @@ public class ImagemController {
             return ResponseEntity.notFound().build();
         }
 
-        S3Service.DownloadS3Objeto download = s3Service.baixarObjeto(funcionario.getFoto());
+        ImagemService.DownloadImagem download = imagemService.baixarObjeto(funcionario.getFoto());
         MediaType mediaType = download.contentType() != null && !download.contentType().isBlank()
                 ? MediaType.parseMediaType(download.contentType())
                 : MediaType.APPLICATION_OCTET_STREAM;
 
         return ResponseEntity.ok()
                 .contentType(mediaType)
-                .body(new ByteArrayResource(download.conteudo()));
+                .body(new org.springframework.core.io.ByteArrayResource(download.conteudo()));
+    }
+
+    @GetMapping({"", "/{*caminho}"})
+    public ResponseEntity<Resource> servirImagem(@PathVariable(required = false) String caminho) {
+        if (caminho == null || caminho.isBlank()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String caminhoRelativo = caminho.replace('\\', '/');
+        if (caminhoRelativo.startsWith("imagens/")) {
+            caminhoRelativo = caminhoRelativo.substring("imagens/".length());
+        }
+        Path arquivo = DIRETORIO_IMAGENS.resolve(caminhoRelativo).normalize();
+        if (!arquivo.startsWith(DIRETORIO_IMAGENS) || !Files.isRegularFile(arquivo)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        MediaType mediaType = MediaTypeFactory.getMediaType(arquivo.getFileName().toString())
+            .orElse(MediaType.APPLICATION_OCTET_STREAM);
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header("Content-Disposition", "inline; filename=\"" + arquivo.getFileName() + "\"")
+                .body(new FileSystemResource(arquivo));
     }
 }

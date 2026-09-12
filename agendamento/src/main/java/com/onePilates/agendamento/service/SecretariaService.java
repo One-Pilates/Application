@@ -33,15 +33,15 @@ public class SecretariaService {
     private final SecretariaRepository secretariaRepository;
     private final EnderecoRepository enderecoRepository;
     private final PasswordEncoder passwordEncoder;
-    private final S3Service s3Service;
+    private final ImagemService imagemService;
     private final RabbitMQProducer rabbitMQ;
     private final AgendamentoRepository agendamentoRepository;
 
-    public SecretariaService(SecretariaRepository secretariaRepository, EnderecoRepository enderecoRepository, PasswordEncoder passwordEncoder, S3Service s3Service, RabbitMQProducer rabbitMQ, AgendamentoRepository agendamentoRepository) {
+    public SecretariaService(SecretariaRepository secretariaRepository, EnderecoRepository enderecoRepository, PasswordEncoder passwordEncoder, ImagemService imagemService, RabbitMQProducer rabbitMQ, AgendamentoRepository agendamentoRepository) {
         this.secretariaRepository = secretariaRepository;
         this.enderecoRepository = enderecoRepository;
         this.passwordEncoder = passwordEncoder;
-        this.s3Service = s3Service;
+        this.imagemService = imagemService;
         this.rabbitMQ = rabbitMQ;
         this.agendamentoRepository = agendamentoRepository;
     }
@@ -90,7 +90,7 @@ public class SecretariaService {
             // Processa imagem se fornecida (após salvar para ter o ID)
             if (dto.getImagem() != null && !dto.getImagem().isEmpty()) {
                 try {
-                    String caminhoFoto = s3Service.uploadFotoSecretaria(dto.getImagem(), saved.getId());
+                    String caminhoFoto = imagemService.uploadFotoSecretaria(dto.getImagem(), saved.getId());
                     saved.setFoto(caminhoFoto);
                     saved = secretariaRepository.save(saved);
                 } catch (Exception e) {
@@ -237,13 +237,13 @@ public class SecretariaService {
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Secretária não encontrada"));
 
         String fotoAntiga = secretaria.getFoto();
-        String caminhoNovaFoto = s3Service.uploadFotoSecretaria(file, id);
+        String caminhoNovaFoto = imagemService.uploadFotoSecretaria(file, id);
 
         secretaria.setFoto(caminhoNovaFoto);
         secretariaRepository.save(secretaria);
 
         if (fotoAntiga != null && !fotoAntiga.isBlank() && !fotoAntiga.equals(caminhoNovaFoto)) {
-            s3Service.removerObjeto(fotoAntiga);
+            imagemService.removerObjeto(fotoAntiga);
         }
 
         return caminhoNovaFoto;
@@ -258,7 +258,7 @@ public class SecretariaService {
 
             // Remove a imagem se existir
             if (secretaria.getFoto() != null) {
-                s3Service.removerObjeto(secretaria.getFoto());
+                imagemService.removerObjeto(secretaria.getFoto());
             }
 
             secretariaRepository.deleteById(id);
